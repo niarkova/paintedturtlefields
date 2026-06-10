@@ -1,0 +1,30 @@
+---
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+<div
+  id="noticing-list"
+  style="display:flex;flex-direction:column;gap:12px;margin-top:32px;"
+  role="group"
+  aria-label="Noticing checklist"
+>
+  {items.map((item, i) => (
+    <div
+      class="noticing-item reveal"
+      role="checkbox"
+      aria-checked="false"
+      tabindex="0"
+      data-item-id={`notice-${i}`}
+    >
+      <div class="check-circle" aria-hidden="true"></div>
+      <span class="item-text">{item}</span>
+    </div>
+  ))}
+</div>
+<p
+  id="noticing-count"
+  class="spotted-banner"
+  aria-live="polite"
+></p>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160" role="img" aria-label="Nina&#39;s Garden">
+  <defs>
+    
+  </defs>
+  <text x="20" y="110" class="word ink" font-size="96">Nina&#39;s</text>
+  <text x="252" y="110" class="word rose" font-size="100">garden</text>
+  
+  <g transform="translate(560 38)" stroke="#1F2A24" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="-12" cy="0" rx="9" ry="6" fill="#FFFCEC" transform="rotate(-22 -12 0)"></ellipse>
+    <ellipse cx="12" cy="0" rx="9" ry="6" fill="#FFFCEC" transform="rotate(22 12 0)"></ellipse>
+    <ellipse cx="0" cy="14" rx="14" ry="11" fill="#FFD93D"></ellipse>
+    <path d="M-10 8 q4 6 0 14" fill="none"></path>
+    <path d="M0 6 q4 8 0 18" fill="none"></path>
+    <path d="M10 8 q-4 6 0 14" fill="none"></path>
+    <circle cx="0" cy="0" r="5" fill="#1F2A24"></circle>
+  </g>
+</svg>

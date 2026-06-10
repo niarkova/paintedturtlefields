@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+  <defs>
+    <radialGradient id="bird-glow" cx="50%" cy="55%" r="60%">
+      <stop offset="0%" stop-color="#5DADE2" stop-opacity="0.35"></stop>
+      <stop offset="100%" stop-color="#5DADE2" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="64" rx="46" ry="32" fill="url(#bird-glow)"></ellipse>
+  <g stroke="#1F2A24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    
+    <path d="M28 70 C 30 50, 60 42, 84 50 C 96 54, 98 70, 86 78 C 70 88, 38 86, 28 70 Z" fill="#5DADE2"></path>
+    
+    <path d="M40 76 C 56 84, 72 82, 80 74" fill="#FFFCEC"></path>
+    
+    <path d="M52 56 C 60 50, 76 50, 82 60 C 76 68, 64 70, 52 64 Z" fill="#3A6EA5"></path>
+    
+    <path d="M28 70 L 14 64 L 18 76 Z" fill="#3A6EA5"></path>
+    
+    <circle cx="84" cy="56" r="4" fill="#1F2A24" stroke="none"></circle>
+    <path d="M88 60 L 100 58 L 88 64 Z" fill="#FFD93D"></path>
+    
+    <path d="M58 86 L 56 96 M58 96 L 54 96 M58 96 L 62 96" fill="none"></path>
+    <path d="M68 86 L 66 96 M68 96 L 64 96 M68 96 L 72 96" fill="none"></path>
+  </g>
+</svg>

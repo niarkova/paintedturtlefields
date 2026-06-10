@@ -1,0 +1,8 @@
+---
+interface Props {
+  label: string;
+  color?: 'lime' | 'sun' | 'peach' | 'pink' | 'sky' | 'violet';
+}
+const { label, color = 'lime' } = Astro.props;
+---
+<span class={`chip chip--${color}`}>{label}</span>

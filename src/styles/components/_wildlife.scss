@@ -1,0 +1,123 @@
+.wildlife-section {
+  padding: var(--space-9) 0;
+  position: relative;
+  z-index: 1;
+}
+
+.wildlife-corner-motif {
+  position: absolute;
+  opacity: .15;
+  pointer-events: none;
+  width: clamp(60px, 10vw, 100px);
+  border-radius: 50%;
+
+  &--tl { top: var(--space-5);    left:  var(--space-4); background: radial-gradient(circle, rgba(168,204,144,.5), transparent 70%); }
+  &--tr { top: var(--space-5);    right: var(--space-4); background: radial-gradient(circle, rgba(242,201,76,.4),  transparent 70%); }
+  &--bl { bottom: var(--space-5); left:  var(--space-4); background: radial-gradient(circle, rgba(200,121,65,.4),  transparent 70%); }
+  &--br { bottom: var(--space-5); right: var(--space-4); background: radial-gradient(circle, rgba(126,184,212,.4), transparent 70%); }
+
+  &--tl, &--tr, &--bl, &--br { aspect-ratio: 1; }
+
+  @media (max-width: 480px) {
+    &--tl, &--bl { display: none; }
+  }
+}
+
+.wildlife-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.wildlife-card {
+  background: rgba(255, 248, 232, 0.05);
+  border: 1px solid rgba(255, 248, 232, 0.08);
+  border-radius: 20px;
+  padding: var(--space-5);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity .3s;
+    background: radial-gradient(ellipse at center, var(--bg-glow, rgba(107,203,119,.15)) 0%, transparent 70%);
+  }
+
+  &:hover              { transform: translateY(-3px); border-color: rgba(255,252,236,.15); }
+  &:hover::before      { opacity: 1; }
+  &.spotted            { border-color: rgba(168,204,144,.3); }
+  &.spotted::before    { opacity: 1; }
+
+  .animal-name {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-size: 17px;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--cream-ink);
+    line-height: 1.2;
+  }
+
+  .animal-note {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--cream-ink-soft);
+    line-height: 1.35;
+  }
+
+  .spot-chip {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(168, 204, 144, 0.12);
+    color: var(--leaf-pale);
+    border: 1px solid rgba(168, 204, 144, 0.22);
+    transition: background .2s;
+  }
+
+  &.spotted .spot-chip {
+    background: rgba(168, 204, 144, 0.28);
+  }
+}
+
+// Placeholder circle — no images
+.animal-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 248, 232, 0.07);
+  border: 1px solid rgba(255, 248, 232, 0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .animal-initial {
+    font-family: var(--font-script);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--leaf-pale);
+    opacity: 0.75;
+    line-height: 1;
+  }
+}
+
+.spotted-banner {
+  text-align: center;
+  margin-top: var(--space-6);
+  font-family: var(--font-script);
+  font-size: var(--text-script);
+  color: var(--leaf-pale);
+}

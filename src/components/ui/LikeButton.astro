@@ -1,0 +1,13 @@
+---
+interface Props {
+  stopId: string;
+  label: string;
+}
+const { stopId, label } = Astro.props;
+---
+<button
+  class="like-btn"
+  data-stop-id={stopId}
+  aria-pressed="false"
+  aria-label={`Love stop: ${label}`}
+>♥</button>

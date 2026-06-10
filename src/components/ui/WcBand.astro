@@ -1,0 +1,12 @@
+---
+interface Props {
+  label?: string;
+  innerClass?: string;
+}
+const { label, innerClass = 'section-inner' } = Astro.props;
+---
+<section class="wc-band" aria-label={label}>
+  <div class={innerClass} style="position:relative;z-index:1;padding-top:64px;padding-bottom:64px;">
+    <slot />
+  </div>
+</section>
