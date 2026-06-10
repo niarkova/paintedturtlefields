@@ -490,15 +490,40 @@ function GoalStream({ goals }: { goals: SeedGoal[] }) {
   );
 }
 
+const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSeA8Gi_cjxZ3EiUJK4sBBvqPSAbmaxEsxNFEmtpzrGHsj8T8w/formResponse';
+const FORM_GOAL_FIELD = 'entry.1489834405';
+const FORM_NAME_FIELD = 'entry.1903810587';
+// Set this to your Apps Script web app URL after deploying it
+const GOALS_API_URL = 'https://script.google.com/macros/s/AKfycbyDPPOeAHIPSOHZzjAaRRYd0pSjeqnRFATStIOc1yY-jwTEkMU61rByHAa45xmyda95/exec';
+
 function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
   const KEY = 'ptf_goals_v1';
-  const [goals, setGoals] = useState<SeedGoal[]>(() => {
-    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
-  });
+  const [goals, setGoals] = useState<SeedGoal[]>([]);
   const [text, setText] = useState('');
   const [name, setName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  // Load goals: try API first, fall back to localStorage + seedGoals
+  useEffect(() => {
+    if (GOALS_API_URL) {
+      fetch(GOALS_API_URL)
+        .then(r => r.json())
+        .then((data: SeedGoal[]) => setGoals(data))
+        .catch(() => loadLocal());
+    } else {
+      loadLocal();
+    }
+    function loadLocal() {
+      try {
+        const stored: SeedGoal[] = JSON.parse(localStorage.getItem(KEY) || '[]');
+        setGoals([...stored, ...seedGoals]);
+      } catch {
+        setGoals(seedGoals);
+      }
+    }
+  }, []);
 
   function pushToast(msg: string, kind: string) {
     clearTimeout(toastTimer.current);
@@ -507,19 +532,38 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
   }
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  function submit(e: React.FormEvent) {
+  const MAX = 300;
+  const overLimit = text.length > MAX;
+
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     const g = text.trim();
     if (!g) { pushToast('Write your goal first', 'error'); return; }
+    if (overLimit) { pushToast('Please shorten your goal to 300 characters', 'error'); return; }
+    setSubmitting(true);
+
     const entry: SeedGoal = { id: Date.now(), text: g, name: name.trim() || undefined };
-    const next = [entry, ...goals].slice(0, 24);
-    setGoals(next);
-    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch {}
+
+    // POST to Google Form (no-cors — Google doesn't allow CORS on formResponse)
+    const body = new URLSearchParams();
+    body.set(FORM_GOAL_FIELD, g);
+    if (name.trim()) body.set(FORM_NAME_FIELD, name.trim());
+    try {
+      await fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body });
+    } catch {}
+
+    // Optimistically add to board and cache locally
+    setGoals(prev => {
+      const next = [entry, ...prev].slice(0, 48);
+      try { localStorage.setItem(KEY, JSON.stringify(next.slice(0, 24))); } catch {}
+      return next;
+    });
     setText(''); setName('');
+    setSubmitting(false);
     pushToast('shared — thank you', 'success');
   }
 
-  const streamGoals = [...goals, ...seedGoals];
+  const streamGoals = goals;
 
   return (
     <section className="goals goals-letter" aria-label="Garden goals">
@@ -527,15 +571,18 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
         <h2 className="goals-title">Share your garden <em>goal</em></h2>
         <form className="goals-form" onSubmit={submit}>
           <label className="vh" htmlFor="goal-text">Your garden goal</label>
-          <textarea id="goal-text" className="goals-text" rows={2}
+          <textarea id="goal-text" className={`goals-text${overLimit ? ' goals-text--over' : ''}`} rows={2}
                     placeholder="this year in my garden, I want to…"
                     value={text} onChange={e => setText(e.target.value)} />
+          <div className={`goals-char-count${overLimit ? ' goals-char-count--over' : ''}`} aria-live="polite">
+            {overLimit ? `${text.length - MAX} characters over the limit` : `${MAX - text.length} characters remaining`}
+          </div>
           <div className="goals-row">
             <label className="vh" htmlFor="goal-name">Your name (optional)</label>
             <input id="goal-name" className="goals-name" type="text"
                    placeholder="your name (optional)"
                    value={name} onChange={e => setName(e.target.value)} />
-            <button type="submit" className="goals-add">Share my goal</button>
+            <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'Sharing…' : 'Share my goal'}</button>
           </div>
         </form>
         <GoalStream goals={streamGoals} />
