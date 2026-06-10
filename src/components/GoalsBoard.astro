@@ -1,0 +1,48 @@
+---
+interface Props {
+  seedGoals: string[];
+}
+const { seedGoals } = Astro.props;
+---
+<div class="section-heading reveal">
+  <span class="kicker">community board</span>
+  <h2 class="display">Garden <em>goals</em></h2>
+  <p class="goals-subhead">
+    Share a garden goal and it will be pinned to the board.
+  </p>
+</div>
+
+<form
+  id="goals-form"
+  name="garden-goals"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="goals-form"
+  style="margin-top:32px;max-width:580px;"
+  novalidate
+>
+  <input type="hidden" name="form-name" value="garden-goals" />
+  <p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+  <label for="goal">Your garden goal</label>
+  <textarea id="goal" name="goal" rows="3" required placeholder="I want to grow more..."></textarea>
+
+  <label for="gname">Your first name (optional)</label>
+  <input id="gname" type="text" name="name" placeholder="e.g. Sarah" autocomplete="given-name" />
+
+  <button type="submit" class="goals-submit">Pin it to the board</button>
+</form>
+
+<div id="goals-success" class="bloom-success" aria-live="polite">
+  <div class="bloom-icon" aria-hidden="true">✦</div>
+  <p class="bloom-msg">Thank you, pinned to the board.</p>
+</div>
+
+<div class="goals-board" id="goals-board" style="margin-top:40px;" aria-label="Garden goals board">
+  <div class="goals-board-inner" id="goals-board-inner">
+    {seedGoals.map(goal => (
+      <div class="pinned-note" role="article">{goal}</div>
+    ))}
+  </div>
+</div>

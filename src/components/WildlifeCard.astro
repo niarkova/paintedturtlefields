@@ -1,0 +1,26 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  note: string;
+  img: string;
+  glow: string;
+}
+const { id, name, note, glow } = Astro.props;
+---
+<div
+  class="wildlife-card reveal"
+  role="checkbox"
+  aria-checked="false"
+  aria-label={`Spot the ${name} — ${note}`}
+  tabindex="0"
+  data-wildlife-id={id}
+  style={`--bg-glow:${glow};`}
+>
+  <div class="animal-placeholder" aria-hidden="true">
+    <span class="animal-initial">{name[0]}</span>
+  </div>
+  <span class="animal-name">{name}</span>
+  <span class="animal-note">{note}</span>
+  <span class="spot-chip">tap to spot</span>
+</div>

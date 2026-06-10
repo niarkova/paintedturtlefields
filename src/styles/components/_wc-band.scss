@@ -1,0 +1,33 @@
+// Dark green band — blends with page bg but slightly richer
+.wc-band {
+  position: relative;
+  background: rgba(0,0,0,.18);
+  color: var(--paper);
+  overflow: hidden;
+
+  // Extra watercolor wash
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 30%, rgba(107,203,119,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 90% 70%, rgba(20, 48, 28,.45) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 50% 10%, rgba(46,125, 91,.30) 0%, transparent 70%);
+  }
+
+  // Noise texture
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .25;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  > * { position: relative; z-index: 1; }
+}
