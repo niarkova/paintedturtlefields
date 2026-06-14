@@ -7,71 +7,16 @@ html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
 }
 
-/* ── iOS device frame ── */
-.ios-device {
-  width: 402px;
-  height: 874px;
-  border-radius: 48px;
-  overflow: hidden;
-  position: relative;
-  background: #000;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.25);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-}
-.ios-island {
-  position: absolute;
-  top: 11px; left: 50%;
-  transform: translateX(-50%);
-  width: 126px; height: 37px;
-  border-radius: 24px;
-  background: #000;
-  z-index: 50;
-}
-.ios-status {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 28px 0;
-}
-.ios-time {
-  font-family: -apple-system, 'SF Pro', system-ui;
-  font-weight: 590;
-  font-size: 17px;
-  color: #fff;
-  line-height: 22px;
-}
-.ios-icons {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.ios-content {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-.ios-home-bar {
-  position: absolute;
-  bottom: 8px; left: 50%;
-  transform: translateX(-50%);
-  width: 139px; height: 5px;
-  border-radius: 100px;
-  background: rgba(255,255,255,0.55);
-  z-index: 60;
-  pointer-events: none;
-}
+/* ── iOS device frame (removed — now responsive) ── */
 
 /* ── App stage ── */
 .app-stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   background-color: var(--forest-paper);
   background-image:
@@ -87,70 +32,42 @@ html, body {
 }
 
 /* ── Map frame ── */
-.map-frame { position: absolute; inset: 0; }
-.map-svg   { width: 100%; height: 100%; display: block; }
-
-/* ── Map path ── */
-.path-line {
-  fill: none;
-  stroke: var(--terracotta);
-  stroke-width: 1.5;
-  stroke-dasharray: 3 5;
-  stroke-linecap: round;
-  opacity: 0.55;
+.map-frame {
+  position: absolute; inset: 0;
+  background-color: #b9b7a3;
+  display: flex; align-items: center; justify-content: center;
 }
-
-/* ── Markers ── */
-.marker {
-  cursor: pointer;
-  transition: transform 250ms var(--ease-water, cubic-bezier(0.22,1,0.36,1)),
-              opacity 300ms var(--ease-water, cubic-bezier(0.22,1,0.36,1));
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.marker:focus { outline: none; }
-.marker .halo {
-  fill: var(--terracotta);
-  opacity: 0;
-  transition: opacity 300ms;
-}
-.marker.active        { opacity: 0; }
-.marker .visited-mark { opacity: 0; transition: opacity 280ms; }
-.marker.visited:not(.active) .visited-mark { opacity: 1; }
-
-/* splotch variant */
-.marker .splotch-wash { fill: var(--terracotta); opacity: 0.40; transition: opacity 250ms; }
-.marker .splotch-deep { fill: var(--terracotta); opacity: 0.85; transition: opacity 250ms; }
-.marker .splotch-num  {
-  fill: var(--cream-ink);
-  font-family: var(--font-display);
-  font-size: 19px;
-  text-anchor: middle;
-  dominant-baseline: central;
+.map-frame::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url('/assets/textures/watercolor-paper-dark-green.png');
+  background-size: 400px;
+  opacity: 0.12;
   pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
 }
-.marker.style-splotch:hover .splotch-deep,
-.marker.style-splotch.active .splotch-deep { opacity: 1; }
+.map-svg {
+  /* fill 100vw or 100vh, whichever hits first, then contain */
+  width: min(100vw, calc(100vh * 402 / 714));
+  height: min(100vh, calc(100vw * 714 / 402));
+  display: block; flex: 0 0 auto;
+}
 
-/* visited circle ring */
-.mark-circle .vm-ring {
-  fill: none;
-  stroke: var(--terracotta);
-  stroke-width: 1.8;
-  stroke-dasharray: 3 4.5;
-  stroke-linecap: round;
-  opacity: 0.95;
-}
-.marker.visited:not(.active) > :not(.visited-mark) {
-  opacity: 0.42;
-  transition: opacity 320ms;
+/* ── Map stops ── */
+.map-stop { cursor: pointer; }
+.map-stop:focus { outline: none; }
+.map-stop:focus-visible circle { outline: 3px solid var(--terracotta); }
+.map-stop.active { opacity: 0.6; }
+
+/* @media: respect reduced motion for route animation */
+@media (prefers-reduced-motion: reduce) {
+  .map-svg mask path animate { display: none; }
+  .map-svg mask path { stroke-dashoffset: 0 !important; }
 }
 
 /* ── Trail bar nav ── */
 .map-nav { position: absolute; z-index: 6; }
 .nav-trail {
-  left: 14px; right: 14px; top: 54px;
+  left: 14px; right: 14px; top: calc(env(safe-area-inset-top, 0px) + 12px);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -167,7 +84,7 @@ html, body {
   flex: 0 0 auto;
   appearance: none;
   border: none;
-  height: 38px;
+  height: 44px;
   padding: 0 16px;
   border-radius: 999px;
   display: inline-flex;
@@ -227,7 +144,10 @@ html, body {
 /* ── Bottom sheet ── */
 .sheet {
   position: absolute;
-  left: 0; right: 0; bottom: 0;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  /* match the rendered map width exactly */
+  width: min(100vw, calc(100vh * 402 / 714));
   z-index: 10;
   border-top-left-radius: 28px;
   border-top-right-radius: 28px;
@@ -242,14 +162,14 @@ html, body {
 /* bloom animation */
 .sheet[data-anim="bloom"] {
   clip-path: inset(100% 0 0 0 round 28px 28px 0 0);
-  transform: translateY(10px);
+  transform: translateX(-50%) translateY(10px);
   opacity: 1;
   transition: clip-path 210ms cubic-bezier(0.22,1,0.36,1),
               transform 210ms cubic-bezier(0.22,1,0.36,1);
 }
 .sheet[data-anim="bloom"].open {
   clip-path: inset(0 0 0 0 round 28px 28px 0 0);
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 /* pigment background */
 .sheet[data-bg="pigment"] {
@@ -276,8 +196,8 @@ html, body {
   margin: 0 auto 14px;
 }
 .sheet-close {
-  position: absolute; top: 16px; right: 16px;
-  width: 36px; height: 36px; border-radius: 999px;
+  position: absolute; top: 14px; right: 14px;
+  width: 44px; height: 44px; border-radius: 999px;
   background: rgba(255,248,232,0.10);
   border: 1px solid rgba(255,248,232,0.18);
   color: var(--cream-ink);
@@ -310,7 +230,7 @@ html, body {
 .stop-desc {
   position: relative; z-index: 2;
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: clamp(15px, 4vw, 17px);
   line-height: 1.55;
   margin: 0 0 16px;
   color: var(--cream-ink-soft);
@@ -403,7 +323,7 @@ html, body {
     linear-gradient(180deg, var(--forest-paper-light), var(--forest-paper) 50%, var(--forest-paper-deep));
   background-size: cover; background-position: center;
   display: flex; align-items: center; justify-content: center;
-  padding: 50px 22px 32px;
+  padding: env(safe-area-inset-top, 16px) 22px 32px;
   opacity: 0; pointer-events: none;
   transition: opacity 450ms cubic-bezier(0.22,1,0.36,1);
   overflow: hidden;
@@ -428,9 +348,15 @@ html, body {
 .intro-hero {
   width: 130px; height: 130px; position: relative; margin: 0 0 14px;
 }
-.intro-hero::before {
-  content: ''; position: absolute; inset: -8px;
-  background: radial-gradient(circle, rgba(216,139,106,0.22) 0%, transparent 60%);
+.intro-hero-splash {
+  position: absolute; inset: -50%;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 70% 60% at 52% 48%, rgba(216,139,106,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 80% at 45% 55%, rgba(182,212,155,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 60% 40%, rgba(242,201,76,0.18) 0%, transparent 55%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
   pointer-events: none;
 }
 .intro-hero img {
@@ -498,12 +424,12 @@ html, body {
 /* ── Exit screen ── */
 .intro.exit { display: block; overflow: hidden; padding: 0; }
 .exit-back {
-  position: absolute; top: 62px; left: 22px; z-index: 12;
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 14px; z-index: 12;
 }
 .exit-scroll {
   position: absolute; inset: 0;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 128px 0 40px;
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) 0 40px;
 }
 .intro.exit .intro-frame {
   margin: 0; width: 100%; max-width: none; padding: 0 22px; text-align: center;
@@ -511,10 +437,10 @@ html, body {
 }
 .exit-heading {
   font-family: var(--font-display);
-  font-size: clamp(28px, 7vw, 38px);
+  font-size: clamp(18px, 4.5vw, 24px);
   font-weight: 400;
   color: var(--cream-ink);
-  margin: 0 0 28px;
+  margin: 0 0 20px;
   line-height: 1.15;
 }
 .exit-social {
@@ -551,7 +477,7 @@ html, body {
   border-top: 1px solid rgba(255,248,232,0.12);
   border-bottom: 1px solid rgba(255,248,232,0.12);
   background: rgba(16,41,31,0.35);
-  padding: 24px 22px 0;
+  padding: 24px 22px 24px;
   box-sizing: border-box;
 }
 .goals-title {
@@ -569,7 +495,8 @@ html, body {
   box-shadow: inset 0 1px 0 rgba(0,0,0,0.12);
 }
 .goals-text {
-  resize: none; line-height: 1.45; margin: 0 0 10px; min-height: 104px;
+  resize: none; line-height: 1.45; margin: 0 0 10px;
+  min-height: 0; overflow: hidden;
 }
 .goals-text::placeholder, .goals-name::placeholder { color: rgba(255,248,232,0.4); font-style: normal; }
 .goals-text:focus, .goals-name:focus {
@@ -619,6 +546,17 @@ html, body {
 }
 .stream-hint.is-hidden { opacity: 0; }
 .goal-stream-wrap.is-rising .stream-hint { left: 50%; bottom: 10px; transform: translateX(-50%); white-space: nowrap; }
+
+.goal-stream-empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--cream-ink-soft);
+  opacity: 0.5;
+  text-align: center;
+  padding: 20px 0 8px;
+  margin: 0;
+  font-style: italic;
+}
 
 /* goal chips (letter style) */
 .goal-chip {
@@ -675,7 +613,7 @@ html, body {
 .g-gallery { width: 100%; margin: 30px 0 8px; }
 .exit-section-divider {
   width: 100%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,248,232,0.18) 30%, rgba(255,248,232,0.18) 70%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,248,232,0.04) 30%, rgba(255,248,232,0.04) 70%, transparent);
   margin: 32px 0 28px;
 }
 .g-gallery-head {
@@ -778,9 +716,64 @@ html, body {
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* ── Responsive ── */
+
+/* Tablet (600px+): loosen the narrowest mobile constraints */
+@media (min-width: 600px) {
+  .intro-frame {
+    max-width: 480px;
+  }
+  .intro-title { font-size: 52px; }
+  .intro-bio-name { font-size: 22px; }
+  .intro-bio-line { font-size: 14px; }
+
+  /* Bottom sheet stays map-width, managed by base rules */
+
+  /* Exit screen */
+  .intro.exit .intro-frame {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .goals-panel {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    border-radius: 12px;
+  }
+}
+
+/* Desktop (800px+): wider map, centered column layout */
+@media (min-width: 800px) {
+  .intro-frame {
+    max-width: 600px;
+  }
+  .intro-title { font-size: 62px; }
+
+  /* sheet width = map width, already handled by base rule */
+
+  /* Map nav: cap and center */
+  .nav-trail {
+    left: 50%;
+    right: auto;
+    width: min(560px, 90vw);
+    transform: translateX(-50%);
+  }
+
+  /* Exit: comfortable reading width */
+  .intro.exit .intro-frame {
+    max-width: 680px;
+  }
+
+  /* Gallery: 3-col on wide screens */
+  .g-mosaic .g-gallery-body {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .sheet, .intro, .marker, .g-viewer, .trail-hint .tap-dot,
+  .sheet, .intro, .map-stop, .g-viewer, .trail-hint .tap-dot,
   .scroll-hint-arrow, .stream-hint-arrow {
     animation: none !important;
     transition-duration: 80ms !important;

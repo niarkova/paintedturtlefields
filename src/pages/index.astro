@@ -4,45 +4,32 @@ import GardenApp from '../components/GardenApp';
 import '../styles/tokens.css';
 import '../styles/app.css';
 
-// Load stops from markdown files
+// Load stops from markdown files — 5 stops in walking order: 3→4→2→8→7
+const WALKING_ORDER = [3, 4, 2, 8, 7];
 const stopEntries = await getCollection('stops');
-stopEntries.sort((a, b) => a.data.number - b.data.number);
+const stops = WALKING_ORDER.map((num, walkIdx) => {
+  const entry = stopEntries.find((e) => e.data.number === num);
+  if (!entry) throw new Error(`No stop entry found for number ${num} (walking order index ${walkIdx})`);
+  return {
+    id: entry.id.replace(/^\d+-/, ''),
+    n: walkIdx + 1,
+    title: entry.data.name,
+    mood: entry.data.subtitle,
+    desc: entry.body?.trim() ?? '',
+    plants: entry.data.plants,
+    accent: entry.data.accent ?? '#D88B6A',
+  };
+});
 
-const stops = stopEntries.map((entry) => ({
-  id: entry.id.replace(/^\d+-/, ''),
-  n: entry.data.number,
-  title: entry.data.name,
-  mood: entry.data.subtitle,
-  desc: entry.body?.trim() ?? '',
-  plants: entry.data.plants,
-  accent: entry.data.accent ?? '#D88B6A',
-}));
-
-// Seed goals left by past visitors
-const seedGoals = [
-  { id: 's1',  text: 'plant milkweed for the monarchs',        name: 'Tess' },
-  { id: 's2',  text: 'finally rip out the front lawn and put in a real pollinator meadow — yarrow, bee balm, coneflower, little bluestem — and just let it grow tall and messy the way the bees actually want it.', name: 'Harriet' },
-  { id: 's3',  text: 'finally build the cold frame',            name: 'Priya' },
-  { id: 's4',  text: 'a whole row of dahlias, like Marjorie',   name: 'Jordan' },
-  { id: 's5',  text: "build a little greenhouse out of the old windows we've been saving in the barn, so I can start tomatoes and peppers six weeks earlier and stop buying sad seedlings from the box store every May.", name: 'Cal' },
-  { id: 's6',  text: 'sow sweet peas in February',              name: 'Sam' },
-  { id: 's7',  text: 'a little pond for the frogs',             name: 'Ana' },
-  { id: 's8',  text: 'save my tomato seeds this fall',          name: 'Devon' },
-  { id: 's9',  text: 'take over the strip along the driveway my neighbour never mows, plant it thick with cosmos and zinnias, and leave a little hand-painted sign saying take what you like.', name: 'Noor' },
-  { id: 's10', text: 'a bench where the morning sun lands',     name: 'Eli' },
-  { id: 's11', text: 'borage everywhere for the bees',          name: 'Maya' },
-  { id: 's12', text: 'teach my daughter to start seeds from scratch this spring — her own little tray on the windowsill, her name on the labels, and whatever survives goes in the ground in May.', name: 'Owen' },
-  { id: 's13', text: 'compost everything — no more bags',       name: 'Lena' },
-  { id: 's14', text: 'grow enough garlic to never buy it',      name: 'Ruth' },
-  { id: 's15', text: 'let the back third go wild this year — no mowing, no tidying, just clover and whatever wants to come up.', name: 'Beth' },
-];
+// Goals come from the Google Sheet via the Apps Script API; start empty
+const seedGoals: { id: string; text: string; name?: string }[] = [];
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="A peaceful walk through Painted Turtle Fields in Underhill, Vermont. Garden tour July 11, 2026." />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
