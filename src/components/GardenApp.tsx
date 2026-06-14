@@ -45,28 +45,27 @@ const GAL_TINTS = [
   'rgba(182,212,155,0.28)',
 ];
 
-// ─── Map positions (hand-tuned, 402×800 viewBox) ──────────────────
-const POSITIONS = [
-  { x: 130, y: 210 },
-  { x: 295, y: 215 },
-  { x: 315, y: 340 },
-  { x: 175, y: 410 },
-  {  x: 72, y: 475 },
-  { x: 128, y: 580 },
-  { x: 105, y: 685 },
-  { x: 300, y: 685 },
+// ─── Map positions — 5 stops, walking order (402×714 coord space matching image ratio) ──
+const MAP_POS = [
+  { x: 300, y: 411, label: 'Veggie garden'     },
+  { x: 306, y: 339, label: 'Medicinal field'   },
+  { x: 211, y: 235, label: 'Patio garden'      },
+  { x: 145, y: 259, label: "Marjorie's garden" },
+  { x:  93, y: 130, label: 'Sauna garden'      },
 ];
 
+// parking → 1 → 2 → 3 → 4 → right around house above → 5
 const PATH_D = [
-  `M ${POSITIONS[0].x} ${POSITIONS[0].y}`,
-  `Q 213 170, ${POSITIONS[1].x} ${POSITIONS[1].y}`,
-  `Q 355 280, ${POSITIONS[2].x} ${POSITIONS[2].y}`,
-  `Q 260 395, ${POSITIONS[3].x} ${POSITIONS[3].y}`,
-  `Q 100 442, ${POSITIONS[4].x} ${POSITIONS[4].y}`,
-  `Q  58 535, ${POSITIONS[5].x} ${POSITIONS[5].y}`,
-  `Q  98 645, ${POSITIONS[6].x} ${POSITIONS[6].y}`,
-  `Q 210 720, ${POSITIONS[7].x} ${POSITIONS[7].y}`,
+  'M 182 637',
+  'Q 245 520, 300 411',
+  'C 305 375, 308 355, 306 339',
+  'C 285 285, 250 245, 211 235',
+  'Q 175 240, 145 259',
+  'C 290 250, 340 145, 93 130',
 ].join(' ');
+
+const MAP_CREAM = (a: number) => `rgba(255,248,232,${a})`;
+const MAP_DEEP  = (a: number) => `rgba(16,41,31,${a})`;
 
 const TRAIL_TINTS = [
   '#D88B6A', '#E0A33C', '#7E9A60', '#9BC36B',
@@ -79,7 +78,7 @@ const GOAL_TINTS = [
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
 ];
 
-const NINA_BIO = "I've been growing this garden in Underhill, Vermont since 2018 — eight stops on the south slope, a wetland edge to the north, and as many pollinators as I can talk into staying. This is the third year I've opened it for visitors.";
+const NINA_BIO = "I've been growing this garden in Underhill, Vermont since 2018 — five stops on the south slope, a wetland edge to the north, and as many pollinators as I can talk into staying. This is the third year I've opened it for visitors.";
 
 const SHEET_TOP_PCT = 24;
 
@@ -174,71 +173,82 @@ function IOSDevice({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Map: Splotch marker ──────────────────────────────────────────
-function SplotchMarker({ n }: { n: number }) {
-  return (
-    <>
-      <circle className="halo" r="28" />
-      <path className="splotch-wash"
-            d="M -16 -16 Q -22 -8, -19 4 Q -22 14, -10 18 Q 4 22, 14 16 Q 24 8, 20 -4 Q 22 -16, 8 -19 Q -6 -22, -16 -16 Z" />
-      <path className="splotch-deep"
-            d="M -10 -10 Q -16 -2, -12 7 Q -10 14, -2 14 Q 9 16, 14 9 Q 18 0, 12 -8 Q 4 -14, -4 -12 Q -10 -10, -10 -10 Z" />
-      <text className="splotch-num" y="0.5">{n}</text>
-    </>
-  );
-}
+// ─── Map pin components ───────────────────────────────────────────
+const PIN_R = 12, PIN_LIFT = 20, NUM_SCALE = 1.25;
+const STOP_COLOR = '#2E7D5B';
+const HANKEN = "'Hanken Grotesk', system-ui, sans-serif";
 
-function VisitedRing() {
-  return (
-    <g className="visited-mark mark-circle" pointerEvents="none">
-      <ellipse className="vm-ring" cx="0" cy="1" rx="22" ry="20" transform="rotate(-9)" />
-    </g>
-  );
-}
-
-interface MarkerProps {
-  x: number; y: number; n: number; title: string;
-  active: boolean; visited: boolean;
-  onClick: () => void;
-}
-function Marker({ x, y, n, title, active, visited, onClick }: MarkerProps) {
-  return (
-    <g
-      className={`marker style-splotch ${active ? 'active' : ''} ${visited ? 'visited' : ''}`}
-      transform={`translate(${x} ${y})`}
-      role="button"
-      tabIndex={0}
-      aria-label={`Stop ${n}: ${title}${visited ? ' (visited)' : ''}`}
-      onClick={onClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }}}
-    >
-      <SplotchMarker n={n} />
-      <VisitedRing />
-    </g>
-  );
-}
-
-// ─── Map decor ────────────────────────────────────────────────────
-function Wetlands() {
+function NumberPin({ n, active, visited }: { n: number; active: boolean; visited: boolean }) {
+  const r = PIN_R, lift = PIN_LIFT;
+  const cy = -lift - r;
+  const border = visited ? 'none' : 'double';
   return (
     <g>
-      <path d="M -10 770 Q 30 740 80 760 T 170 745 L 170 820 L -10 820 Z"
-            fill="rgba(93,173,226,0.06)" />
-      <path d="M -10 758 Q 35 738 78 755 T 168 748"
-            fill="none" stroke="rgba(182,212,155,0.55)" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M -10 765 Q 35 750 80 762 T 165 757"
-            fill="none" stroke="rgba(93,173,226,0.45)" strokeWidth="0.9"
-            strokeDasharray="2 3" strokeLinecap="round" />
+      <ellipse cx="0" cy="1.5" rx={r * 0.5} ry="2" fill={MAP_DEEP(0.4)} />
+      {/* stem tail */}
+      <line x1="0" y1={cy + r} x2="0" y2="0"
+            stroke={MAP_CREAM(0.95)} strokeWidth="1" strokeLinecap="round" />
+      {/* double border outer ring */}
+      {border === 'double' && (
+        <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
+      )}
+      {/* active selection ring */}
+      {active && (
+        <circle cx="0" cy={cy} r={r + 5} fill="none" stroke={MAP_CREAM(0.85)} strokeWidth="1.4" />
+      )}
+      {/* disc */}
+      <circle cx="0" cy={cy} r={r} fill={STOP_COLOR}
+              stroke={MAP_CREAM(0.95)} strokeWidth={Math.max(1.4, r * 0.12)} />
+      {/* sheen */}
+      <circle cx={-r * 0.34} cy={cy - r * 0.34} r={r * 0.32} fill={MAP_CREAM(0.16)} />
+      {/* number */}
+      <text x="0" y={cy + r * NUM_SCALE * 0.36} textAnchor="middle"
+            fontFamily={HANKEN} fontSize={r * NUM_SCALE} fontWeight="800"
+            fill={MAP_CREAM(0.98)} letterSpacing="-0.01em">{n}</text>
     </g>
   );
 }
-function Compass() {
+
+function StopLabel({ x, y, text }: { x: number; y: number; text: string }) {
   return (
-    <g transform="translate(362 742)">
-      <circle cx="0" cy="0" r="14" fill="rgba(16,41,31,0.6)" stroke="rgba(255,248,232,0.20)" strokeWidth="0.8" />
-      <path d="M 0 -10 L 3 0 L 0 10 L -3 0 Z" fill="var(--terracotta)" />
-      <text x="0" y="-18" textAnchor="middle"
-            fontFamily="var(--font-body)" fontSize="9"
-            fill="rgba(255,248,232,0.55)" letterSpacing="0.16em">N</text>
+    <text x={x} y={y} textAnchor="middle"
+          fontFamily="var(--font-body)" fontSize="12.5" fontWeight="400"
+          fill={MAP_CREAM(0.92)} letterSpacing="0.005em"
+          pointerEvents="none">{text}</text>
+  );
+}
+
+function ParkingIcon() {
+  return (
+    <g transform="translate(182 637)" pointerEvents="none">
+      <rect x="-9" y="-9" width="18" height="18" rx="5"
+            fill="var(--terracotta)" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
+      <text x="0" y="5.4" textAnchor="middle"
+            fontFamily={HANKEN} fontSize="15" fontWeight="800"
+            fill={MAP_CREAM(0.98)}>P</text>
+    </g>
+  );
+}
+
+function MapStop({ pos, n, label, title, active, visited, onClick }: {
+  pos: {x:number;y:number}; n: number; label: string; title: string;
+  active: boolean; visited: boolean; onClick: () => void;
+}) {
+  const { x, y } = pos;
+  const labelY = y + 12.5 + 2;
+  const top = y - PIN_LIFT - PIN_R * 2 - 8;
+  return (
+    <g className={`map-stop ${active ? 'active' : ''} ${visited ? 'visited' : ''}`}
+       role="button" tabIndex={0}
+       aria-label={`Stop ${n}: ${title}${visited ? ' (visited)' : ''}`}
+       style={{ cursor: 'pointer' }}
+       onClick={onClick}
+       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
+      <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
+      <g transform={`translate(${x} ${y})`}>
+        <NumberPin n={n} active={active} visited={visited} />
+      </g>
+      <StopLabel x={x} y={labelY} text={label} />
     </g>
   );
 }
@@ -251,20 +261,56 @@ function GardenMap({ stops, activeIdx, visited, onSelect }: {
   onSelect: (i: number, pos: {x:number;y:number}) => void;
 }) {
   return (
-    <svg className="map-svg" viewBox="0 0 402 800"
-         preserveAspectRatio="xMidYMid slice"
-         aria-label="Garden map — eight numbered stops">
-      <Wetlands />
-      <Compass />
-      <path d={PATH_D} className="path-line" />
-      {stops.map((s, i) => (
-        <Marker key={s.id}
-          x={POSITIONS[i].x} y={POSITIONS[i].y}
-          n={s.n} title={s.title}
-          active={activeIdx === i}
-          visited={visited.has(i)}
-          onClick={() => onSelect(i, POSITIONS[i])} />
-      ))}
+    <svg className="map-svg" viewBox="0 0 402 714"
+         preserveAspectRatio="xMidYMid meet"
+         aria-label="Painted Turtle Fields — map of five numbered stops">
+      <defs>
+        <mask id="mapRouteReveal">
+          <path d={PATH_D} pathLength="100" fill="none" stroke="#fff" strokeWidth="16"
+                strokeLinecap="round" strokeLinejoin="round"
+                strokeDasharray="100 100" strokeDashoffset="100">
+            <animate attributeName="stroke-dashoffset" from="100" to="0" dur="1.7s"
+                     begin="0.4s" fill="freeze" calcMode="spline" keyTimes="0;1"
+                     keySplines="0.45 0 0.25 1" />
+          </path>
+        </mask>
+      </defs>
+
+      {/* map photo — viewBox 402×714 matches image ratio 941×1672 exactly */}
+      <image href="/assets/map-ground-v2.png" x="0" y="0" width="402" height="714"
+             preserveAspectRatio="none" />
+      {/* green wash to seat photo into dark theme */}
+      <rect x="0" y="0" width="402" height="714" fill="#16382b" opacity="0.25" />
+
+
+      {/* dotted walking route */}
+      <g mask="url(#mapRouteReveal)">
+        <path d={PATH_D} fill="none" stroke="#ffffff" strokeWidth="1.7"
+              strokeDasharray="1.02 6.5" strokeLinecap="round" opacity="0.5" />
+      </g>
+
+      <ParkingIcon />
+
+      {stops.map((s, i) => {
+        const pos = MAP_POS[i];
+        if (!pos) return null;
+        return (
+          <MapStop key={s.id}
+            pos={pos} n={s.n} label={pos.label} title={s.title}
+            active={activeIdx === i} visited={visited.has(i)}
+            onClick={() => onSelect(i, pos)} />
+        );
+      })}
+
+      {/* compass — bottom-right */}
+      <g transform="translate(383 697)" pointerEvents="none">
+
+        <circle r="14" fill={MAP_DEEP(0.55)} stroke={MAP_CREAM(0.22)} strokeWidth="0.8" />
+        <path d="M 0 -10 L 3 0 L 0 10 L -3 0 Z" fill="var(--terracotta)" />
+        <path d="M 0 10 L 3 0 L -3 0 Z" fill={MAP_CREAM(0.3)} />
+        <text y="-18" textAnchor="middle" fontFamily="var(--font-label)" fontSize="9"
+              fill="#10291F" letterSpacing="0.16em">N</text>
+      </g>
     </svg>
   );
 }
@@ -297,11 +343,11 @@ function StopGallery({ stop }: { stop: StopData }) {
         {stop.plants.map((plant) => (
           <figure className="stop-shot" key={plant}>
             <div className="photo-placeholder">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,248,232,0.3)"
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="rgba(255,248,232,0.35)"
                    strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="m21 15-5-5L5 21"/>
+                <path d="M16 28 L16 14" />
+                <path d="M16 20 C16 20, 10 18, 8 12 C12 12, 16 15, 16 20" fill="rgba(255,248,232,0.08)" />
+                <path d="M16 16 C16 16, 22 14, 24 8 C20 8, 16 11, 16 16" fill="rgba(255,248,232,0.08)" />
               </svg>
             </div>
             <figcaption className="stop-shot-cap">{plant}</figcaption>
@@ -382,7 +428,7 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
       </button>
       <span className="trail-hint">
         <span className="tap-dot" />
-        {tint ? 'tap another stop' : 'tap a stop'}
+        tap a stop
       </span>
       <button className="trail-step finish" onClick={onExit} aria-label="Finish your walk">
         <span className="trail-step-label">finish</span>
@@ -401,9 +447,10 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
       </div>
       <div className="intro-frame">
         <div className="intro-hero">
+          <span className="intro-hero-splash" aria-hidden="true" />
           <img src="/assets/watercolor/painted-turtle.png" alt="A painted turtle, hand-painted in watercolor" />
         </div>
-        <p className="intro-kick">underhill · july 11, 2026</p>
+        <p className="intro-kick">underhill garden tour · july 11, 2026</p>
         <h1 className="intro-title">Painted Turtle Fields</h1>
         <div className="intro-bio-card">
           <div className="intro-photo-placeholder">N</div>
@@ -469,7 +516,9 @@ function GoalStream({ goals }: { goals: SeedGoal[] }) {
     };
   }, [animated]);
 
-  if (!goals.length) return null;
+  if (!goals.length) return (
+    <p className="goal-stream-empty">Goals shared today will appear here.</p>
+  );
   const items = animated ? [...goals, ...goals] : goals;
 
   return (
@@ -481,11 +530,6 @@ function GoalStream({ goals }: { goals: SeedGoal[] }) {
           ))}
         </div>
       </div>
-      {animated && (
-        <span className={`stream-hint ${showHint ? '' : 'is-hidden'}`} aria-hidden="true">
-          scroll <span className="stream-hint-arrow">↓</span>
-        </span>
-      )}
     </div>
   );
 }
@@ -502,18 +546,26 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  // Load goals: try API first, fall back to localStorage + seedGoals
+  // Load goals: API goals merged with seedGoals as baseline
   useEffect(() => {
+    loadLocal();
     if (GOALS_API_URL) {
       fetch(GOALS_API_URL)
         .then(r => r.json())
-        .then((data: SeedGoal[]) => setGoals(data))
-        .catch(() => loadLocal());
-    } else {
-      loadLocal();
+        .then((data: SeedGoal[]) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setGoals(prev => {
+              const ids = new Set(data.map(g => g.id));
+              const extras = prev.filter(g => !ids.has(g.id));
+              return [...data, ...extras];
+            });
+          }
+        })
+        .catch(() => {});
     }
     function loadLocal() {
       try {
@@ -571,16 +623,22 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
         <h2 className="goals-title">Share your garden <em>goal</em></h2>
         <form className="goals-form" onSubmit={submit}>
           <label className="vh" htmlFor="goal-text">Your garden goal</label>
-          <textarea id="goal-text" className={`goals-text${overLimit ? ' goals-text--over' : ''}`} rows={2}
+          <textarea id="goal-text" ref={textareaRef}
+                    className={`goals-text${overLimit ? ' goals-text--over' : ''}`} rows={1}
                     placeholder="this year in my garden, I want to…"
-                    value={text} onChange={e => setText(e.target.value)} />
+                    value={text} onChange={e => {
+                      setText(e.target.value);
+                      const el = e.target;
+                      el.style.height = 'auto';
+                      el.style.height = el.scrollHeight + 'px';
+                    }} />
           <div className={`goals-char-count${overLimit ? ' goals-char-count--over' : ''}`} aria-live="polite">
-            {overLimit ? `${text.length - MAX} characters over the limit` : `${MAX - text.length} characters remaining`}
+            {overLimit ? `${text.length - MAX} characters over the limit` : ''}
           </div>
           <div className="goals-row">
             <label className="vh" htmlFor="goal-name">Your name (optional)</label>
             <input id="goal-name" className="goals-name" type="text"
-                   placeholder="your name (optional)"
+                   placeholder="your name"
                    value={name} onChange={e => setName(e.target.value)} />
             <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'Sharing…' : 'Share my goal'}</button>
           </div>
@@ -696,7 +754,7 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
 function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
   return (
     <section className="g-gallery g-mosaic" aria-label="From the garden">
-      <p className="g-gallery-head">from the garden</p>
+      <p className="g-gallery-head">Gallery</p>
       <div className="g-gallery-body">
         {GALLERY.map((it, i) => (
           <button key={it.img} className="g-cell" data-i={String(i % 6)}
@@ -725,7 +783,7 @@ function Exit({ show, onBackToMap, seedGoals }: {
       </button>
       <div className="exit-scroll">
         <div className="intro-frame exit-frame">
-          <h2 className="exit-heading">Thank you for visiting</h2>
+          <h2 className="exit-heading">Thanks for visiting!</h2>
           <div className="exit-social">
             <a className="social-ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <IgGlyph />
@@ -772,23 +830,21 @@ export default function GardenApp({ stops, seedGoals }: Props) {
   const inMap = view === 'map';
 
   return (
-    <IOSDevice>
-      <div className="app-stage">
-        {inMap && (
-          <MapNav
-            visited={visited} total={stops.length}
-            activeIdx={activeIdx}
-            onIntro={gotoIntro} onExit={gotoExit}
-          />
-        )}
-        <div className="map-frame">
-          <GardenMap stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} />
-        </div>
-        <div className={`sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={closeSheet} />
-        <BottomSheet stop={stop} isOpen={isOpen} onClose={closeSheet} tapPctSheet={tapPctSheet} />
-        <Intro show={view === 'intro'} onEnter={gotoMap} />
-        <Exit show={view === 'exit'} onBackToMap={gotoMap} seedGoals={seedGoals} />
+    <div className="app-stage">
+      {inMap && (
+        <MapNav
+          visited={visited} total={stops.length}
+          activeIdx={activeIdx}
+          onIntro={gotoIntro} onExit={gotoExit}
+        />
+      )}
+      <div className="map-frame">
+        <GardenMap stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} />
       </div>
-    </IOSDevice>
+      <div className={`sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={closeSheet} />
+      <BottomSheet stop={stop} isOpen={isOpen} onClose={closeSheet} tapPctSheet={tapPctSheet} />
+      <Intro show={view === 'intro'} onEnter={gotoMap} />
+      <Exit show={view === 'exit'} onBackToMap={gotoMap} seedGoals={seedGoals} />
+    </div>
   );
 }
