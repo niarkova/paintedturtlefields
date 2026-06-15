@@ -8,4 +8,4 @@ chipColors: [sun, peach, lime, sky]
 accent: "#F2C94C"
 ---
 
-A sunny garden near the front of the property. In loving memory of Marjorie Annapav, Shane's mom.
+A sunny garden near the front of the property. In loving memory of Marjorie Annapav.
