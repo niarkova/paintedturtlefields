@@ -393,7 +393,7 @@ html, body {
   display: flex; align-items: center; gap: 10px;
 }
 .intro-photo-placeholder {
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 52px; height: 52px; border-radius: 50%;
   background: rgba(255,248,232,0.10);
   border: 1px solid rgba(255,248,232,0.2);
   overflow: hidden;
@@ -404,6 +404,10 @@ html, body {
 }
 .intro-bio-text { min-width: 0; }
 .intro-bio-card .stop-kicker { margin: 0; font-size: 10px; }
+.intro-bio-lead {
+  font-family: var(--font-body); font-size: 14px; line-height: 1.4;
+  font-weight: 600; color: var(--cream-ink); margin: 0; min-width: 0;
+}
 .intro-bio-name {
   font-family: var(--font-display); font-weight: 400;
   font-size: 20px; margin: 0 0 6px; color: var(--cream-ink); line-height: 1.1;
