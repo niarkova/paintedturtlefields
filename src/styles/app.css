@@ -397,7 +397,7 @@ html, body {
   background: rgba(255,248,232,0.10);
   border: 1px solid rgba(255,248,232,0.2);
   overflow: hidden;
-  flex: 0 0 auto;
+  flex: 0 0 auto; margin-top: 8px;
 }
 .intro-photo-placeholder img {
   width: 100%; height: 100%; object-fit: cover; display: block;

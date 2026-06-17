@@ -79,9 +79,7 @@ const GOAL_TINTS = [
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
 ];
 
-const NINA_LEAD = "Hi, we're Nina and Shane. Welcome to our gardens.";
-const NINA_BIO = "I've been expanding our gardens since we moved here in 2020.";
-const NINA_BIO2 = "The gardens are a work in progress, every year I'm experimenting and moving plants around, learning what works and what doesn't.";
+const NINA_BIO = "I've been expanding our gardens since we moved here in 2020. The gardens are a work in progress, every year I'm experimenting and moving plants around, learning what works and what doesn't.";
 const NINA_BIO3 = "Painted turtles come up from the wetlands each summer to nest in the sandy soil. They're one of many creatures we share this special land with.";
 
 const SHEET_TOP_PCT = 24;
@@ -271,7 +269,11 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   // always mounted (under the intro), so without this the SMIL timeline would
   // run once on page load — before the user ever sees the map.
   useEffect(() => {
-    if (active) revealRef.current?.beginElement();
+    if (!active) return;
+    // Wait for the intro to finish fading out (~450ms) so the full draw is
+    // visible, rather than the first half happening behind the intro.
+    const t = setTimeout(() => revealRef.current?.beginElement(), 480);
+    return () => clearTimeout(t);
   }, [active]);
 
   return (
@@ -472,11 +474,10 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
             <div className="intro-photo-placeholder">
               <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
             </div>
-            <p className="intro-bio-lead">{NINA_LEAD}</p>
+            <p className="intro-bio-lead">Hi, we're Nina and Shane.<br />Welcome to our gardens.</p>
           </div>
           <div className="intro-bio-text">
             <p className="intro-bio-line">{NINA_BIO}</p>
-            <p className="intro-bio-line">{NINA_BIO2}</p>
             <p className="intro-bio-line">{NINA_BIO3}</p>
           </div>
         </div>
