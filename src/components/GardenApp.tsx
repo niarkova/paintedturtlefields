@@ -79,7 +79,8 @@ const GOAL_TINTS = [
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
 ];
 
-const NINA_BIO = "Hi, we're Nina and Shane. I've been expanding our gardens since we moved here in 2020.";
+const NINA_LEAD = "Hi, we're Nina and Shane. Welcome to our gardens.";
+const NINA_BIO = "I've been expanding our gardens since we moved here in 2020.";
 const NINA_BIO2 = "The gardens are a work in progress, every year I'm experimenting and moving plants around, learning what works and what doesn't.";
 const NINA_BIO3 = "Painted turtles come up from the wetlands each summer to nest in the sandy soil. They're one of many creatures we share this special land with.";
 
@@ -471,7 +472,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
             <div className="intro-photo-placeholder">
               <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
             </div>
-            <p className="stop-kicker">welcome to our gardens</p>
+            <p className="intro-bio-lead">{NINA_LEAD}</p>
           </div>
           <div className="intro-bio-text">
             <p className="intro-bio-line">{NINA_BIO}</p>
