@@ -49,19 +49,20 @@ const GAL_TINTS = [
 const MAP_POS = [
   { x: 300, y: 411, label: 'Veggie garden'     },
   { x: 306, y: 339, label: 'Medicinal field'   },
-  { x: 211, y: 235, label: 'Patio garden'      },
+  { x: 222, y: 240, label: 'Patio garden'      },
   { x: 145, y: 259, label: "Marjorie's garden" },
   { x:  93, y: 130, label: 'Sauna garden'      },
 ];
 
 // parking → 1 → 2 → 3 → 4 → right around house above → 5
+// ⚠️ LOCKED — hand-tuned against the map background. See docs/map-path.md before editing.
 const PATH_D = [
   'M 182 637',
   'Q 245 520, 300 411',
   'C 305 375, 308 355, 306 339',
-  'C 285 285, 250 245, 211 235',
-  'Q 175 240, 145 259',
-  'C 290 250, 340 145, 93 130',
+  'C 268 318, 238 262, 222 240',
+  'Q 183 252, 145 259',
+  'C 255 248, 225 155, 93 130',
 ].join(' ');
 
 const MAP_CREAM = (a: number) => `rgba(255,248,232,${a})`;
@@ -78,7 +79,9 @@ const GOAL_TINTS = [
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
 ];
 
-const NINA_BIO = "I've been growing this garden in Underhill, Vermont since 2018 — five stops on the south slope, a wetland edge to the north, and as many pollinators as I can talk into staying. This is the third year I've opened it for visitors.";
+const NINA_BIO = "Hi, we're Nina and Shane. I've been expanding our gardens since we moved here in 2020.";
+const NINA_BIO2 = "The gardens are a work in progress, every year I'm experimenting and moving plants around, learning what works and what doesn't.";
+const NINA_BIO3 = "Painted turtles come up from the wetlands each summer to nest in the sandy soil. They're one of many creatures we share this special land with.";
 
 const SHEET_TOP_PCT = 24;
 
@@ -254,12 +257,22 @@ function MapStop({ pos, n, label, title, active, visited, onClick }: {
 }
 
 // ─── Garden Map SVG ───────────────────────────────────────────────
-function GardenMap({ stops, activeIdx, visited, onSelect }: {
+function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   stops: StopData[];
   activeIdx: number | null;
   visited: Set<number>;
   onSelect: (i: number, pos: {x:number;y:number}) => void;
+  active: boolean;
 }) {
+  const revealRef = useRef<SVGAnimateElement>(null);
+
+  // Replay the route-draw each time the map view becomes active. The SVG is
+  // always mounted (under the intro), so without this the SMIL timeline would
+  // run once on page load — before the user ever sees the map.
+  useEffect(() => {
+    if (active) revealRef.current?.beginElement();
+  }, [active]);
+
   return (
     <svg className="map-svg" viewBox="0 0 402 714"
          preserveAspectRatio="xMidYMid meet"
@@ -269,8 +282,9 @@ function GardenMap({ stops, activeIdx, visited, onSelect }: {
           <path d={PATH_D} pathLength="100" fill="none" stroke="#fff" strokeWidth="16"
                 strokeLinecap="round" strokeLinejoin="round"
                 strokeDasharray="100 100" strokeDashoffset="100">
-            <animate attributeName="stroke-dashoffset" from="100" to="0" dur="1.7s"
-                     begin="0.4s" fill="freeze" calcMode="spline" keyTimes="0;1"
+            <animate ref={revealRef}
+                     attributeName="stroke-dashoffset" from="100" to="0" dur="1.1s"
+                     begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1"
                      keySplines="0.45 0 0.25 1" />
           </path>
         </mask>
@@ -303,7 +317,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect }: {
       })}
 
       {/* compass — bottom-right */}
-      <g transform="translate(383 697)" pointerEvents="none">
+      <g transform="translate(372 680)" pointerEvents="none">
 
         <circle r="14" fill={MAP_DEEP(0.55)} stroke={MAP_CREAM(0.22)} strokeWidth="0.8" />
         <path d="M 0 -10 L 3 0 L 0 10 L -3 0 Z" fill="var(--terracotta)" />
@@ -443,7 +457,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
   return (
     <div className={`intro intro-img-garland ${show ? 'show' : ''}`} aria-hidden={!show}>
       <div className="intro-deco garland" aria-hidden="true">
-        <img src="/assets/watercolor/floral-border.png" alt="" />
+        <img src="/assets/watercolor/floral-border-v2.png" alt="" />
       </div>
       <div className="intro-frame">
         <div className="intro-hero">
@@ -453,11 +467,16 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
         <p className="intro-kick">underhill garden tour · july 11, 2026</p>
         <h1 className="intro-title">Painted Turtle Fields</h1>
         <div className="intro-bio-card">
-          <div className="intro-photo-placeholder">N</div>
+          <div className="intro-bio-head">
+            <div className="intro-photo-placeholder">
+              <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
+            </div>
+            <p className="stop-kicker">welcome to our gardens</p>
+          </div>
           <div className="intro-bio-text">
-            <p className="stop-kicker">about your host</p>
-            <h3 className="intro-bio-name">Hi, I'm <em>Nina.</em></h3>
             <p className="intro-bio-line">{NINA_BIO}</p>
+            <p className="intro-bio-line">{NINA_BIO2}</p>
+            <p className="intro-bio-line">{NINA_BIO3}</p>
           </div>
         </div>
         <button className="intro-cta" onClick={onEnter}>
@@ -839,7 +858,7 @@ export default function GardenApp({ stops, seedGoals }: Props) {
         />
       )}
       <div className="map-frame">
-        <GardenMap stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} />
+        <GardenMap stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} active={inMap} />
       </div>
       <div className={`sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={closeSheet} />
       <BottomSheet stop={stop} isOpen={isOpen} onClose={closeSheet} tapPctSheet={tapPctSheet} />

@@ -8,4 +8,4 @@ chipColors: [pink, violet, lime, sky]
 accent: "#B6D49B"
 ---
 
-The patio was built in 2024. The patio garden is intended to be a more ornamental garden space.
+The patio was built in 2024. During summer, we love hosting dinner and projecting movies. A perfect place to relax after a day of gardening.
