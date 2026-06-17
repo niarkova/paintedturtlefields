@@ -42,6 +42,9 @@ const seedGoals: { id: string; text: string; name?: string }[] = [];
     <style>
       /* Ensure the app fills the viewport */
       html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+      /* Forest backdrop from first paint so there's no white flash before
+         the React loader (turtle) mounts. */
+      body { background: #183C2F; }
       #app { height: 100%; }
     </style>
   </head>

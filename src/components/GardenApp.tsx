@@ -286,7 +286,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
                 strokeLinecap="round" strokeLinejoin="round"
                 strokeDasharray="100 100" strokeDashoffset="100">
             <animate ref={revealRef}
-                     attributeName="stroke-dashoffset" from="100" to="0" dur="1.1s"
+                     attributeName="stroke-dashoffset" from="100" to="0" dur="2.2s"
                      begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1"
                      keySplines="0.45 0 0.25 1" />
           </path>
@@ -417,14 +417,14 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
         </svg>
       </button>
       {stop && (
-        <>
+        <div className="sheet-body">
           <div className="sheet-titles">
             <p className="stop-kicker">stop {String(stop.n).padStart(2, '0')}</p>
             <h2 className="stop-title">{stop.title}</h2>
           </div>
           <p className="stop-desc">{stop.desc}</p>
           <StopGallery stop={stop} />
-        </>
+        </div>
       )}
     </aside>
   );
@@ -457,34 +457,56 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
 
 // ─── Intro screen ─────────────────────────────────────────────────
 function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
+  // The turtle doubles as the app loader: it animates alone while the page
+  // loads, then the rest of the intro fades in around it (turtle stays put).
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const MIN = 1100; // keep the loader on screen long enough to read as one
+    const start = performance.now();
+    let timer: ReturnType<typeof setTimeout>;
+    const finish = () => {
+      const wait = Math.max(0, MIN - (performance.now() - start));
+      timer = setTimeout(() => setReady(true), wait);
+    };
+    if (document.readyState === 'complete') finish();
+    else window.addEventListener('load', finish, { once: true });
+    return () => { clearTimeout(timer); window.removeEventListener('load', finish); };
+  }, []);
+
   return (
-    <div className={`intro intro-img-garland ${show ? 'show' : ''}`} aria-hidden={!show}>
+    <div className={`intro intro-img-garland ${show ? 'show' : ''} ${ready ? 'is-ready' : 'is-loading'}`} aria-busy={!ready} aria-hidden={!show}>
       <div className="intro-deco garland" aria-hidden="true">
         <img src="/assets/watercolor/floral-border-v2.png" alt="" />
       </div>
       <div className="intro-frame">
         <div className="intro-hero">
           <span className="intro-hero-splash" aria-hidden="true" />
+          <svg className="intro-hero-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle className="ring-track" cx="60" cy="60" r="56" />
+            <circle className="ring-arc" cx="60" cy="60" r="56" pathLength="100" />
+          </svg>
           <img src="/assets/watercolor/painted-turtle.png" alt="A painted turtle, hand-painted in watercolor" />
         </div>
-        <p className="intro-kick">underhill garden tour · july 11, 2026</p>
-        <h1 className="intro-title">Painted Turtle Fields</h1>
-        <div className="intro-bio-card">
-          <div className="intro-bio-head">
-            <div className="intro-photo-placeholder">
-              <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
+        <div className="intro-reveal">
+          <p className="intro-kick">underhill garden tour · july 11, 2026</p>
+          <h1 className="intro-title">Painted Turtle Fields</h1>
+          <div className="intro-bio-card">
+            <div className="intro-bio-head">
+              <div className="intro-photo-placeholder">
+                <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
+              </div>
+              <p className="intro-bio-lead">Hi, we're Nina and Shane.<br />Welcome to our garden.</p>
             </div>
-            <p className="intro-bio-lead">Hi, we're Nina and Shane.<br />Welcome to our gardens.</p>
+            <div className="intro-bio-text">
+              <p className="intro-bio-line">{NINA_BIO}</p>
+              <p className="intro-bio-line">{NINA_BIO3}</p>
+            </div>
           </div>
-          <div className="intro-bio-text">
-            <p className="intro-bio-line">{NINA_BIO}</p>
-            <p className="intro-bio-line">{NINA_BIO3}</p>
-          </div>
+          <button className="intro-cta" onClick={onEnter}>
+            start the tour
+            <span className="arrow">→</span>
+          </button>
         </div>
-        <button className="intro-cta" onClick={onEnter}>
-          start the tour
-          <span className="arrow">→</span>
-        </button>
       </div>
     </div>
   );
@@ -661,7 +683,7 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
             <input id="goal-name" className="goals-name" type="text"
                    placeholder="your name"
                    value={name} onChange={e => setName(e.target.value)} />
-            <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'Sharing…' : 'Share my goal'}</button>
+            <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'sharing…' : 'share my goal'}</button>
           </div>
         </form>
         <GoalStream goals={streamGoals} />
