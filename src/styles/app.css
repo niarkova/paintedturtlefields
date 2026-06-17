@@ -148,16 +148,24 @@ html, body {
   transform: translateX(-50%);
   /* match the rendered map width exactly */
   width: min(100vw, calc(100vh * 402 / 714));
+  box-sizing: border-box;
   z-index: 10;
   border-top-left-radius: 28px;
   border-top-right-radius: 28px;
-  padding: 12px 22px 38px;
+  padding: 12px 0 0;
   max-height: 88%;
+  display: flex; flex-direction: column;
   overflow: hidden;
-  overflow-y: auto;
   box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,248,232,0.08);
   isolation: isolate;
   will-change: transform, opacity, filter;
+}
+/* the close button + handle live in the non-scrolling sheet, so they stay
+   pinned; only this body scrolls. */
+.sheet-body {
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 0 22px 38px;
 }
 /* bloom animation */
 .sheet[data-anim="bloom"] {
@@ -275,9 +283,10 @@ html, body {
 .stop-gallery {
   position: relative; z-index: 2;
   display: flex; gap: 12px;
-  margin: 0 -22px 18px; padding: 4px 22px 6px 30px;
+  margin: 0 -22px 18px; padding: 4px 22px 6px 22px;
   overflow-x: auto; overflow-y: hidden;
   scroll-snap-type: x proximity;
+  scroll-padding-left: 22px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22px, #000 calc(100% - 32px), transparent 100%);
@@ -338,7 +347,7 @@ html, body {
   display: flex; flex-direction: column; align-items: center; z-index: 2;
 }
 .intro-deco.garland {
-  position: fixed; left: -130px; right: -130px; bottom: 0;
+  position: fixed; left: -130px; right: -130px; bottom: -28px;
   z-index: 0; pointer-events: none;
 }
 .intro-deco.garland img {
@@ -346,6 +355,19 @@ html, body {
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18));
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 32%, #000 62%);
           mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 32%, #000 62%);
+}
+/* On wider screens, stretching the border to full width makes it tower up
+   the page. Pin it to a fixed-height band along the bottom and let the
+   artwork crop instead of scaling, so it reads as a border, not a backdrop. */
+@media (min-width: 700px) {
+  .intro-deco.garland {
+    left: 0; right: 0; bottom: -28px;
+    height: clamp(180px, 24vh, 250px);
+  }
+  .intro-deco.garland img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center bottom;
+  }
 }
 .intro-hero {
   width: 130px; height: 130px; position: relative; margin: 0 0 14px;
@@ -365,6 +387,69 @@ html, body {
   width: 100%; height: 100%; object-fit: contain;
   filter: drop-shadow(0 14px 28px rgba(0,0,0,0.40));
   position: relative; z-index: 1;
+}
+
+/* ── Loading state: turtle is the loader, content reveals around it ── */
+.intro-reveal {
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 1; transform: translateY(0);
+  transition: opacity 650ms cubic-bezier(0.22,1,0.36,1) 80ms,
+              transform 650ms cubic-bezier(0.22,1,0.36,1) 80ms;
+}
+.intro.is-loading .intro-reveal {
+  opacity: 0; transform: translateY(14px); pointer-events: none;
+}
+.intro.is-loading .intro-deco.garland { opacity: 0; }
+.intro-deco.garland { transition: opacity 650ms ease 120ms; }
+/* gentle swim while loading */
+.intro.is-loading .intro-hero img {
+  animation: turtle-swim 1.5s ease-in-out infinite;
+}
+.intro.is-loading .intro-hero-splash {
+  animation: turtle-pulse 1.5s ease-in-out infinite;
+}
+/* loading ring that grows/sweeps around the turtle */
+.intro-hero-ring {
+  position: absolute; inset: -22px;
+  width: calc(100% + 44px); height: calc(100% + 44px);
+  opacity: 0; transition: opacity 400ms ease;
+  fill: none; pointer-events: none;
+  overflow: visible;
+}
+.intro-hero-ring .ring-track {
+  stroke: rgba(255,248,232,0.12); stroke-width: 3;
+}
+.intro-hero-ring .ring-arc {
+  stroke: var(--terracotta); stroke-width: 3; stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+  transform-origin: center;
+}
+.intro.is-loading .intro-hero-ring {
+  opacity: 1;
+  animation: ring-spin 1.4s linear infinite;
+}
+.intro.is-loading .ring-arc {
+  animation: ring-grow 1.4s ease-in-out infinite;
+}
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+@keyframes ring-grow {
+  0%   { stroke-dashoffset: 100; }
+  50%  { stroke-dashoffset: 30; }
+  100% { stroke-dashoffset: 100; }
+}
+@keyframes turtle-swim {
+  0%, 100% { transform: translateY(0) rotate(-2.5deg); }
+  50%      { transform: translateY(-7px) rotate(2.5deg); }
+}
+@keyframes turtle-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.92); }
+  50%      { opacity: 1;   transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro.is-loading .intro-hero img,
+  .intro.is-loading .intro-hero-splash,
+  .intro.is-loading .intro-hero-ring { animation: none; }
 }
 .intro-kick {
   font-family: var(--font-body);
@@ -393,11 +478,11 @@ html, body {
   display: flex; align-items: center; gap: 10px;
 }
 .intro-photo-placeholder {
-  width: 52px; height: 52px; border-radius: 50%;
+  width: 68px; height: 68px; border-radius: 50%;
   background: rgba(255,248,232,0.10);
   border: 1px solid rgba(255,248,232,0.2);
   overflow: hidden;
-  flex: 0 0 auto; margin-top: 8px;
+  flex: 0 0 auto;
 }
 .intro-photo-placeholder img {
   width: 100%; height: 100%; object-fit: cover; display: block;
@@ -405,7 +490,7 @@ html, body {
 .intro-bio-text { min-width: 0; }
 .intro-bio-card .stop-kicker { margin: 0; font-size: 10px; }
 .intro-bio-lead {
-  font-family: var(--font-body); font-size: 14px; line-height: 1.4;
+  font-family: var(--font-body); font-size: 17px; line-height: 1.32;
   font-weight: 600; color: var(--cream-ink); margin: 0; min-width: 0;
 }
 .intro-bio-name {
