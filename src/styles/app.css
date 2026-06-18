@@ -749,7 +749,7 @@ html, body {
 .toast-msg { line-height: 1.2; }
 
 /* ── Gallery (mosaic) ── */
-.g-gallery { width: 100%; margin: 6px 0 8px; }
+.g-gallery { width: 100%; margin: 6px 0 0; }
 .exit-section-divider {
   width: 100%; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,248,232,0.04) 30%, rgba(255,248,232,0.04) 70%, transparent);
@@ -758,9 +758,15 @@ html, body {
 .g-gallery-head {
   font-family: var(--font-body); font-size: 11px; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--cream-ink-soft); text-align: center; margin: 0 0 16px;
+  color: var(--cream-ink-soft); text-align: center; margin: 0 0 12px;
 }
-.g-mosaic .g-gallery-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* iPhone-style: 3 cols, hairline gap, break out of frame padding to go edge-to-edge */
+.g-mosaic .g-gallery-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin: 0 -22px;
+}
 .g-cell {
   appearance: none; border: none; margin: 0; padding: 0; cursor: pointer;
   text-align: left; background: transparent; color: inherit;
@@ -768,16 +774,14 @@ html, body {
 }
 .g-cell-img {
   position: relative; display: grid; place-items: center;
-  overflow: hidden; border-radius: 14px;
+  overflow: hidden; border-radius: 0;
   background-color: var(--forest-paper-light);
   background-image:
     radial-gradient(ellipse 125% 105% at 50% -5%, var(--cell-tint, rgba(216,139,106,0.28)), transparent 75%),
     url('/assets/textures/watercolor-paper-dark-green.webp');
   background-size: cover, 200px;
-  border: 1px solid rgba(255,248,232,0.14);
-  box-shadow: 0 12px 26px -16px rgba(0,0,0,0.7);
-  transition: transform 200ms cubic-bezier(0.22,1,0.36,1), box-shadow 200ms;
   aspect-ratio: 1/1;
+  transition: opacity 120ms;
 }
 /* photos fill the tile; watercolor illustrations float, contained, on the
    textured tile so their transparent edges read cleanly */
@@ -786,8 +790,7 @@ html, body {
   width: 84%; height: 84%; object-fit: contain;
   filter: drop-shadow(0 10px 18px rgba(0,0,0,0.34));
 }
-.g-cell:hover .g-cell-img { transform: translateY(-2px); box-shadow: 0 18px 30px -15px rgba(0,0,0,0.78); }
-.g-cell:active .g-cell-img { transform: scale(0.985); }
+.g-cell:active .g-cell-img { opacity: 0.7; }
 
 /* gallery viewer */
 .g-viewer-backdrop {
@@ -876,6 +879,7 @@ html, body {
     margin: 0 auto;
     padding: 0 32px;
   }
+  .g-mosaic .g-gallery-body { margin: 0 -32px; }
   .goals-panel {
     margin-left: 0;
     margin-right: 0;
@@ -909,9 +913,9 @@ html, body {
     max-width: 680px;
   }
 
-  /* Gallery: 3-col on wide screens */
+  /* Gallery: match wider frame padding */
   .g-mosaic .g-gallery-body {
-    grid-template-columns: 1fr 1fr 1fr;
+    margin: 0 -32px;
   }
 }
 
