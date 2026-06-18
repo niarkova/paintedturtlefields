@@ -24,16 +24,17 @@ interface Props {
 
 // ─── Gallery items (closing screen) ───────────────────────────────
 const GALLERY = [
+  { img: 'painted-turtle', name: 'Painted turtle',  note: 'our namesake', illustration: true },
   { img: 'garden-1',   name: 'In the garden',   note: 'a moment from the beds' },
   { img: 'garden-2',   name: 'In the garden',   note: 'a moment from the beds' },
   { img: 'garden-3',   name: 'In the garden',   note: 'a moment from the beds' },
-  { img: 'hydrangea',  name: 'Hydrangea',       note: 'by the patio chairs' },
-  { img: 'nasturtium', name: 'Nasturtium',      note: 'tumbling over the entrance' },
-  { img: 'tomato',     name: 'Heirloom tomato', note: 'the crop wheel, late August' },
-  { img: 'gladiolus',  name: 'Gladiolus',       note: "Marjorie's sunny corner" },
-  { img: 'grapevine',  name: 'Grapevine',       note: 'along the south fence' },
-  { img: 'songbird',   name: 'Cedar waxwing',   note: 'in the upper apple' },
-  { img: 'woodpecker', name: 'Woodpecker',      note: 'the old tree rows' },
+  { img: 'hydrangea',  name: 'Hydrangea',       note: 'by the patio chairs',         illustration: true },
+  { img: 'nasturtium', name: 'Nasturtium',      note: 'tumbling over the entrance',  illustration: true },
+  { img: 'tomato',     name: 'Heirloom tomato', note: 'the crop wheel, late August', illustration: true },
+  { img: 'gladiolus',  name: 'Gladiolus',       note: "Marjorie's sunny corner",     illustration: true },
+  { img: 'grapevine',  name: 'Grapevine',       note: 'along the south fence',       illustration: true },
+  { img: 'songbird',   name: 'Cedar waxwing',   note: 'in the upper apple',          illustration: true },
+  { img: 'woodpecker', name: 'Woodpecker',      note: 'the old tree rows',           illustration: true },
 ];
 
 const GAL_TINTS = [
@@ -79,7 +80,7 @@ const GOAL_TINTS = [
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
 ];
 
-const NINA_BIO = "I've been expanding our gardens since we moved here in 2020. The gardens are a work in progress, every year I'm experimenting and moving plants around, learning what works and what doesn't.";
+const NINA_BIO = "We moved here in 2020 and have added numerous garden spaces since.";
 const NINA_BIO3 = "Painted turtles come up from the wetlands each summer to nest in the sandy soil. They're one of many creatures we share this special land with.";
 
 const SHEET_TOP_PCT = 24;
@@ -851,7 +852,7 @@ function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
       <p className="g-gallery-head">Gallery</p>
       <div className="g-gallery-body">
         {GALLERY.map((it, i) => (
-          <button key={it.img} className="g-cell" data-i={String(i % 6)}
+          <button key={it.img} className={`g-cell ${it.illustration ? 'is-illus' : 'is-photo'}`} data-i={String(i % 6)}
                   style={{ '--cell-tint': GAL_TINTS[i % GAL_TINTS.length] } as React.CSSProperties}
                   onClick={() => onOpen(i)} aria-label={`View ${it.name}`}>
             <span className="g-cell-img">
