@@ -370,7 +370,7 @@ html, body {
   }
 }
 .intro-hero {
-  width: 130px; height: 130px; position: relative; margin: 0 0 14px;
+  width: 104px; height: 104px; position: relative; margin: 0 0 14px;
 }
 .intro-hero-splash {
   position: absolute; inset: -50%;
@@ -490,8 +490,8 @@ html, body {
 .intro-bio-text { min-width: 0; }
 .intro-bio-card .stop-kicker { margin: 0; font-size: 10px; }
 .intro-bio-lead {
-  font-family: var(--font-body); font-size: 17px; line-height: 1.32;
-  font-weight: 600; color: var(--cream-ink); margin: 0; min-width: 0;
+  font-family: var(--font-display); font-size: 22px; line-height: 1.12;
+  font-weight: 400; color: var(--cream-ink); margin: 0; min-width: 0;
 }
 .intro-bio-name {
   font-family: var(--font-display); font-weight: 400;
@@ -520,7 +520,17 @@ html, body {
 .intro-cta .arrow { font-family: var(--font-display); font-size: 20px; font-style: normal; }
 
 /* ── Exit screen ── */
-.intro.exit { display: block; overflow: hidden; padding: 0; }
+.intro.exit {
+  display: block; overflow: hidden; padding: 0;
+  /* deeper, more uniform green than the intro so the content reads as the
+     body and the surrounding area isn't a lighter wash */
+  background-color: var(--forest-paper-deep);
+  background-image:
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
+    linear-gradient(180deg, var(--forest-paper-deep), #0c2017 60%, var(--forest-paper-deep));
+  background-size: cover;
+  background-position: center;
+}
 .exit-back {
   position: absolute; top: calc(env(safe-area-inset-top, 0px) + 20px); left: 22px; z-index: 12;
 }
@@ -535,15 +545,15 @@ html, body {
 }
 .exit-heading {
   font-family: var(--font-display);
-  font-size: clamp(28px, 6vw, 40px);
+  font-size: clamp(24px, 5vw, 30px);
   font-weight: 400;
   color: var(--cream-ink);
-  margin: 0 0 20px;
-  line-height: 1.15;
+  margin: 0 0 14px;
+  line-height: 1.12;
 }
 .exit-social {
   display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-  gap: 10px; margin: 0 0 28px;
+  gap: 10px; margin: 0 0 18px;
 }
 .social-ig {
   display: inline-grid; place-items: center;
@@ -575,7 +585,7 @@ html, body {
   border-top: 1px solid rgba(255,248,232,0.12);
   border-bottom: 1px solid rgba(255,248,232,0.12);
   background: rgba(16,41,31,0.35);
-  padding: 24px 22px 24px;
+  padding: 18px 22px 18px;
   box-sizing: border-box;
 }
 .goals-title {
@@ -620,16 +630,20 @@ html, body {
 .goal-stream-wrap.is-rising { margin-top: 8px; }
 .goal-stream { position: relative; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .goal-stream::-webkit-scrollbar { display: none; }
-.goal-stream-track { display: flex; }
+.goal-stream-track { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
 .goal-stream.is-rising {
   height: 224px; overflow-x: hidden; overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
           mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
 }
-.goal-stream.is-rising .goal-stream-track {
-  flex-direction: column; align-items: stretch; gap: 8px; padding: 22px 20px;
+.goal-stream.is-rising .goal-stream-track { padding: 22px 20px; }
+/* few goals: grow to fit (no dead space), scroll only past ~3 */
+.goal-stream.is-static {
+  max-height: 232px; overflow-x: hidden; overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
+.goal-stream.is-static .goal-stream-track { padding: 4px 20px 0; }
 .stream-hint {
   position: absolute; z-index: 3;
   display: inline-flex; align-items: center; gap: 6px;
@@ -708,11 +722,11 @@ html, body {
 .toast-msg { line-height: 1.2; }
 
 /* ── Gallery (mosaic) ── */
-.g-gallery { width: 100%; margin: 30px 0 8px; }
+.g-gallery { width: 100%; margin: 6px 0 8px; }
 .exit-section-divider {
   width: 100%; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,248,232,0.04) 30%, rgba(255,248,232,0.04) 70%, transparent);
-  margin: 32px 0 28px;
+  margin: 16px 0 16px;
 }
 .g-gallery-head {
   font-family: var(--font-body); font-size: 11px; font-weight: 600;
