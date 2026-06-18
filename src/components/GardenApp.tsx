@@ -384,6 +384,9 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
   tapPctSheet: {x:number;y:number};
 }) {
   const [animOpen, setAnimOpen] = useState(false);
+  const sheetRef = useRef<HTMLElement>(null);
+  const dragRef = useRef({ startY: 0, isDragging: false, currentY: 0 });
+
   useEffect(() => {
     let id1: number, id2: number;
     if (isOpen) {
@@ -397,8 +400,41 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
     return () => { cancelAnimationFrame(id1); cancelAnimationFrame(id2); };
   }, [isOpen, stop?.id]);
 
+  function onHandleTouchStart(e: React.TouchEvent) {
+    dragRef.current = { startY: e.touches[0].clientY, isDragging: true, currentY: 0 };
+  }
+
+  function onHandleTouchMove(e: React.TouchEvent) {
+    if (!dragRef.current.isDragging) return;
+    const dy = e.touches[0].clientY - dragRef.current.startY;
+    if (dy < 0) return;
+    dragRef.current.currentY = dy;
+    if (sheetRef.current) {
+      sheetRef.current.style.transition = 'none';
+      sheetRef.current.style.transform = `translateX(-50%) translateY(${dy}px)`;
+    }
+  }
+
+  function onHandleTouchEnd() {
+    if (!dragRef.current.isDragging) return;
+    dragRef.current.isDragging = false;
+    const dy = dragRef.current.currentY;
+    if (!sheetRef.current) return;
+    if (dy > 80) {
+      sheetRef.current.style.transition = '';
+      sheetRef.current.style.transform = '';
+      onClose();
+    } else {
+      sheetRef.current.style.transition = 'transform 250ms cubic-bezier(0.22,1,0.36,1)';
+      sheetRef.current.style.transform = 'translateX(-50%) translateY(0)';
+      const el = sheetRef.current;
+      setTimeout(() => { el.style.transition = ''; el.style.transform = ''; }, 250);
+    }
+  }
+
   return (
     <aside
+      ref={sheetRef}
       className={`sheet ${animOpen ? 'open' : ''}`}
       data-anim="bloom"
       data-bg="pigment"
@@ -411,7 +447,12 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
       aria-modal="false"
       aria-label={stop ? `Stop ${stop.n}: ${stop.title}` : 'Stop details'}
     >
-      <div className="sheet-handle" />
+      <div
+        className="sheet-handle"
+        onTouchStart={onHandleTouchStart}
+        onTouchMove={onHandleTouchMove}
+        onTouchEnd={onHandleTouchEnd}
+      />
       <button className="sheet-close" onClick={onClose} aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
           <path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />

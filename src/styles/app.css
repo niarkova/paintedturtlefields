@@ -203,6 +203,11 @@ html, body {
   background: rgba(255,248,232,0.25);
   border-radius: 999px;
   margin: 0 auto 14px;
+  /* expand touch target without changing visual; margin-bottom compensates for padding */
+  padding: 12px 40px 2px;
+  box-sizing: content-box;
+  cursor: grab;
+  touch-action: none;
 }
 .sheet-close {
   position: absolute; top: 14px; right: 14px;
