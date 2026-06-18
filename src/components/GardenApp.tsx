@@ -945,7 +945,18 @@ function Exit({ show, onBackToMap, seedGoals }: {
             <a className="social-ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <IgGlyph />
             </a>
-            <a className="social-btn" href="mailto:hello@paintedturtlefields.com">
+            <a
+              className="social-btn"
+              href="#email"
+              data-m="nina_kittie"
+              data-d="hotmail.com"
+              onClick={(e) => {
+                e.preventDefault();
+                const t = e.currentTarget;
+                window.location.href = `mailto:${t.dataset.m}@${t.dataset.d}`;
+              }}
+              aria-label="Send email"
+            >
               <MailGlyph />
               <span>email</span>
             </a>
