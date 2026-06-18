@@ -345,7 +345,11 @@ html, body {
 .intro-frame {
   position: relative; text-align: center; width: 100%; max-width: 400px;
   display: flex; flex-direction: column; align-items: center; z-index: 2;
+  transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
 }
+/* While loading, drop the frame so the lone turtle sits centered on screen
+   (not pinned to the top); it eases back up as the content blooms in. */
+.intro.is-loading .intro-frame { transform: translateY(34vh); }
 .intro-deco.garland {
   position: fixed; left: -130px; right: -130px; bottom: -28px;
   z-index: 0; pointer-events: none;
@@ -594,6 +598,11 @@ html, body {
   margin: 0 0 14px;
 }
 .goals-title em { font-style: normal; color: var(--terracotta); }
+.goals-stream-head {
+  font-family: var(--font-body); font-weight: 700; font-size: 10.5px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: #eaa8a6; margin: 14px 0 8px; text-align: left;
+}
 .goals-form { margin: 0 0 16px; }
 .goals-text, .goals-name {
   box-sizing: border-box; width: 100%; appearance: none;
