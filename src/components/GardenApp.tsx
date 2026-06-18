@@ -24,9 +24,9 @@ interface Props {
 
 // ─── Gallery items (closing screen) ───────────────────────────────
 const GALLERY = [
-  { img: 'iris',       name: 'Bearded iris',    note: 'first to bloom, by the gate' },
-  { img: 'coneflower', name: 'Coneflower',      note: 'the herb bed in July' },
-  { img: 'strawberry', name: 'Strawberries',    note: 'underfoot in the berry rows' },
+  { img: 'garden-1',   name: 'In the garden',   note: 'a moment from the beds' },
+  { img: 'garden-2',   name: 'In the garden',   note: 'a moment from the beds' },
+  { img: 'garden-3',   name: 'In the garden',   note: 'a moment from the beds' },
   { img: 'hydrangea',  name: 'Hydrangea',       note: 'by the patio chairs' },
   { img: 'nasturtium', name: 'Nasturtium',      note: 'tumbling over the entrance' },
   { img: 'tomato',     name: 'Heirloom tomato', note: 'the crop wheel, late August' },
@@ -495,10 +495,10 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
               <div className="intro-photo-placeholder">
                 <img src="/assets/watercolor/host-photo.webp" alt="Nina and Shane" />
               </div>
-              <p className="intro-bio-lead">Hi, we're Nina and Shane.<br />Welcome to our garden.</p>
+              <p className="intro-bio-lead">Hi, we're Nina and Shane.</p>
             </div>
             <div className="intro-bio-text">
-              <p className="intro-bio-line">{NINA_BIO}</p>
+              <p className="intro-bio-line">Welcome to our garden. {NINA_BIO}</p>
               <p className="intro-bio-line">{NINA_BIO3}</p>
             </div>
           </div>
@@ -565,8 +565,8 @@ function GoalStream({ goals }: { goals: SeedGoal[] }) {
   const items = animated ? [...goals, ...goals] : goals;
 
   return (
-    <div className="goal-stream-wrap is-rising">
-      <div className="goal-stream is-rising" ref={ref}>
+    <div className={`goal-stream-wrap ${animated ? 'is-rising' : 'is-static'}`}>
+      <div className={`goal-stream ${animated ? 'is-rising' : 'is-static'}`} ref={ref}>
         <div className="goal-stream-track">
           {items.map((g, i) => (
             <GoalChip key={i} g={g} tint={GOAL_TINTS[i % GOAL_TINTS.length]} />
@@ -583,7 +583,7 @@ const FORM_NAME_FIELD = 'entry.1903810587';
 // Set this to your Apps Script web app URL after deploying it
 const GOALS_API_URL = 'https://script.google.com/macros/s/AKfycbyDPPOeAHIPSOHZzjAaRRYd0pSjeqnRFATStIOc1yY-jwTEkMU61rByHAa45xmyda95/exec';
 
-function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
+function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; active?: boolean }) {
   const KEY = 'ptf_goals_v1';
   const [goals, setGoals] = useState<SeedGoal[]>([]);
   const [text, setText] = useState('');
@@ -593,32 +593,43 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  // Load goals: API goals merged with seedGoals as baseline
+  // Merge freshly-fetched API goals over whatever we have (server wins, keep
+  // any local-only optimistic entries the server hasn't echoed back yet).
+  function mergeServer(data: SeedGoal[]) {
+    if (!Array.isArray(data) || data.length === 0) return;
+    setGoals(prev => {
+      const ids = new Set(data.map(g => g.id));
+      const extras = prev.filter(g => !ids.has(g.id));
+      return [...data, ...extras];
+    });
+  }
+  function refresh() {
+    if (!GOALS_API_URL) return;
+    fetch(GOALS_API_URL).then(r => r.json()).then(mergeServer).catch(() => {});
+  }
+
+  // Initial load from local cache only. The server fetch is deferred to the
+  // active-poll effect below so no third-party (Google) request fires while
+  // the visitor is still on the intro/map — important on slow mobile links.
   useEffect(() => {
-    loadLocal();
-    if (GOALS_API_URL) {
-      fetch(GOALS_API_URL)
-        .then(r => r.json())
-        .then((data: SeedGoal[]) => {
-          if (Array.isArray(data) && data.length > 0) {
-            setGoals(prev => {
-              const ids = new Set(data.map(g => g.id));
-              const extras = prev.filter(g => !ids.has(g.id));
-              return [...data, ...extras];
-            });
-          }
-        })
-        .catch(() => {});
-    }
-    function loadLocal() {
-      try {
-        const stored: SeedGoal[] = JSON.parse(localStorage.getItem(KEY) || '[]');
-        setGoals([...stored, ...seedGoals]);
-      } catch {
-        setGoals(seedGoals);
-      }
+    try {
+      const stored: SeedGoal[] = JSON.parse(localStorage.getItem(KEY) || '[]');
+      setGoals([...stored, ...seedGoals]);
+    } catch {
+      setGoals(seedGoals);
     }
   }, []);
+
+  // Poll while the closing screen is active so new goals from other phones
+  // show up automatically (paused when tab is hidden to save data).
+  useEffect(() => {
+    if (!active || !GOALS_API_URL) return;
+    refresh();
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') refresh();
+    }, 15000);
+    return () => clearInterval(id);
+  }, [active]);
 
   function pushToast(msg: string, kind: string) {
     clearTimeout(toastTimer.current);
@@ -681,7 +692,7 @@ function GoalsBoard({ seedGoals }: { seedGoals: SeedGoal[] }) {
           <div className="goals-row">
             <label className="vh" htmlFor="goal-name">Your name (optional)</label>
             <input id="goal-name" className="goals-name" type="text"
-                   placeholder="your name"
+                   placeholder="your name (optional)"
                    value={name} onChange={e => setName(e.target.value)} />
             <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'sharing…' : 'share my goal'}</button>
           </div>
@@ -840,7 +851,7 @@ function Exit({ show, onBackToMap, seedGoals }: {
               <span>email</span>
             </a>
           </div>
-          <GoalsBoard seedGoals={seedGoals} />
+          <GoalsBoard seedGoals={seedGoals} active={show} />
           <div className="exit-section-divider" aria-hidden="true" />
           {galleryMounted && <GardenGallery onOpen={setViewerIdx} />}
         </div>
@@ -854,8 +865,18 @@ function Exit({ show, onBackToMap, seedGoals }: {
 }
 
 // ─── App ──────────────────────────────────────────────────────────
+const VIEW_KEY = 'ptf_view_v1';
+
 export default function GardenApp({ stops, seedGoals }: Props) {
-  const [view, setView] = useState<'intro' | 'map' | 'exit'>('intro');
+  // Restore the screen on refresh (e.g. refresh on screen 3 → stay on screen 3).
+  const [view, setView] = useState<'intro' | 'map' | 'exit'>(() => {
+    try {
+      const v = localStorage.getItem(VIEW_KEY);
+      if (v === 'map' || v === 'exit' || v === 'intro') return v;
+    } catch {}
+    return 'intro';
+  });
+  useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [visited, setVisited] = useState(() => new Set<number>());
   const [tapPctSheet, setTapPctSheet] = useState({ x: 50, y: -10 });
