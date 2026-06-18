@@ -294,7 +294,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
       </defs>
 
       {/* map photo — viewBox 402×714 matches image ratio 941×1672 exactly */}
-      <image href="/assets/map-ground-v2.png" x="0" y="0" width="402" height="714"
+      <image href="/assets/map-ground-v2.webp" x="0" y="0" width="402" height="714"
              preserveAspectRatio="none" />
       {/* green wash to seat photo into dark theme */}
       <rect x="0" y="0" width="402" height="714" fill="#16382b" opacity="0.25" />
@@ -476,7 +476,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
   return (
     <div className={`intro intro-img-garland ${show ? 'show' : ''} ${ready ? 'is-ready' : 'is-loading'}`} aria-busy={!ready} aria-hidden={!show}>
       <div className="intro-deco garland" aria-hidden="true">
-        <img src="/assets/watercolor/floral-border-v2.png" alt="" />
+        <img src="/assets/watercolor/floral-border-v2.webp" alt="" />
       </div>
       <div className="intro-frame">
         <div className="intro-hero">
@@ -485,7 +485,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
             <circle className="ring-track" cx="60" cy="60" r="56" />
             <circle className="ring-arc" cx="60" cy="60" r="56" pathLength="100" />
           </svg>
-          <img src="/assets/watercolor/painted-turtle.png" alt="A painted turtle, hand-painted in watercolor" />
+          <img src="/assets/watercolor/painted-turtle.webp" alt="A painted turtle, hand-painted in watercolor" />
         </div>
         <div className="intro-reveal">
           <p className="intro-kick">underhill garden tour · july 11, 2026</p>
@@ -493,7 +493,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
           <div className="intro-bio-card">
             <div className="intro-bio-head">
               <div className="intro-photo-placeholder">
-                <img src="/assets/watercolor/host-photo.jpg" alt="Nina and Shane" />
+                <img src="/assets/watercolor/host-photo.webp" alt="Nina and Shane" />
               </div>
               <p className="intro-bio-lead">Hi, we're Nina and Shane.<br />Welcome to our garden.</p>
             </div>
@@ -772,7 +772,7 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
           {items.map((it) => (
             <div className="g-viewer-slide" key={it.img}>
               <span className="g-viewer-wash" aria-hidden="true" />
-              <img src={`/assets/watercolor/${it.img}.png`} alt={it.name} />
+              <img src={`/assets/watercolor/${it.img}.webp`} alt={it.name} loading="lazy" />
             </div>
           ))}
         </div>
@@ -804,7 +804,7 @@ function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
                   style={{ '--cell-tint': GAL_TINTS[i % GAL_TINTS.length] } as React.CSSProperties}
                   onClick={() => onOpen(i)} aria-label={`View ${it.name}`}>
             <span className="g-cell-img">
-              <img src={`/assets/watercolor/${it.img}.png`} alt={it.name} loading="lazy" />
+              <img src={`/assets/watercolor/${it.img}.webp`} alt={it.name} loading="lazy" />
             </span>
           </button>
         ))}
@@ -818,6 +818,10 @@ function Exit({ show, onBackToMap, seedGoals }: {
   show: boolean; onBackToMap: () => void; seedGoals: SeedGoal[];
 }) {
   const [viewerIdx, setViewerIdx] = useState<number | null>(null);
+  // Defer mounting the photo gallery (heavy images) until the closing screen
+  // is first reached, so it never competes with the intro/map on slow links.
+  const [galleryMounted, setGalleryMounted] = useState(false);
+  useEffect(() => { if (show) setGalleryMounted(true); }, [show]);
   return (
     <div className={`intro exit ${show ? 'show' : ''}`} aria-hidden={!show}>
       <button className="trail-step prev exit-back" onClick={onBackToMap} aria-label="Back to the map">
@@ -838,11 +842,13 @@ function Exit({ show, onBackToMap, seedGoals }: {
           </div>
           <GoalsBoard seedGoals={seedGoals} />
           <div className="exit-section-divider" aria-hidden="true" />
-          <GardenGallery onOpen={setViewerIdx} />
+          {galleryMounted && <GardenGallery onOpen={setViewerIdx} />}
         </div>
       </div>
-      <GalleryViewer items={GALLERY} index={viewerIdx}
-                     onClose={() => setViewerIdx(null)} onIndex={setViewerIdx} />
+      {galleryMounted && (
+        <GalleryViewer items={GALLERY} index={viewerIdx}
+                       onClose={() => setViewerIdx(null)} onIndex={setViewerIdx} />
+      )}
     </div>
   );
 }

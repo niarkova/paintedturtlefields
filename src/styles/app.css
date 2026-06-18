@@ -23,7 +23,7 @@ html, body {
     radial-gradient(ellipse 80% 50% at 20% 8%,  rgba(255,255,255,0.10), transparent 60%),
     radial-gradient(ellipse 60% 40% at 90% 30%, rgba(216,139,106,0.12), transparent 60%),
     radial-gradient(ellipse 70% 50% at 50% 110%, rgba(0,0,0,0.30), transparent 60%),
-    url('/assets/textures/watercolor-paper-dark-green.png'),
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
     linear-gradient(160deg, var(--forest-paper-light) 0%, var(--forest-paper) 45%, var(--forest-paper-deep) 100%);
   background-size: cover;
   background-position: center;
@@ -40,7 +40,7 @@ html, body {
 .map-frame::before {
   content: '';
   position: absolute; inset: 0;
-  background: url('/assets/textures/watercolor-paper-dark-green.png');
+  background: url('/assets/textures/watercolor-paper-dark-green.webp');
   background-size: 400px;
   opacity: 0.12;
   pointer-events: none;
@@ -185,7 +185,7 @@ html, body {
   background-image:
     radial-gradient(ellipse 95% 55% at 50% -8%, var(--stop-accent, var(--terracotta)), transparent 60%),
     radial-gradient(ellipse 70% 45% at 18% 110%, rgba(255,248,232,0.06), transparent 60%),
-    url('/assets/textures/watercolor-paper-dark-green.png'),
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
     linear-gradient(180deg, var(--forest-paper) 0%, var(--forest-paper-deep) 70%);
   background-size: cover, cover, cover, cover;
   background-blend-mode: multiply, normal, normal, normal;
@@ -330,7 +330,7 @@ html, body {
   background-color: var(--forest-paper);
   background-image:
     radial-gradient(circle at 50% 30%, rgba(216,139,106,0.22), transparent 60%),
-    url('/assets/textures/watercolor-paper-dark-green.png'),
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
     linear-gradient(180deg, var(--forest-paper-light), var(--forest-paper) 50%, var(--forest-paper-deep));
   background-size: cover; background-position: center;
   display: flex; align-items: safe center; justify-content: center;
@@ -731,7 +731,7 @@ html, body {
   background-color: var(--forest-paper-light);
   background-image:
     radial-gradient(ellipse 125% 105% at 50% -5%, var(--cell-tint, rgba(216,139,106,0.28)), transparent 75%),
-    url('/assets/textures/watercolor-paper-dark-green.png');
+    url('/assets/textures/watercolor-paper-dark-green.webp');
   background-size: cover, 200px;
   border: 1px solid rgba(255,248,232,0.14);
   box-shadow: 0 12px 26px -16px rgba(0,0,0,0.7);
@@ -761,7 +761,7 @@ html, body {
   background-color: var(--forest-paper-deep);
   background-image:
     radial-gradient(ellipse 95% 45% at 50% -2%, rgba(216,139,106,0.22), transparent 62%),
-    url('/assets/textures/watercolor-paper-dark-green.png'),
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
     linear-gradient(180deg, var(--forest-paper) 0%, var(--forest-paper-deep) 72%);
   background-size: cover, cover, cover;
   box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,248,232,0.08);
