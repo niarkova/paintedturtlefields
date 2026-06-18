@@ -603,9 +603,15 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
       return [...data, ...extras];
     });
   }
+  const inFlight = useRef(false);
   function refresh() {
-    if (!GOALS_API_URL) return;
-    fetch(GOALS_API_URL).then(r => r.json()).then(mergeServer).catch(() => {});
+    if (!GOALS_API_URL || inFlight.current) return;
+    inFlight.current = true;
+    fetch(GOALS_API_URL, { cache: 'no-store' })
+      .then(r => r.json())
+      .then(mergeServer)
+      .catch(() => {})
+      .finally(() => { inFlight.current = false; });
   }
 
   // Initial load from local cache only. The server fetch is deferred to the
@@ -625,9 +631,10 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   useEffect(() => {
     if (!active || !GOALS_API_URL) return;
     refresh();
+    // ~2s latency so a goal added on another phone shows up almost live.
     const id = setInterval(() => {
       if (document.visibilityState === 'visible') refresh();
-    }, 15000);
+    }, 2000);
     return () => clearInterval(id);
   }, [active]);
 
