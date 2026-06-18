@@ -456,6 +456,27 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
 }
 
 // ─── Intro screen ─────────────────────────────────────────────────
+// Screens 1 (intro) + 2 (map) art — the loader waits on these so the first
+// two screens are fully loaded before the turtle hands off, making the
+// intro↔map toggle instant. Screen 3's gallery is then warmed in the
+// background (everyone walks through all three; 2nd is where they linger).
+const SCREEN_1_2_IMAGES = [
+  '/assets/textures/watercolor-paper-dark-green.webp',
+  '/assets/watercolor/painted-turtle.webp',
+  '/assets/watercolor/floral-border-v2.webp',
+  '/assets/watercolor/host-photo.webp',
+  '/assets/map-ground-v2.webp',
+];
+const SCREEN_3_IMAGES = GALLERY.map(g => `/assets/watercolor/${g.img}.webp`);
+
+function preloadImages(urls: string[]) {
+  return Promise.all(urls.map(src => new Promise<void>(resolve => {
+    const im = new Image();
+    im.onload = im.onerror = () => resolve();
+    im.src = src;
+  })));
+}
+
 function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
   // The turtle doubles as the app loader: it animates alone while the page
   // loads, then the rest of the intro fades in around it (turtle stays put).
@@ -464,13 +485,23 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
     const MIN = 1100; // keep the loader on screen long enough to read as one
     const start = performance.now();
     let timer: ReturnType<typeof setTimeout>;
+    let done = false;
     const finish = () => {
+      if (done) return;
+      done = true;
       const wait = Math.max(0, MIN - (performance.now() - start));
-      timer = setTimeout(() => setReady(true), wait);
+      timer = setTimeout(() => {
+        setReady(true);
+        // Screens 1+2 are in — warm screen 3 in the background so the
+        // closing screen is instant when the visitor gets there.
+        preloadImages(SCREEN_3_IMAGES);
+      }, wait);
     };
-    if (document.readyState === 'complete') finish();
-    else window.addEventListener('load', finish, { once: true });
-    return () => { clearTimeout(timer); window.removeEventListener('load', finish); };
+    // Hold the loader until screens 1+2 art has decoded; safety net so a
+    // stalled asset can never trap the visitor on the loading view.
+    preloadImages(SCREEN_1_2_IMAGES).then(finish);
+    const safety = setTimeout(finish, 8000);
+    return () => { clearTimeout(timer); clearTimeout(safety); };
   }, []);
 
   return (
