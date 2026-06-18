@@ -18,7 +18,7 @@ html, body {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background-color: var(--forest-paper);
+  background-color: #0E2318;
   background-image:
     radial-gradient(ellipse 80% 50% at 20% 8%,  rgba(255,255,255,0.10), transparent 60%),
     radial-gradient(ellipse 60% 40% at 90% 30%, rgba(216,139,106,0.12), transparent 60%),
@@ -73,10 +73,11 @@ html, body {
   gap: 12px;
   padding: 8px 10px 8px 8px;
   border-radius: 999px;
-  background: rgba(16,41,31,0.58);
+  /* Solid-ish background instead of backdrop-filter: blur — the blur was
+     re-rendering the whole map (and the route animation) behind this bar
+     every frame, which janks on mobile. */
+  background: rgba(13,33,24,0.92);
   border: 1px solid rgba(255,248,232,0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 26px -10px rgba(0,0,0,0.6);
   justify-content: space-between;
 }
@@ -158,7 +159,7 @@ html, body {
   overflow: hidden;
   box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,248,232,0.08);
   isolation: isolate;
-  will-change: transform, opacity, filter;
+  will-change: transform, clip-path;
 }
 /* the close button + handle live in the non-scrolling sheet, so they stay
    pinned; only this body scrolls. */
@@ -327,11 +328,11 @@ html, body {
 /* ── Intro screen ── */
 .intro {
   position: absolute; inset: 0; z-index: 20;
-  background-color: var(--forest-paper);
+  background-color: #0E2318;
   background-image:
-    radial-gradient(circle at 50% 30%, rgba(216,139,106,0.22), transparent 60%),
+    radial-gradient(circle at 50% 30%, rgba(216,139,106,0.18), transparent 60%),
     url('/assets/textures/watercolor-paper-dark-green.webp'),
-    linear-gradient(180deg, var(--forest-paper-light), var(--forest-paper) 50%, var(--forest-paper-deep));
+    linear-gradient(180deg, var(--forest-paper) 0%, var(--forest-paper-deep) 55%, #0E2318 100%);
   background-size: cover; background-position: center;
   display: flex; align-items: safe center; justify-content: center;
   padding: calc(env(safe-area-inset-top, 16px) + 24px) 36px 32px;
@@ -375,7 +376,11 @@ html, body {
 }
 .intro-hero {
   width: 104px; height: 104px; position: relative; margin: 0 0 14px;
+  transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
 }
+/* Bigger while loading (centered, clear of the top), then eases down to its
+   welcome-screen size as the content blooms in. */
+.intro.is-loading .intro-hero { transform: scale(1.5); }
 .intro-hero-splash {
   position: absolute; inset: -50%;
   border-radius: 50%;
@@ -494,7 +499,7 @@ html, body {
 .intro-bio-text { min-width: 0; }
 .intro-bio-card .stop-kicker { margin: 0; font-size: 10px; }
 .intro-bio-lead {
-  font-family: var(--font-display); font-size: 22px; line-height: 1.12;
+  font-family: var(--font-display); font-size: 18px; line-height: 1.14;
   font-weight: 400; color: var(--cream-ink); margin: 0; min-width: 0;
 }
 .intro-bio-name {
@@ -761,11 +766,13 @@ html, body {
   transition: transform 200ms cubic-bezier(0.22,1,0.36,1), box-shadow 200ms;
   aspect-ratio: 1/1;
 }
-.g-mosaic .g-cell[data-i="0"] { grid-column: 1 / -1; }
-.g-mosaic .g-cell[data-i="0"] .g-cell-img { aspect-ratio: 16/9; }
-.g-mosaic .g-cell[data-i="5"] { grid-column: 1 / -1; }
-.g-mosaic .g-cell[data-i="5"] .g-cell-img { aspect-ratio: 16/9; }
-.g-cell-img img { width: 84%; height: 84%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.34)); }
+/* photos fill the tile; watercolor illustrations float, contained, on the
+   textured tile so their transparent edges read cleanly */
+.g-cell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.g-cell.is-illus .g-cell-img img {
+  width: 84%; height: 84%; object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.34));
+}
 .g-cell:hover .g-cell-img { transform: translateY(-2px); box-shadow: 0 18px 30px -15px rgba(0,0,0,0.78); }
 .g-cell:active .g-cell-img { transform: scale(0.985); }
 
@@ -893,8 +900,6 @@ html, body {
   .g-mosaic .g-gallery-body {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  .g-mosaic .g-cell[data-i="4"] { grid-column: 1 / -1; }
-  .g-mosaic .g-cell[data-i="4"] .g-cell-img { aspect-ratio: 16/9; }
 }
 
 /* ── Reduced motion ── */
