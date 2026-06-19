@@ -361,9 +361,7 @@ html, body {
   display: flex; flex-direction: column; align-items: center; z-index: 2;
   transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
 }
-/* While loading, drop the frame so the lone turtle sits centered on screen
-   (not pinned to the top); it eases back up as the content blooms in. */
-.intro.is-loading .intro-frame { transform: translateY(34vh); }
+/* While loading the turtle stays in its final position (no shift). */
 .intro-deco.garland {
   position: fixed; left: -130px; right: -130px; bottom: -28px;
   z-index: 0; pointer-events: none;
@@ -393,7 +391,7 @@ html, body {
 }
 /* Bigger while loading (centered, clear of the top), then eases down to its
    welcome-screen size as the content blooms in. */
-.intro.is-loading .intro-hero { transform: scale(1.5); }
+/* no scale change while loading — turtle stays at final size */
 .intro-hero-splash {
   position: absolute; inset: -50%;
   border-radius: 50%;
@@ -423,6 +421,15 @@ html, body {
   opacity: 0; transform: translateY(14px); pointer-events: none;
 }
 .intro.is-loading .intro-deco.garland { opacity: 0; }
+.intro-loading-label {
+  font-family: var(--font-body); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,248,232,0.35);
+  margin: 10px 0 0; text-align: center;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+.intro.is-ready .intro-loading-label { opacity: 0; }
 .intro-deco.garland { transition: opacity 650ms ease 120ms; }
 /* gentle swim while loading */
 .intro.is-loading .intro-hero img {
