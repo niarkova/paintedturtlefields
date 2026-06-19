@@ -576,6 +576,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
           </svg>
           <img src="/assets/watercolor/painted-turtle.webp" alt="A painted turtle, hand-painted in watercolor" />
         </div>
+        <p className="intro-loading-label" aria-live="polite">Loading map</p>
         <div className="intro-reveal">
           <p className="intro-kick">underhill garden tour · july 11, 2026</p>
           <h1 className="intro-title">Painted Turtle Fields</h1>
