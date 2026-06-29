@@ -26,15 +26,15 @@ interface Props {
 // src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
   { src: '/assets/photos/general/nina-with-turtle.webp',             name: 'Nina & a visitor',      note: 'a painted turtle'              },
-  { src: '/assets/photos/stop-2-patio/patio-dogs-evening.webp',      name: 'Chaos & Mayhem',        note: 'on the patio at dusk'          },
-  { src: '/assets/photos/stop-3-veggie/harvest-basket.webp',         name: 'The harvest',           note: 'from the veggie garden'        },
+  { src: '/assets/photos/general/patio-dogs-evening.webp',           name: 'Chaos & Mayhem',        note: 'on the patio at dusk'          },
+  { src: '/assets/photos/general/harvest-basket.webp',               name: 'The harvest',           note: 'from the veggie garden'        },
   { src: '/assets/photos/general/nina-wheelbarrow-lilies.webp',      name: 'Nina',                  note: 'among the lilies'              },
   { src: '/assets/photos/general/nina-shane-arbor.webp',             name: 'Nina & Shane',          note: 'at the garden entrance'        },
   { src: '/assets/photos/general/dahlias-fall.webp',                 name: 'Dahlias',               note: 'in early fall'                 },
   { src: '/assets/photos/general/zinnias-arch.webp',                 name: 'Zinnias',               note: 'by the mailbox arch'           },
   { src: '/assets/photos/general/lilacs-bouquet.webp',               name: 'Lilacs',                note: 'picked from the hedge'         },
   { src: '/assets/photos/general/painted-turtles-forest.webp',       name: 'Painted turtles',       note: 'nesting in the woods'          },
-  { src: '/assets/photos/stop-7-sauna/patio-hammock-adirondack.webp',name: 'The sauna garden',      note: 'a place to rest'               },
+  { src: '/assets/photos/general/patio-hammock-adirondack.webp',     name: 'The sauna garden',      note: 'a place to rest'               },
   { src: '/assets/photos/general/nina-shane-lakeside.webp',          name: 'Nina & Shane',          note: 'on Lake Champlain'             },
   { src: '/assets/photos/general/dog-garden-evening.webp',           name: 'Chaos',                 note: 'helping in the garden'         },
 ];
