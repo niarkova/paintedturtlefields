@@ -107,6 +107,14 @@ html, body {
   box-shadow: 0 6px 18px -6px rgba(216,139,106,0.7);
 }
 .trail-step.finish:hover { background: var(--terracotta); }
+/* Muted finish: outlined pink until all stops are visited */
+.trail-step.finish.is-muted {
+  background: transparent;
+  color: var(--terracotta);
+  border: 1.5px solid var(--terracotta);
+  box-shadow: none;
+  opacity: 0.7;
+}
 .trail-step svg { flex: 0 0 auto; }
 .trail-step-label { line-height: 1; white-space: nowrap; }
 
@@ -626,7 +634,7 @@ html, body {
 .goals-stream-head {
   font-family: var(--font-body); font-weight: 700; font-size: 10.5px;
   letter-spacing: 0.16em; text-transform: uppercase;
-  color: #eaa8a6; margin: 14px 0 8px; text-align: left;
+  color: #eaa8a6; margin: 28px 0 8px; text-align: left;
 }
 .goals-form { margin: 0 0 16px; }
 .goals-text, .goals-name {
@@ -736,6 +744,19 @@ html, body {
 .goal-chip-more:hover { opacity: 1; text-decoration: underline; }
 .goal-chip-name {
   font-family: var(--font-display); font-size: 12.5px; color: var(--terracotta);
+}
+/* Pending shimmer — shown while waiting for server to confirm the goal */
+.goal-chip.is-pending { position: relative; overflow: hidden; }
+.goal-chip-pending {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.07) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: chip-shimmer 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes chip-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* toast */

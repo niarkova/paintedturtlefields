@@ -271,9 +271,9 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   // run once on page load — before the user ever sees the map.
   useEffect(() => {
     if (!active) return;
-    // Wait for the intro to finish fading out (~450ms) so the full draw is
-    // visible, rather than the first half happening behind the intro.
-    const t = setTimeout(() => revealRef.current?.beginElement(), 480);
+    // Give the screen transition time to settle, then draw the trail.
+    // Delay replays every time the user returns to the map.
+    const t = setTimeout(() => revealRef.current?.beginElement(), 900);
     return () => clearTimeout(t);
   }, [active]);
 
@@ -481,7 +481,9 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
             <p className="stop-kicker">stop {String(stop.n).padStart(2, '0')}</p>
             <h2 className="stop-title">{stop.title}</h2>
           </div>
-          <p className="stop-desc">{stop.desc}</p>
+          {stop.desc.split('\n\n').map((para, i) => (
+            <p key={i} className="stop-desc">{para}</p>
+          ))}
           <StopGallery stop={stop} />
         </div>
       )}
@@ -495,6 +497,7 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
   onIntro: () => void; onExit: () => void;
 }) {
   const tint = activeIdx !== null ? TRAIL_TINTS[activeIdx % TRAIL_TINTS.length] : null;
+  const allVisited = visited.size >= total;
   return (
     <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''}`}
          style={tint ? { '--trail-tint': tint } as React.CSSProperties : undefined}>
@@ -506,7 +509,12 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
         <span className="tap-dot" />
         tap a stop
       </span>
-      <button className="trail-step finish" onClick={onExit} aria-label="Finish your walk">
+      <button
+        className={`trail-step finish ${allVisited ? '' : 'is-muted'}`}
+        onClick={onExit}
+        aria-label="Finish your walk"
+        aria-disabled={!allVisited}
+      >
         <span className="trail-step-label">finish</span>
         <ChevronGlyph dir="right" />
       </button>
@@ -603,17 +611,18 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
 }
 
 // ─── Goals board ─────────────────────────────────────────────────
-function GoalChip({ g, tint }: { g: SeedGoal; tint: string }) {
+function GoalChip({ g, tint, pending }: { g: SeedGoal; tint: string; pending?: boolean }) {
   return (
-    <div className="goal-chip idea-letter is-expanded"
+    <div className={`goal-chip idea-letter is-expanded${pending ? ' is-pending' : ''}`}
          style={{ '--chip-tint': tint } as React.CSSProperties}>
       <p className="goal-chip-text">{g.text}</p>
       {g.name && <span className="goal-chip-name">— {g.name}</span>}
+      {pending && <span className="goal-chip-pending" aria-label="Saving…" />}
     </div>
   );
 }
 
-function GoalStream({ goals }: { goals: SeedGoal[] }) {
+function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: number | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const pauseUntil = useRef(0);
   const animated = goals.length > 5;
@@ -659,7 +668,7 @@ function GoalStream({ goals }: { goals: SeedGoal[] }) {
       <div className={`goal-stream ${animated ? 'is-rising' : 'is-static'}`} ref={ref}>
         <div className="goal-stream-track">
           {items.map((g, i) => (
-            <GoalChip key={i} g={g} tint={GOAL_TINTS[i % GOAL_TINTS.length]} />
+            <GoalChip key={i} g={g} tint={GOAL_TINTS[i % GOAL_TINTS.length]} pending={pendingId !== null && g.id === pendingId} />
           ))}
         </div>
       </div>
@@ -679,6 +688,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [pendingId, setPendingId] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -755,7 +765,8 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
       await fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body });
     } catch {}
 
-    // Optimistically add to board and cache locally
+    // Optimistically add to board and cache locally; mark as pending
+    setPendingId(entry.id as number);
     setGoals(prev => {
       const next = [entry, ...prev].slice(0, 48);
       try { localStorage.setItem(KEY, JSON.stringify(next.slice(0, 24))); } catch {}
@@ -764,6 +775,8 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
     setText(''); setName('');
     setSubmitting(false);
     pushToast('shared — thank you', 'success');
+    // Clear pending indicator after polling has had time to confirm
+    setTimeout(() => setPendingId(null), 18000);
   }
 
   const streamGoals = goals;
@@ -795,9 +808,9 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
           </div>
         </form>
         {streamGoals.length > 0 && (
-          <p className="goals-stream-head">What others are growing</p>
+          <p className="goals-stream-head">From the community</p>
         )}
-        <GoalStream goals={streamGoals} />
+        <GoalStream goals={streamGoals} pendingId={pendingId} />
       </div>
       {toast && (
         <div className={`goal-toast show ${toast.kind}`} role="status" aria-live="polite">
@@ -943,7 +956,7 @@ function Exit({ show, onBackToMap, seedGoals }: {
         <div className="intro-frame exit-frame">
           <h2 className="exit-heading">Thanks for visiting!</h2>
           <div className="exit-social">
-            <a className="social-ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a className="social-ig" href="https://instagram.com/ninakittie" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <IgGlyph />
             </a>
             <a
@@ -963,7 +976,6 @@ function Exit({ show, onBackToMap, seedGoals }: {
             </a>
           </div>
           <GoalsBoard seedGoals={seedGoals} active={show} />
-          <div className="exit-section-divider" aria-hidden="true" />
           {galleryMounted && <GardenGallery onOpen={setViewerIdx} />}
         </div>
       </div>
