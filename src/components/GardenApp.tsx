@@ -622,6 +622,25 @@ function GoalChip({ g, tint, pending }: { g: SeedGoal; tint: string; pending?: b
   );
 }
 
+function GoalStreamSkeleton() {
+  const lines = [
+    ['72%', '45%'],
+    ['88%', '30%'],
+    ['60%'],
+  ];
+  return (
+    <div className="goal-stream-wrap is-static goal-skeleton-wrap" aria-busy="true" aria-label="Loading">
+      {lines.map((widths, i) => (
+        <div key={i} className="goal-chip goal-chip-skeleton">
+          {widths.map((w, j) => (
+            <span key={j} className="goal-skel-line" style={{ width: w }} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: number | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const pauseUntil = useRef(0);
@@ -658,9 +677,6 @@ function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: numbe
     };
   }, [animated]);
 
-  if (!goals.length) return (
-    <p className="goal-stream-empty">Goals shared today will appear here.</p>
-  );
   const items = animated ? [...goals, ...goals] : goals;
 
   return (
@@ -689,6 +705,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [pendingId, setPendingId] = useState<number | null>(null);
+  const [serverLoaded, setServerLoaded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -696,6 +713,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   // Merge freshly-fetched API goals over whatever we have (server wins, keep
   // any local-only optimistic entries the server hasn't echoed back yet).
   function mergeServer(data: SeedGoal[]) {
+    setServerLoaded(true);
     if (!Array.isArray(data) || data.length === 0) return;
     setGoals(prev => {
       const ids = new Set(data.map(g => g.id));
@@ -710,7 +728,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
     fetch(GOALS_API_URL, { cache: 'no-store' })
       .then(r => r.json())
       .then(mergeServer)
-      .catch(() => {})
+      .catch(() => { setServerLoaded(true); })
       .finally(() => { inFlight.current = false; });
   }
 
@@ -807,10 +825,11 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
             <button type="submit" className="goals-add" disabled={submitting}>{submitting ? 'sharing…' : 'share my goal'}</button>
           </div>
         </form>
-        {streamGoals.length > 0 && (
-          <p className="goals-stream-head">From the community</p>
-        )}
-        <GoalStream goals={streamGoals} pendingId={pendingId} />
+        <p className="goals-stream-head">From the community</p>
+        {goals.length === 0
+          ? <GoalStreamSkeleton />
+          : <GoalStream goals={streamGoals} pendingId={pendingId} />
+        }
       </div>
       {toast && (
         <div className={`goal-toast show ${toast.kind}`} role="status" aria-live="polite">

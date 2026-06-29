@@ -758,6 +758,26 @@ html, body {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+/* Loading skeleton for goal stream */
+.goal-skeleton-wrap { display: flex; flex-direction: column; gap: 10px; }
+.goal-chip-skeleton {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 14px 16px 16px; border-radius: 6px;
+  background-color: var(--forest-paper-light);
+  border: 1px solid rgba(255,248,232,0.08);
+  position: relative; overflow: hidden;
+}
+.goal-chip-skeleton::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.06) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: chip-shimmer 1.8s ease-in-out infinite;
+}
+.goal-skel-line {
+  display: block; height: 11px; border-radius: 4px;
+  background: rgba(255,248,232,0.10);
+}
 
 /* toast */
 .goal-toast {
