@@ -363,6 +363,8 @@ html, body {
 }
 .intro.show { opacity: 1; pointer-events: auto; }
 .intro-img-garland { padding-top: 14px; padding-bottom: 210px; }
+/* During loading, collapse the garland padding so the turtle truly centers */
+.intro.is-loading { padding-bottom: 32px; }
 
 .intro-frame {
   position: relative; text-align: center; width: 100%; max-width: 400px;
@@ -395,11 +397,13 @@ html, body {
 }
 .intro-hero {
   width: 104px; height: 104px; position: relative; margin: 0 0 14px;
-  transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
+  transform: scale(1);
+  transition: transform 700ms cubic-bezier(0.22,1,0.36,1);
 }
-/* Bigger while loading (centered, clear of the top), then eases down to its
-   welcome-screen size as the content blooms in. */
-/* no scale change while loading — turtle stays at final size */
+/* Smaller while loading so it stays centered in the viewport without being
+   pushed around by the hidden reveal content below it. Grows to full size
+   as the content blooms in. */
+.intro.is-loading .intro-hero { transform: scale(0.68); }
 .intro-hero-splash {
   position: absolute; inset: -50%;
   border-radius: 50%;
@@ -421,19 +425,22 @@ html, body {
 .intro-reveal {
   width: 100%;
   display: flex; flex-direction: column; align-items: center;
-  opacity: 1; transform: translateY(0);
+  opacity: 1; transform: translateY(0); max-height: 800px; overflow: hidden;
   transition: opacity 650ms cubic-bezier(0.22,1,0.36,1) 80ms,
-              transform 650ms cubic-bezier(0.22,1,0.36,1) 80ms;
+              transform 650ms cubic-bezier(0.22,1,0.36,1) 80ms,
+              max-height 650ms cubic-bezier(0.22,1,0.36,1) 80ms;
 }
+/* Collapse reveal height during loading so turtle stays vertically centered */
 .intro.is-loading .intro-reveal {
   opacity: 0; transform: translateY(14px); pointer-events: none;
+  max-height: 0;
 }
 .intro.is-loading .intro-deco.garland { opacity: 0; }
 .intro-loading-label {
   font-family: var(--font-body); font-size: 11px; font-weight: 500;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(255,248,232,0.35);
-  margin: 10px 0 0; text-align: center;
+  margin: 22px 0 0; text-align: center;
   transition: opacity 400ms ease;
   pointer-events: none;
 }
@@ -672,20 +679,20 @@ html, body {
 .goal-stream-wrap.is-rising { margin-top: 8px; }
 .goal-stream { position: relative; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .goal-stream::-webkit-scrollbar { display: none; }
-.goal-stream-track { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.goal-stream-track { display: flex; flex-direction: row; align-items: stretch; gap: 10px; }
 .goal-stream.is-rising {
-  height: 224px; overflow-x: hidden; overflow-y: auto;
-  overscroll-behavior-y: contain;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
-          mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
 }
-.goal-stream.is-rising .goal-stream-track { padding: 22px 20px; }
-/* few goals: grow to fit (no dead space), scroll only past ~3 */
+.goal-stream.is-rising .goal-stream-track { padding: 4px 20px; }
+/* few goals: horizontal scroll */
 .goal-stream.is-static {
-  max-height: 232px; overflow-x: hidden; overflow-y: auto;
-  overscroll-behavior-y: contain;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
 }
-.goal-stream.is-static .goal-stream-track { padding: 4px 20px 0; }
+.goal-stream.is-static .goal-stream-track { padding: 4px 20px 8px; }
 .stream-hint {
   position: absolute; z-index: 3;
   display: inline-flex; align-items: center; gap: 6px;
@@ -699,7 +706,7 @@ html, body {
   box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 .stream-hint.is-hidden { opacity: 0; }
-.goal-stream-wrap.is-rising .stream-hint { left: 50%; bottom: 10px; transform: translateX(-50%); white-space: nowrap; }
+.goal-stream-wrap.is-rising .stream-hint { right: 12px; top: 50%; transform: translateY(-50%); white-space: nowrap; }
 
 .goal-stream-empty {
   font-family: var(--font-body);
@@ -715,6 +722,7 @@ html, body {
 /* goal chips (letter style) */
 .goal-chip {
   flex: 0 0 auto;
+  width: 220px;
   display: flex; flex-direction: column; gap: 5px;
   padding: 12px 15px 14px; border-radius: 6px; text-align: left;
   background-color: rgba(255,248,232,0.05);
@@ -759,8 +767,9 @@ html, body {
   100% { background-position: -200% 0; }
 }
 /* Loading skeleton for goal stream */
-.goal-skeleton-wrap { display: flex; flex-direction: column; gap: 10px; }
+.goal-skeleton-wrap { display: flex; flex-direction: row; gap: 10px; padding: 4px 20px 8px; margin-left: -22px; margin-right: -22px; overflow: hidden; }
 .goal-chip-skeleton {
+  flex: 0 0 auto; width: 220px;
   display: flex; flex-direction: column; gap: 8px;
   padding: 14px 16px 16px; border-radius: 6px;
   background-color: var(--forest-paper-light);
