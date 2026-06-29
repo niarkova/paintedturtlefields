@@ -273,7 +273,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
     if (!active) return;
     // Give the screen transition time to settle, then draw the trail.
     // Delay replays every time the user returns to the map.
-    const t = setTimeout(() => revealRef.current?.beginElement(), 2900);
+    const t = setTimeout(() => revealRef.current?.beginElement(), 1000);
     return () => clearTimeout(t);
   }, [active]);
 
