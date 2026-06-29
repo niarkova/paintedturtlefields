@@ -23,18 +23,20 @@ interface Props {
 }
 
 // ─── Gallery items (closing screen) ───────────────────────────────
+// src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
-  { img: 'painted-turtle', name: 'Painted turtle',  note: 'our namesake', illustration: true },
-  { img: 'garden-1',   name: 'In the garden',   note: 'a moment from the beds' },
-  { img: 'garden-2',   name: 'In the garden',   note: 'a moment from the beds' },
-  { img: 'garden-3',   name: 'In the garden',   note: 'a moment from the beds' },
-  { img: 'hydrangea',  name: 'Hydrangea',       note: 'by the patio chairs',         illustration: true },
-  { img: 'nasturtium', name: 'Nasturtium',      note: 'tumbling over the entrance',  illustration: true },
-  { img: 'tomato',     name: 'Heirloom tomato', note: 'the crop wheel, late August', illustration: true },
-  { img: 'gladiolus',  name: 'Gladiolus',       note: "Marjorie's sunny corner",     illustration: true },
-  { img: 'grapevine',  name: 'Grapevine',       note: 'along the south fence',       illustration: true },
-  { img: 'songbird',   name: 'Cedar waxwing',   note: 'in the upper apple',          illustration: true },
-  { img: 'woodpecker', name: 'Woodpecker',      note: 'the old tree rows',           illustration: true },
+  { src: '/assets/photos/general/nina-with-turtle.webp',             name: 'Nina & a visitor',      note: 'a painted turtle'              },
+  { src: '/assets/photos/stop-2-patio/patio-dogs-evening.webp',      name: 'Chaos & Mayhem',        note: 'on the patio at dusk'          },
+  { src: '/assets/photos/stop-3-veggie/harvest-basket.webp',         name: 'The harvest',           note: 'from the veggie garden'        },
+  { src: '/assets/photos/general/nina-wheelbarrow-lilies.webp',      name: 'Nina',                  note: 'among the lilies'              },
+  { src: '/assets/photos/general/nina-shane-arbor.webp',             name: 'Nina & Shane',          note: 'at the garden entrance'        },
+  { src: '/assets/photos/general/dahlias-fall.webp',                 name: 'Dahlias',               note: 'in early fall'                 },
+  { src: '/assets/photos/general/zinnias-arch.webp',                 name: 'Zinnias',               note: 'by the mailbox arch'           },
+  { src: '/assets/photos/general/lilacs-bouquet.webp',               name: 'Lilacs',                note: 'picked from the hedge'         },
+  { src: '/assets/photos/general/painted-turtles-forest.webp',       name: 'Painted turtles',       note: 'nesting in the woods'          },
+  { src: '/assets/photos/stop-7-sauna/patio-hammock-adirondack.webp',name: 'The sauna garden',      note: 'a place to rest'               },
+  { src: '/assets/photos/general/nina-shane-lakeside.webp',          name: 'Nina & Shane',          note: 'on Lake Champlain'             },
+  { src: '/assets/photos/general/dog-garden-evening.webp',           name: 'Chaos',                 note: 'helping in the garden'         },
 ];
 
 const GAL_TINTS = [
@@ -186,7 +188,7 @@ function NumberPin({ n, active, visited }: { n: number; active: boolean; visited
   const cy = -lift - r;
   const border = visited ? 'none' : 'double';
   return (
-    <g>
+    <g opacity={visited && !active ? 0.5 : 1} style={{ transition: 'opacity 400ms ease' }}>
       <ellipse cx="0" cy="1.5" rx={r * 0.5} ry="2" fill={MAP_DEEP(0.4)} />
       {/* stem tail */}
       <line x1="0" y1={cy + r} x2="0" y2="0"
@@ -513,7 +515,6 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
         className={`trail-step finish ${allVisited ? '' : 'is-muted'}`}
         onClick={onExit}
         aria-label="Finish your walk"
-        aria-disabled={!allVisited}
       >
         <span className="trail-step-label">finish</span>
         <ChevronGlyph dir="right" />
@@ -533,7 +534,9 @@ const SCREEN_1_IMAGES = [
   '/assets/watercolor/host-photo.webp',
 ];
 const SCREEN_2_IMAGES = ['/assets/map-ground-v2.webp'];
-const SCREEN_3_IMAGES = GALLERY.map(g => `/assets/watercolor/${g.img}.webp`);
+const gallerySrc = (g: { src?: string; img?: string; name: string; note: string; illustration?: boolean }) =>
+  g.src ?? `/assets/watercolor/${g.img}.webp`;
+const SCREEN_3_IMAGES = GALLERY.map(gallerySrc);
 
 function preloadImages(urls: string[]) {
   return Promise.all(urls.map(src => new Promise<void>(resolve => {
@@ -548,7 +551,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
   // loads, then the rest of the intro fades in around it (turtle stays put).
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    const MIN = 1100; // keep the loader on screen long enough to read as one
+    const MIN = 900;
     const start = performance.now();
     let timer: ReturnType<typeof setTimeout>;
     let done = false;
@@ -556,18 +559,25 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
       if (done) return;
       done = true;
       const wait = Math.max(0, MIN - (performance.now() - start));
-      timer = setTimeout(() => {
-        setReady(true);
-        // Screen 1 is in — warm screen 2 (map) first, then screen 3 (gallery)
-        // in the background while the visitor reads the intro.
-        preloadImages(SCREEN_2_IMAGES).then(() => preloadImages(SCREEN_3_IMAGES));
-      }, wait);
+      timer = setTimeout(() => setReady(true), wait);
     };
-    // Hold the loader only until screen 1 art has decoded; safety net so a
-    // stalled asset can never trap the visitor on the loading view.
+    // Screen 1 must be painted before we reveal; screens 2 & 3 warm in parallel
+    // so they're ready before the visitor taps through — critical on slow links.
     preloadImages(SCREEN_1_IMAGES).then(finish);
-    const safety = setTimeout(finish, 8000);
-    return () => { clearTimeout(timer); clearTimeout(safety); };
+    preloadImages(SCREEN_2_IMAGES).then(() => preloadImages(SCREEN_3_IMAGES));
+    const safety = setTimeout(finish, 6000);
+
+    // Re-preload after phone wakes from sleep so images are warm again
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        preloadImages(SCREEN_2_IMAGES).then(() => preloadImages(SCREEN_3_IMAGES));
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearTimeout(timer); clearTimeout(safety);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, []);
 
   return (
@@ -657,10 +667,10 @@ function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: numbe
     const speed = 0.20;
     function tick() {
       if (Date.now() > pauseUntil.current) {
-        const half = el.scrollHeight / 2;
-        let ny = el.scrollTop + speed;
-        if (half > 0 && ny >= half) ny -= half;
-        el.scrollTop = ny;
+        const half = el.scrollWidth / 2;
+        let nx = el.scrollLeft + speed;
+        if (half > 0 && nx >= half) nx -= half;
+        el.scrollLeft = nx;
       }
       raf = requestAnimationFrame(tick);
     }
@@ -709,15 +719,25 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  // Tracks the text of the optimistic entry so we can dedupe when server echoes it back
+  const pendingTextRef = useRef<string | null>(null);
 
-  // Merge freshly-fetched API goals over whatever we have (server wins, keep
-  // any local-only optimistic entries the server hasn't echoed back yet).
+  // Merge freshly-fetched API goals over whatever we have (server wins).
+  // Match by both ID and text so the optimistic entry doesn't duplicate when
+  // the server returns it with a different ID, and clear the pending shimmer
+  // as soon as the server confirms the submission.
   function mergeServer(data: SeedGoal[]) {
     setServerLoaded(true);
     if (!Array.isArray(data) || data.length === 0) return;
+    const serverTexts = new Set(data.map(g => g.text?.trim()));
+    if (pendingTextRef.current && serverTexts.has(pendingTextRef.current)) {
+      setPendingId(null);
+      pendingTextRef.current = null;
+    }
     setGoals(prev => {
-      const ids = new Set(data.map(g => g.id));
-      const extras = prev.filter(g => !ids.has(g.id));
+      const serverIds = new Set(data.map(g => g.id));
+      // Keep local-only entries that aren't confirmed by the server yet (by ID or text)
+      const extras = prev.filter(g => !serverIds.has(g.id) && !serverTexts.has(g.text?.trim()));
       return [...data, ...extras];
     });
   }
@@ -784,6 +804,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
     } catch {}
 
     // Optimistically add to board and cache locally; mark as pending
+    pendingTextRef.current = g;
     setPendingId(entry.id as number);
     setGoals(prev => {
       const next = [entry, ...prev].slice(0, 48);
@@ -793,8 +814,8 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
     setText(''); setName('');
     setSubmitting(false);
     pushToast('shared — thank you', 'success');
-    // Clear pending indicator after polling has had time to confirm
-    setTimeout(() => setPendingId(null), 18000);
+    // Fallback: clear pending shimmer after 8s if server hasn't confirmed yet
+    setTimeout(() => { setPendingId(null); pendingTextRef.current = null; }, 8000);
   }
 
   const streamGoals = goals;
@@ -913,9 +934,9 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
         </button>
         <div className="g-viewer-track" ref={trackRef} onScroll={onScroll}>
           {items.map((it) => (
-            <div className="g-viewer-slide" key={it.img}>
+            <div className="g-viewer-slide" key={gallerySrc(it)}>
               <span className="g-viewer-wash" aria-hidden="true" />
-              <img src={`/assets/watercolor/${it.img}.webp`} alt={it.name} loading="lazy" />
+              <img src={gallerySrc(it)} alt={it.name} loading="lazy" />
             </div>
           ))}
         </div>
@@ -943,11 +964,11 @@ function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
       <p className="g-gallery-head">Gallery</p>
       <div className="g-gallery-body">
         {GALLERY.map((it, i) => (
-          <button key={it.img} className={`g-cell ${it.illustration ? 'is-illus' : 'is-photo'}`} data-i={String(i % 6)}
+          <button key={gallerySrc(it)} className={`g-cell ${'illustration' in it && it.illustration ? 'is-illus' : 'is-photo'}`} data-i={String(i % 6)}
                   style={{ '--cell-tint': GAL_TINTS[i % GAL_TINTS.length] } as React.CSSProperties}
                   onClick={() => onOpen(i)} aria-label={`View ${it.name}`}>
             <span className="g-cell-img">
-              <img src={`/assets/watercolor/${it.img}.webp`} alt={it.name} loading="lazy" />
+              <img src={gallerySrc(it)} alt={it.name} loading="lazy" />
             </span>
           </button>
         ))}
