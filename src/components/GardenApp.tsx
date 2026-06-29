@@ -273,7 +273,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
     if (!active) return;
     // Give the screen transition time to settle, then draw the trail.
     // Delay replays every time the user returns to the map.
-    const t = setTimeout(() => revealRef.current?.beginElement(), 900);
+    const t = setTimeout(() => revealRef.current?.beginElement(), 2900);
     return () => clearTimeout(t);
   }, [active]);
 
@@ -287,7 +287,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
                 strokeLinecap="round" strokeLinejoin="round"
                 strokeDasharray="100 100" strokeDashoffset="100">
             <animate ref={revealRef}
-                     attributeName="stroke-dashoffset" from="100" to="0" dur="2.2s"
+                     attributeName="stroke-dashoffset" from="100" to="0" dur="3.8s"
                      begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1"
                      keySplines="0.45 0 0.25 1" />
           </path>
