@@ -25,18 +25,24 @@ interface Props {
 // ─── Gallery items (closing screen) ───────────────────────────────
 // src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
-  { src: '/assets/photos/general/nina-with-turtle.webp',             name: 'Nina & a visitor',      note: 'a painted turtle'              },
-  { src: '/assets/photos/general/patio-dogs-evening.webp',           name: 'Chaos & Mayhem',        note: 'on the patio at dusk'          },
-  { src: '/assets/photos/general/harvest-basket.webp',               name: 'The harvest',           note: 'from the veggie garden'        },
-  { src: '/assets/photos/general/nina-wheelbarrow-lilies.webp',      name: 'Nina',                  note: 'among the lilies'              },
-  { src: '/assets/photos/general/nina-shane-arbor.webp',             name: 'Nina & Shane',          note: 'at the garden entrance'        },
-  { src: '/assets/photos/general/dahlias-fall.webp',                 name: 'Dahlias',               note: 'in early fall'                 },
-  { src: '/assets/photos/general/zinnias-arch.webp',                 name: 'Zinnias',               note: 'by the mailbox arch'           },
-  { src: '/assets/photos/general/lilacs-bouquet.webp',               name: 'Lilacs',                note: 'picked from the hedge'         },
-  { src: '/assets/photos/general/painted-turtles-forest.webp',       name: 'Painted turtles',       note: 'nesting in the woods'          },
-  { src: '/assets/photos/general/patio-hammock-adirondack.webp',     name: 'The sauna garden',      note: 'a place to rest'               },
-  { src: '/assets/photos/general/nina-shane-lakeside.webp',          name: 'Nina & Shane',          note: 'on Lake Champlain'             },
-  { src: '/assets/photos/general/dog-garden-evening.webp',           name: 'Chaos',                 note: 'helping in the garden'         },
+  // turtles
+  { src: '/assets/photos/general/turtle-1.webp',   name: 'Nina & a visitor',   note: 'a painted turtle'          },
+  { src: '/assets/photos/general/turtle-2.webp',   name: 'Painted turtles',    note: 'nesting in the woods'      },
+  // dogs
+  { src: '/assets/photos/general/dog-1.webp',      name: 'Chaos & Mayhem',     note: 'on the patio at dusk'      },
+  { src: '/assets/photos/general/dog-2.webp',      name: 'Chaos',              note: 'helping in the garden'     },
+  // harvest
+  { src: '/assets/photos/general/harvest-1.webp',  name: 'The harvest',        note: 'from the veggie garden'    },
+  // flowers
+  { src: '/assets/photos/general/flower-1.webp',   name: 'Dahlias',            note: 'in early fall'             },
+  { src: '/assets/photos/general/flower-2.webp',   name: 'Zinnias',            note: 'by the mailbox arch'       },
+  { src: '/assets/photos/general/flower-3.webp',   name: 'Lilacs',             note: 'picked from the hedge'     },
+  // garden / patio
+  { src: '/assets/photos/general/garden-1.webp',   name: 'Nina',               note: 'among the lilies'          },
+  { src: '/assets/photos/general/garden-2.webp',   name: 'The sauna garden',   note: 'a place to rest'           },
+  // hosts
+  { src: '/assets/photos/general/hosts-1.webp',    name: 'Nina & Shane',       note: 'at the garden entrance'    },
+  { src: '/assets/photos/general/hosts-2.webp',    name: 'Nina & Shane',       note: 'on Lake Champlain'         },
 ];
 
 const GAL_TINTS = [
@@ -290,8 +296,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
                 strokeDasharray="100 100" strokeDashoffset="100">
             <animate ref={revealRef}
                      attributeName="stroke-dashoffset" from="100" to="0" dur="3.8s"
-                     begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1"
-                     keySplines="0.45 0 0.25 1" />
+                     begin="indefinite" fill="freeze" calcMode="linear" />
           </path>
         </mask>
       </defs>
