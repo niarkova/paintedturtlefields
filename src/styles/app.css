@@ -602,7 +602,7 @@ html, body {
 .social-ig {
   display: inline-grid; place-items: center;
   width: 44px; height: 44px; border-radius: 999px;
-  color: #c77da6; text-decoration: none;
+  color: #e09fca; text-decoration: none;
   background: rgba(255,248,232,0.06);
   border: 1px solid rgba(199,125,166,0.4);
   transition: background 200ms, color 200ms, transform 200ms;
