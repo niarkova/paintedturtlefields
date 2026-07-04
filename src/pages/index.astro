@@ -35,10 +35,13 @@ const seedGoals: { id: string; text: string; name?: string }[] = [];
     <!-- Preload the intro's critical art so it paints fast on slow (3G) links -->
     <link rel="preload" as="image" href="/assets/textures/watercolor-paper-dark-green.webp" />
     <link rel="preload" as="image" href="/assets/watercolor/painted-turtle.webp" />
+    <!-- Preload the map so screen 2 paints instantly after the intro -->
+    <link rel="preload" as="image" href="/assets/map-ground-v2.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Subset to the weights/styles actually used (400–700, normal + italic) -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Young+Serif&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=Young+Serif&display=swap"
       rel="stylesheet"
     />
     <title>Painted Turtle Fields</title>
@@ -49,6 +52,11 @@ const seedGoals: { id: string; text: string; name?: string }[] = [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-PYQLW97H9Z');
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
     </script>
     <style>
       /* Ensure the app fills the viewport */

@@ -541,6 +541,8 @@ const SCREEN_1_IMAGES = [
 const SCREEN_2_IMAGES = ['/assets/map-ground-v2.webp'];
 const gallerySrc = (g: { src?: string; img?: string; name: string; note: string; illustration?: boolean }) =>
   g.src ?? `/assets/watercolor/${g.img}.webp`;
+const gallerySrcSm = (g: Parameters<typeof gallerySrc>[0]) =>
+  gallerySrc(g).replace('.webp', '-sm.webp');
 const SCREEN_3_IMAGES = GALLERY.map(gallerySrc);
 
 function preloadImages(urls: string[]) {
@@ -597,7 +599,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
             <circle className="ring-track" cx="60" cy="60" r="56" />
             <circle className="ring-arc" cx="60" cy="60" r="56" pathLength="100" />
           </svg>
-          <img src="/assets/watercolor/painted-turtle.webp" alt="A painted turtle, hand-painted in watercolor" />
+          <img src="/assets/watercolor/painted-turtle.webp" alt="A painted turtle, hand-painted in watercolor" loading="eager" fetchPriority="high" width="260" height="260" />
         </div>
         <p className="intro-loading-label" aria-live="polite">Loading map</p>
         <div className="intro-reveal">
@@ -606,7 +608,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
           <div className="intro-bio-card">
             <div className="intro-bio-head">
               <div className="intro-photo-placeholder">
-                <img src="/assets/watercolor/host-photo.webp" alt="Nina and Shane" />
+                <img src="/assets/watercolor/host-photo.webp" alt="Nina and Shane" loading="eager" />
               </div>
               <p className="intro-bio-lead">Hi, we're Nina and Shane.</p>
             </div>
@@ -973,7 +975,10 @@ function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
                   style={{ '--cell-tint': GAL_TINTS[i % GAL_TINTS.length] } as React.CSSProperties}
                   onClick={() => onOpen(i)} aria-label={`View ${it.name}`}>
             <span className="g-cell-img">
-              <img src={gallerySrc(it)} alt={it.name} loading="lazy" />
+              <img src={gallerySrc(it)}
+                   srcSet={`${gallerySrcSm(it)} 480w, ${gallerySrc(it)} 900w`}
+                   sizes="160px"
+                   alt={it.name} loading="lazy" />
             </span>
           </button>
         ))}
