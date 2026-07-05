@@ -43,6 +43,10 @@ const GALLERY = [
   // hosts
   { src: '/assets/photos/general/hosts-1.webp',    name: 'Nina & Shane',       note: 'at the garden entrance'    },
   { src: '/assets/photos/general/hosts-2.webp',    name: 'Nina & Shane',       note: 'on Lake Champlain'         },
+  // garden — before & after
+  { src: '/assets/photos/general/garden-3.webp',   name: 'Nina',               note: 'in the patio garden'       },
+  { src: '/assets/photos/general/before-1.webp',   name: 'How it started',     note: 'early spring'              },
+  { src: '/assets/photos/general/before-2.webp',   name: 'Breaking ground',    note: 'building the sauna garden' },
 ];
 
 const GAL_TINTS = [

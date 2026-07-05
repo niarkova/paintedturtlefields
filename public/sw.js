@@ -1,4 +1,4 @@
-const CACHE = 'ptf-v2';
+const CACHE = 'ptf-v3';
 
 const PRECACHE = [
   '/',
@@ -19,6 +19,9 @@ const PRECACHE = [
   '/assets/photos/general/garden-2.webp',
   '/assets/photos/general/hosts-1.webp',
   '/assets/photos/general/hosts-2.webp',
+  '/assets/photos/general/garden-3.webp',
+  '/assets/photos/general/before-1.webp',
+  '/assets/photos/general/before-2.webp',
 ];
 
 self.addEventListener('install', e => {
