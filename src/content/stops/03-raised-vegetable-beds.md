@@ -8,7 +8,7 @@ chipColors: [lime, sun, peach, sky, violet, pink]
 accent: "#7E9A60"
 ---
 
-This area felt very rectilinear with the barn and solar panels. The vegetable beds were designed in a circular layout to soften those straight lines and make the garden feel more connected to the surrounding landscape.
+This space felt very rectilinear with the barn and solar panels, so the raised beds were designed in a circular layout to soften the layout.
 
 The center bed is reserved for flowers that attract pollinators — I use it to experiment with new annual flowers and a new colour palette each year. Flowers that reseeded get moved to the adjacent cut flower row.
 
