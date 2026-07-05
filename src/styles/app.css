@@ -363,8 +363,6 @@ html, body {
 }
 .intro.show { opacity: 1; pointer-events: auto; }
 .intro-img-garland { padding-top: 14px; padding-bottom: 210px; }
-/* During loading, collapse the garland padding so the turtle truly centers */
-.intro.is-loading { padding-bottom: 32px; }
 
 .intro-frame {
   position: relative; text-align: center; width: 100%; max-width: 400px;
@@ -400,10 +398,7 @@ html, body {
   transform: scale(1);
   transition: transform 700ms cubic-bezier(0.22,1,0.36,1);
 }
-/* Smaller while loading so it stays centered in the viewport without being
-   pushed around by the hidden reveal content below it. Grows to full size
-   as the content blooms in. */
-.intro.is-loading .intro-hero { transform: scale(0.68); }
+/* No scale change while loading — turtle stays at its final size and spot. */
 .intro-hero-splash {
   position: absolute; inset: -50%;
   border-radius: 50%;
@@ -425,15 +420,14 @@ html, body {
 .intro-reveal {
   width: 100%;
   display: flex; flex-direction: column; align-items: center;
-  opacity: 1; transform: translateY(0); max-height: 800px; overflow: hidden;
+  opacity: 1; transform: translateY(0);
   transition: opacity 650ms cubic-bezier(0.22,1,0.36,1) 80ms,
-              transform 650ms cubic-bezier(0.22,1,0.36,1) 80ms,
-              max-height 650ms cubic-bezier(0.22,1,0.36,1) 80ms;
+              transform 650ms cubic-bezier(0.22,1,0.36,1) 80ms;
 }
-/* Collapse reveal height during loading so turtle stays vertically centered */
+/* Reveal fades/slides in place — its box keeps its full height throughout so
+   the turtle above it never shifts position when loading finishes. */
 .intro.is-loading .intro-reveal {
   opacity: 0; transform: translateY(14px); pointer-events: none;
-  max-height: 0;
 }
 .intro.is-loading .intro-deco.garland { opacity: 0; }
 .intro-loading-label {
@@ -515,7 +509,7 @@ html, body {
   display: flex; flex-direction: column; gap: 10px;
   background: rgba(255,248,232,0.12);
   border: 1px solid rgba(255,248,232,0.28);
-  border-radius: 14px; padding: 13px 15px 14px;
+  border-radius: 14px; padding: 16px 22px 18px;
   text-align: left; width: 100%; margin: 0 0 24px;
 }
 .intro-bio-head {
@@ -773,19 +767,19 @@ html, body {
   display: flex; flex-direction: column; gap: 8px;
   padding: 14px 16px 16px; border-radius: 6px;
   background-color: var(--forest-paper-light);
-  border: 1px solid rgba(255,248,232,0.08);
+  border: 1px solid rgba(255,248,232,0.16);
   position: relative; overflow: hidden;
 }
 .goal-chip-skeleton::after {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.06) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.14) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: chip-shimmer 1.8s ease-in-out infinite;
 }
 .goal-skel-line {
   display: block; height: 11px; border-radius: 4px;
-  background: rgba(255,248,232,0.10);
+  background: rgba(255,248,232,0.22);
 }
 
 /* toast */
