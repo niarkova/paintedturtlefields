@@ -8,4 +8,4 @@ chipColors: [sky, violet, lime, peach]
 accent: "#7E9A60"
 ---
 
-The barrel sauna is an electric kit from Almost Heaven, added with the patio in 2021. This shade garden space is intended to contribute to a peaceful sauna session. A perfect place to relax after a day of gardening.
+This Almost Heaven barrel sauna was added with the patio in 2021. The shade garden was designed to make the space feel quiet and tucked away, offering a peaceful place to unwind after working in the garden.
