@@ -1,0 +1,10 @@
+# Hosting: this site is deployed on Netlify (not GitHub Pages).
+# Build settings are also configurable in the Netlify dashboard;
+# this file keeps them in version control so the host is unambiguous.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.12.0"
