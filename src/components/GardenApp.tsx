@@ -81,6 +81,17 @@ const PATH_D = [
 const MAP_CREAM = (a: number) => `rgba(255,248,232,${a})`;
 const MAP_DEEP  = (a: number) => `rgba(16,41,31,${a})`;
 
+// Tour opens July 10 2026 (local time). Before then, real contact info is
+// replaced with harmless test values so it never appears in the HTML source.
+function isTourOpen() { return new Date() >= new Date('2026-07-10T00:00:00'); }
+const TOUR_IG      = isTourOpen() ? 'ninakittie'   : 'test';
+const TOUR_EMAIL_M = isTourOpen() ? 'nina_kittie'  : 'test';
+const TOUR_EMAIL_D = isTourOpen() ? 'hotmail.com'  : 'test.com';
+
+function ga(event: string, params?: Record<string, unknown>) {
+  try { (window as any).gtag?.('event', event, params); } catch {}
+}
+
 const TRAIL_TINTS = [
   '#D88B6A', '#E0A33C', '#7E9A60', '#9BC36B',
   '#D06A6A', '#3C8E72', '#C77DA6', '#F2C94C',
@@ -370,7 +381,7 @@ function StopGallery({ stop }: { stop: StopData }) {
       </div>
       <div className={`stop-gallery hint-${scrollState}`} ref={ref} onScroll={update}>
         {stop.plants.map((plant) => (
-          <figure className="stop-shot" key={plant}>
+          <figure className="stop-shot" key={plant} onClick={() => ga('plant_click', { plant, stop_title: stop.title })}>
             <div className="photo-placeholder">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="rgba(255,248,232,0.35)"
                    strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -799,6 +810,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isTourOpen()) { pushToast('Opens July 10 — see you on tour day!', 'info'); return; }
     const g = text.trim();
     if (!g) { pushToast('Write your goal first', 'error'); return; }
     if (overLimit) { pushToast('Please shorten your goal to 300 characters', 'error'); return; }
@@ -977,7 +989,7 @@ function GardenGallery({ onOpen }: { onOpen: (i:number) => void }) {
         {GALLERY.map((it, i) => (
           <button key={gallerySrc(it)} className={`g-cell ${'illustration' in it && it.illustration ? 'is-illus' : 'is-photo'}`} data-i={String(i % 6)}
                   style={{ '--cell-tint': GAL_TINTS[i % GAL_TINTS.length] } as React.CSSProperties}
-                  onClick={() => onOpen(i)} aria-label={`View ${it.name}`}>
+                  onClick={() => { ga('gallery_open', { photo_name: it.name }); onOpen(i); }} aria-label={`View ${it.name}`}>
             <span className="g-cell-img">
               <img src={gallerySrc(it)}
                    srcSet={`${gallerySrcSm(it)} 480w, ${gallerySrc(it)} 900w`}
@@ -1010,18 +1022,15 @@ function Exit({ show, onBackToMap, seedGoals }: {
         <div className="intro-frame exit-frame">
           <h2 className="exit-heading">Thanks for visiting!</h2>
           <div className="exit-social">
-            <a className="social-ig" href="https://instagram.com/ninakittie" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a className="social-ig" href={`https://instagram.com/${TOUR_IG}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <IgGlyph />
             </a>
             <a
               className="social-btn"
               href="#email"
-              data-m="nina_kittie"
-              data-d="hotmail.com"
               onClick={(e) => {
                 e.preventDefault();
-                const t = e.currentTarget;
-                window.location.href = `mailto:${t.dataset.m}@${t.dataset.d}`;
+                window.location.href = `mailto:${TOUR_EMAIL_M}@${TOUR_EMAIL_D}`;
               }}
               aria-label="Send email"
             >
@@ -1061,6 +1070,7 @@ export default function GardenApp({ stops, seedGoals }: Props) {
   function select(i: number, pos: {x:number;y:number}) {
     setActiveIdx(i);
     setVisited(v => { const n = new Set(v); n.add(i); return n; });
+    ga('stop_click', { stop_number: stops[i].n, stop_title: stops[i].title });
     const sx = (pos.x / 402) * 100;
     const sy = (pos.y / 800) * 100;
     const sheetY = ((sy - SHEET_TOP_PCT) / (100 - SHEET_TOP_PCT)) * 100;
