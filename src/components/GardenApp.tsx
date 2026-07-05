@@ -628,7 +628,7 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
               <p className="intro-bio-lead">Hi, we're Nina and Shane.</p>
             </div>
             <div className="intro-bio-text">
-              <p className="intro-bio-line">Welcome to our garden. {NINA_BIO}</p>
+              <p className="intro-bio-line">Welcome! {NINA_BIO}</p>
               <p className="intro-bio-line">{NINA_BIO3}</p>
             </div>
           </div>
