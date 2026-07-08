@@ -1,4 +1,4 @@
-const CACHE = 'ptf-v3';
+const CACHE = 'ptf-v16';
 
 const PRECACHE = [
   '/',
@@ -7,21 +7,31 @@ const PRECACHE = [
   '/assets/watercolor/floral-border-v2.webp',
   '/assets/watercolor/host-photo.webp',
   '/assets/map-ground-v2.webp',
-  '/assets/photos/general/turtle-1.webp',
-  '/assets/photos/general/turtle-2.webp',
-  '/assets/photos/general/dog-1.webp',
-  '/assets/photos/general/dog-2.webp',
-  '/assets/photos/general/harvest-1.webp',
-  '/assets/photos/general/flower-1.webp',
-  '/assets/photos/general/flower-2.webp',
-  '/assets/photos/general/flower-3.webp',
-  '/assets/photos/general/garden-1.webp',
-  '/assets/photos/general/garden-2.webp',
-  '/assets/photos/general/hosts-1.webp',
-  '/assets/photos/general/hosts-2.webp',
-  '/assets/photos/general/garden-3.webp',
-  '/assets/photos/general/before-1.webp',
-  '/assets/photos/general/before-2.webp',
+  // Gallery thumbnails only — full-size photos are cached on demand when
+  // a visitor actually opens one, instead of forcing every visitor to
+  // download the whole gallery upfront.
+  '/assets/photos/general/01-turtles-1-sm.webp',
+  '/assets/photos/general/02-turtles-2-sm.webp',
+  '/assets/photos/general/03-people-1-sm.webp',
+  '/assets/photos/general/04-veggie-garden-1-sm.webp',
+  '/assets/photos/general/05-veggie-garden-2-sm.webp',
+  '/assets/photos/general/06-veggie-garden-3-sm.webp',
+  '/assets/photos/general/07-veggie-garden-4-sm.webp',
+  '/assets/photos/general/08-veggie-garden-5-sm.webp',
+  '/assets/photos/general/09-veggie-garden-6-sm.webp',
+  '/assets/photos/general/10-veggie-garden-7-sm.webp',
+  '/assets/photos/general/11-garlic-harvest-sm.webp',
+  '/assets/photos/general/12-patio-garden-1-sm.webp',
+  '/assets/photos/general/13-patio-garden-2-sm.webp',
+  '/assets/photos/general/14-patio-garden-3-sm.webp',
+  '/assets/photos/general/15-patio-garden-4-sm.webp',
+  '/assets/photos/general/16-patio-garden-5-sm.webp',
+  '/assets/photos/general/17-sauna-garden-1-sm.webp',
+  '/assets/photos/general/18-sauna-garden-2-sm.webp',
+  '/assets/photos/general/19-flower-1-sm.webp',
+  '/assets/photos/general/20-flower-3-sm.webp',
+  '/assets/photos/general/21-seedlings-sm.webp',
+  '/assets/photos/general/22-bouquet-collage-sm.webp',
 ];
 
 self.addEventListener('install', e => {
@@ -47,8 +57,7 @@ self.addEventListener('fetch', e => {
 
   const isStatic =
     url.pathname.startsWith('/assets/') ||
-    url.pathname.startsWith('/_astro/') ||
-    url.pathname.startsWith('/images/');
+    url.pathname.startsWith('/_astro/');
 
   if (isStatic) {
     // Cache-first: images and built assets never change once deployed

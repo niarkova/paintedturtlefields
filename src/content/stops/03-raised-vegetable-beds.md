@@ -2,9 +2,7 @@
 number: 3
 name: Veggie garden
 subtitle: the crop wheel
-mapLabel: Veggie garden
 plants: [Ground cherry, Sun Gold tomato, Rainbow chard, Thai basil, Lemon cucumber, Calendula]
-chipColors: [lime, sun, peach, sky, violet, pink]
 accent: "#7E9A60"
 ---
 

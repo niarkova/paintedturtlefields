@@ -56,7 +56,19 @@ html, body {
 .map-stop { cursor: pointer; }
 .map-stop:focus { outline: none; }
 .map-stop:focus-visible circle { outline: 3px solid var(--terracotta); }
-.map-stop.active { opacity: 0.6; }
+
+/* Subtle "start here" cue on stop 1 — fades away the moment any stop opens */
+.map-stop-spotlight {
+  animation: stop-spotlight 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes stop-spotlight {
+  0%, 100% { opacity: 0.28; stroke-width: 1.4; }
+  50%      { opacity: 0.75; stroke-width: 1.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-stop-spotlight { animation: none; opacity: 0.5; }
+}
 
 /* @media: respect reduced motion for route animation */
 @media (prefers-reduced-motion: reduce) {
@@ -146,7 +158,7 @@ html, body {
   position: absolute; inset: 0; z-index: 9;
   background: rgba(16,41,31,0);
   pointer-events: none;
-  transition: background 400ms cubic-bezier(0.22,1,0.36,1);
+  transition: background 220ms cubic-bezier(0.22,1,0.36,1);
 }
 .sheet-backdrop.open { background: rgba(16,41,31,0.62); pointer-events: auto; }
 
@@ -167,6 +179,7 @@ html, body {
   overflow: hidden;
   box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,248,232,0.08);
   isolation: isolate;
+  contain: paint;
   will-change: transform, clip-path;
 }
 /* the close button + handle live in the non-scrolling sheet, so they stay
@@ -375,10 +388,10 @@ html, body {
   z-index: 0; pointer-events: none;
 }
 .intro-deco.garland img {
-  display: block; width: 100%; height: auto; opacity: 0.62;
+  display: block; width: 100%; height: auto; opacity: 0.88;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18));
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 32%, #000 62%);
-          mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 32%, #000 62%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.65) 24%, #000 48%);
+          mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.65) 24%, #000 48%);
 }
 /* On wider screens, stretching the border to full width makes it tower up
    the page. Pin it to a fixed-height band along the bottom and let the
@@ -501,8 +514,6 @@ html, body {
   margin: 0 0 22px; color: var(--cream-ink); text-wrap: balance;
 }
 .intro-title em { font-style: normal; color: var(--terracotta); font-weight: 400; }
-.intro-title.plain { font-style: normal; }
-.intro-title.plain em { color: inherit; }
 
 /* bio card */
 .intro-bio-card {
@@ -516,7 +527,7 @@ html, body {
   display: flex; align-items: center; gap: 10px;
 }
 .intro-photo-placeholder {
-  width: 68px; height: 68px; border-radius: 50%;
+  width: clamp(68px, 9vh, 108px); height: clamp(68px, 9vh, 108px); border-radius: 50%;
   background: rgba(255,248,232,0.10);
   border: 1px solid rgba(255,248,232,0.2);
   overflow: hidden;
@@ -531,11 +542,6 @@ html, body {
   font-family: var(--font-display); font-size: 24px; line-height: 1.14;
   font-weight: 400; color: var(--cream-ink); margin: 0; min-width: 0;
 }
-.intro-bio-name {
-  font-family: var(--font-display); font-weight: 400;
-  font-size: 20px; margin: 0 0 6px; color: var(--cream-ink); line-height: 1.1;
-}
-.intro-bio-name em { font-style: normal; color: var(--terracotta); font-weight: 400; }
 .intro-bio-line {
   font-family: var(--font-body); font-size: 12.5px; line-height: 1.5;
   color: rgba(255, 248, 232, 0.88); margin: 0;
@@ -551,8 +557,13 @@ html, body {
   font-family: var(--font-display); font-size: 17px; font-weight: 400;
   cursor: pointer; display: inline-flex; align-items: center; gap: 10px;
   box-shadow: 0 10px 28px -8px rgba(216,139,106,0.55);
-  transition: transform 200ms cubic-bezier(0.22,1,0.36,1);
+  opacity: 1;
+  transition: transform 200ms cubic-bezier(0.22,1,0.36,1),
+              opacity 450ms cubic-bezier(0.22,1,0.36,1) 320ms;
 }
+/* Button lags slightly behind the rest of the reveal so it reads as the
+   last thing to arrive, not part of one flat block. */
+.intro.is-loading .intro-cta { opacity: 0; transition-delay: 0ms; }
 .intro-cta:hover  { transform: translateY(-1px); }
 .intro-cta:active { transform: translateY(1px); }
 .intro-cta .arrow { font-family: var(--font-display); font-size: 20px; font-style: normal; }
@@ -685,35 +696,20 @@ html, body {
 .goal-stream.is-static {
   overflow-x: auto; overflow-y: hidden;
   overscroll-behavior-x: contain;
+  padding-left: 20px;
 }
-.goal-stream.is-static .goal-stream-track { padding: 4px 20px 8px; }
-.stream-hint {
-  position: absolute; z-index: 3;
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-body); font-weight: 600; font-size: 10.5px;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--cream-ink);
-  background: rgba(16,41,31,0.82); backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,248,232,0.22);
-  padding: 5px 14px 5px 10px; border-radius: 999px; pointer-events: none;
-  opacity: 1; transition: opacity 420ms;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-.stream-hint.is-hidden { opacity: 0; }
-.goal-stream-wrap.is-rising .stream-hint { right: 12px; top: 50%; transform: translateY(-50%); white-space: nowrap; }
+.goal-stream.is-static .goal-stream-track { padding: 4px 0 8px; }
+/* Trailing padding on a scrolled flex child is clipped from the scrollable
+   region in this browser (a long-standing overflow quirk), so the end inset
+   is a real spacer element instead — padding alone left the last chip flush
+   against the edge once fully scrolled. Scoped to is-static only: is-rising
+   duplicates its content for a seamless loop, and a spacer there would throw
+   off the halfway-point math the loop relies on. */
+.goal-stream.is-static .goal-stream-track::after { content: ''; flex: 0 0 10px; }
 
-.goal-stream-empty {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--cream-ink-soft);
-  opacity: 0.5;
-  text-align: center;
-  padding: 20px 0 8px;
-  margin: 0;
-  font-style: italic;
-}
-
-/* goal chips (letter style) */
+/* goal chips (letter style) — background-image (tint + splash shape) is set
+   inline per-chip, keyed off the goal's own id, so each comment keeps a
+   stable, non-repeating color/shape combo regardless of its list position. */
 .goal-chip {
   flex: 0 0 auto;
   width: 220px;
@@ -721,31 +717,22 @@ html, body {
   padding: 12px 15px 14px; border-radius: 6px; text-align: left;
   background-color: rgba(255,248,232,0.05);
   background-repeat: no-repeat;
-  background-image: radial-gradient(ellipse 165% 135% at 8% -22%, var(--chip-tint, rgba(216,139,106,0.24)), transparent 78%);
   border: 1px solid rgba(255,248,232,0.14);
   box-shadow: inset 0 1px 0 rgba(255,248,232,0.06), 0 10px 22px -16px rgba(0,0,0,0.6);
 }
-.goal-chip:nth-child(2n) {
-  background-image: radial-gradient(ellipse 140% 165% at 108% 125%, var(--chip-tint, rgba(216,139,106,0.24)), transparent 74%);
-}
-.goal-chip:nth-child(3n) {
-  background-image: radial-gradient(circle at 92% -14%, var(--chip-tint, rgba(216,139,106,0.24)), transparent 66%);
-}
-.goal-chip:nth-child(4n) {
-  background-image: radial-gradient(ellipse 185% 100% at -8% 112%, var(--chip-tint, rgba(216,139,106,0.24)), transparent 76%);
-}
+.goal-chip.is-truncated { cursor: pointer; }
 .goal-chip-text {
   font-family: var(--font-body); font-size: 13.5px; line-height: 1.42;
   color: var(--cream-ink); margin: 0;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5;
+  overflow: hidden;
 }
-.goal-chip-more {
-  align-self: flex-start; appearance: none; border: none; background: none;
-  padding: 0; font-family: var(--font-body); font-size: 12px;
-  color: var(--terracotta); cursor: pointer; opacity: 0.9;
-}
-.goal-chip-more:hover { opacity: 1; text-decoration: underline; }
 .goal-chip-name {
   font-family: var(--font-display); font-size: 12.5px; color: var(--terracotta);
+}
+.goal-chip-more {
+  align-self: flex-start; font-family: var(--font-body); font-size: 11.5px;
+  font-weight: 600; color: var(--terracotta); opacity: 0.85;
 }
 /* Pending shimmer — shown while waiting for server to confirm the goal */
 .goal-chip.is-pending { position: relative; overflow: hidden; }
@@ -760,26 +747,101 @@ html, body {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* full goal text modal — opened from a truncated chip. Shares its sheet/backdrop
+   shell (shape, texture, animation) with the gallery viewer below. */
+.goal-modal-backdrop, .g-viewer-backdrop {
+  inset: 0; z-index: 30;
+  background: rgba(16,41,31,0); pointer-events: none;
+  transition: background 320ms cubic-bezier(0.22,1,0.36,1);
+}
+.goal-modal-backdrop { position: fixed; }
+.goal-modal-backdrop.show, .g-viewer-backdrop.show { background: rgba(16,41,31,0.8); pointer-events: auto; }
+.goal-modal, .g-viewer {
+  left: 0; right: 0; bottom: 0; z-index: 31;
+  display: flex; flex-direction: column;
+  border-top-left-radius: 28px; border-top-right-radius: 28px;
+  padding: 12px 0 0;
+  background-color: var(--forest-paper-deep);
+  background-image:
+    radial-gradient(ellipse 95% 45% at 50% -2%, rgba(216,139,106,0.22), transparent 62%),
+    url('/assets/textures/watercolor-paper-dark-green.webp'),
+    linear-gradient(180deg, var(--forest-paper) 0%, var(--forest-paper-deep) 72%);
+  background-size: cover, cover, cover;
+  box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,248,232,0.08);
+  transform: translateY(102%);
+  transition: transform 460ms cubic-bezier(0.22,1,0.36,1);
+  overflow: hidden;
+}
+.goal-modal { position: fixed; max-height: 70%; }
+.goal-modal.show, .g-viewer.show { transform: translateY(0); }
+.goal-modal-track, .g-viewer-track {
+  flex: 1; display: flex; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.goal-modal-track::-webkit-scrollbar, .g-viewer-track::-webkit-scrollbar { display: none; }
+.goal-modal-slide {
+  flex: 0 0 100%; scroll-snap-align: center; box-sizing: border-box;
+  display: flex; flex-direction: column; min-height: 0; position: relative;
+}
+.goal-modal-body {
+  flex: 1 1 auto; min-height: 0;
+  padding: 4px 26px 32px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
+}
+.goal-modal-body.hint-0 {
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+          mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+.goal-modal-body.hint-2 {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12px, #000 100%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 12px, #000 100%);
+}
+.goal-modal-text {
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  color: var(--cream-ink); margin: 0 0 12px; white-space: pre-wrap;
+}
+.goal-modal-name {
+  font-family: var(--font-display); font-size: 14px; color: var(--terracotta);
+}
+.goal-modal-scroll-hint {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-body); font-weight: 600; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-ink); background: rgba(16,41,31,0.82); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,248,232,0.22);
+  padding: 5px 14px; border-radius: 999px; pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .goal-modal-scroll-hint .scroll-hint-arrow { animation: scrollNudgeDown 1.7s cubic-bezier(0.22,1,0.36,1) infinite; }
+}
+@keyframes scrollNudgeDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+
 /* Loading skeleton for goal stream */
-.goal-skeleton-wrap { display: flex; flex-direction: row; gap: 10px; padding: 4px 20px 8px; margin-left: -22px; margin-right: -22px; overflow: hidden; }
+.goal-skeleton-wrap { display: flex; flex-direction: row; gap: 10px; padding: 4px 0 8px; margin-left: 0; margin-right: 0; width: 100%; overflow: hidden; box-sizing: border-box; }
 .goal-chip-skeleton {
-  flex: 0 0 auto; width: 220px;
+  flex: 1 1 160px; width: 220px; max-width: 220px; min-width: 0;
   display: flex; flex-direction: column; gap: 8px;
   padding: 14px 16px 16px; border-radius: 6px;
-  background-color: var(--forest-paper-light);
-  border: 1px solid rgba(255,248,232,0.16);
+  background-color: rgba(255,248,232,0.05);
+  border: 1px solid rgba(255,248,232,0.14);
   position: relative; overflow: hidden;
+  box-sizing: border-box;
 }
 .goal-chip-skeleton::after {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.14) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,248,232,0.08) 50%, transparent 100%);
   background-size: 200% 100%;
-  animation: chip-shimmer 1.8s ease-in-out infinite;
+  animation: chip-shimmer 2.2s ease-in-out infinite;
 }
 .goal-skel-line {
   display: block; height: 11px; border-radius: 4px;
-  background: rgba(255,248,232,0.22);
+  background: rgba(255,248,232,0.16);
 }
 
 /* toast */
@@ -801,11 +863,6 @@ html, body {
 
 /* ── Gallery (mosaic) ── */
 .g-gallery { width: 100%; margin: 40px 0 0; }
-.exit-section-divider {
-  width: 100%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,248,232,0.04) 30%, rgba(255,248,232,0.04) 70%, transparent);
-  margin: 16px 0 16px;
-}
 .g-gallery-head {
   font-family: var(--font-body); font-size: 11px; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
@@ -843,49 +900,24 @@ html, body {
 }
 .g-cell:active .g-cell-img { opacity: 0.7; }
 
-/* gallery viewer */
-.g-viewer-backdrop {
-  position: absolute; inset: 0; z-index: 30;
-  background: rgba(16,41,31,0); pointer-events: none;
-  transition: background 320ms cubic-bezier(0.22,1,0.36,1);
-}
-.g-viewer-backdrop.show { background: rgba(16,41,31,0.8); pointer-events: auto; }
-.g-viewer {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 31;
-  height: 88%; display: flex; flex-direction: column;
-  border-top-left-radius: 28px; border-top-right-radius: 28px;
-  padding: 12px 0 0;
-  background-color: var(--forest-paper-deep);
-  background-image:
-    radial-gradient(ellipse 95% 45% at 50% -2%, rgba(216,139,106,0.22), transparent 62%),
-    url('/assets/textures/watercolor-paper-dark-green.webp'),
-    linear-gradient(180deg, var(--forest-paper) 0%, var(--forest-paper-deep) 72%);
-  background-size: cover, cover, cover;
-  box-shadow: 0 -24px 64px -8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,248,232,0.08);
-  transform: translateY(102%);
-  transition: transform 460ms cubic-bezier(0.22,1,0.36,1);
-  overflow: hidden;
-}
-.g-viewer.show { transform: translateY(0); }
+/* gallery viewer — shares its sheet/backdrop shell with .goal-modal above */
+.g-viewer-backdrop { position: absolute; }
+.g-viewer { position: absolute; height: 88%; }
 .g-viewer .sheet-handle { margin: 0 auto 6px; }
 .g-viewer-close { top: 14px; right: 14px; }
-.g-viewer-track {
-  flex: 1; display: flex; overflow-x: auto; overflow-y: hidden;
-  scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-}
-.g-viewer-track::-webkit-scrollbar { display: none; }
 .g-viewer-slide {
-  position: relative; flex: 0 0 100%; scroll-snap-align: center;
-  display: grid; place-items: center; padding: 12px 20px 4px;
+  position: relative; flex: 0 0 100%; min-height: 0; scroll-snap-align: center;
+  display: flex; align-items: center; justify-content: center; padding: 12px 20px 4px;
+  box-sizing: border-box;
 }
 .g-viewer-wash {
   position: absolute; width: 80%; aspect-ratio: 1/1; border-radius: 50%;
   background: radial-gradient(circle, rgba(216,139,106,0.2), transparent 62%);
   pointer-events: none;
 }
-.g-viewer-slide img { position: relative; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 36px rgba(0,0,0,0.45)); }
+.g-viewer-slide img { position: relative; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 18px 36px rgba(0,0,0,0.45)); }
 .g-viewer-foot {
-  flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 10px 18px 22px;
 }
 .g-viewer-cap { flex: 1; min-width: 0; }
@@ -919,7 +951,6 @@ html, body {
     max-width: 480px;
   }
   .intro-title { font-size: 52px; }
-  .intro-bio-name { font-size: 22px; }
   .intro-bio-line { font-size: 14px; }
 
   /* Bottom sheet stays map-width, managed by base rules */
@@ -936,6 +967,8 @@ html, body {
     margin-right: 0;
     width: 100%;
     border-radius: 12px;
+    border-left: 1px solid rgba(255,248,232,0.12);
+    border-right: 1px solid rgba(255,248,232,0.12);
   }
 }
 
@@ -945,6 +978,10 @@ html, body {
     max-width: 600px;
   }
   .intro-title { font-size: 62px; }
+  .intro-bio-lead { font-size: 28px; }
+  .intro-bio-line { font-size: 15px; }
+  .intro-bio-card .stop-kicker { font-size: 11px; }
+  .intro-cta { font-size: 19px; height: 56px; }
 
   /* sheet width = map width, already handled by base rule */
 
@@ -955,6 +992,8 @@ html, body {
     width: min(720px, 90vw);
     transform: translateX(-50%);
   }
+  .trail-step { font-size: 14px; }
+  .trail-hint { font-size: 15px; }
   .exit-back {
     left: calc(50% - min(360px, 45vw) + 8px);
   }
@@ -968,12 +1007,19 @@ html, body {
   .g-mosaic .g-gallery-body {
     margin: 0 -32px;
   }
+
+  /* Screen 3 card modals: cap width like the stop sheet on screen 2,
+     instead of stretching edge-to-edge on wide viewports. */
+  .goal-modal, .g-viewer {
+    max-width: 480px;
+    margin: 0 auto;
+  }
 }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .sheet, .intro, .map-stop, .g-viewer, .trail-hint .tap-dot,
-  .scroll-hint-arrow, .stream-hint-arrow {
+  .scroll-hint-arrow, .intro-cta, .intro-reveal {
     animation: none !important;
     transition-duration: 80ms !important;
   }

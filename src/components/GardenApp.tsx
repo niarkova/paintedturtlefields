@@ -26,24 +26,34 @@ interface Props {
 // src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
   // turtles
-  { src: '/assets/photos/general/turtle-1.webp',   name: 'Nina & a visitor',   note: 'a painted turtle'          },
-  { src: '/assets/photos/general/turtle-2.webp',   name: 'Painted turtles',    note: 'nesting in the woods'      },
-  // dogs
-  { src: '/assets/photos/general/dog-1.webp',      name: 'Chaos & Mayhem',     note: 'on the patio at dusk'      },
-  { src: '/assets/photos/general/dog-2.webp',      name: 'Chaos',              note: 'helping in the garden'     },
-  // harvest
-  { src: '/assets/photos/general/harvest-1.webp',  name: 'The harvest',        note: 'from the veggie garden'    },
-  // flowers
-  { src: '/assets/photos/general/flower-1.webp',   name: 'Dahlias',            note: 'in early fall'             },
-  { src: '/assets/photos/general/flower-2.webp',   name: 'Zinnias',            note: 'by the mailbox arch'       },
-  { src: '/assets/photos/general/flower-3.webp',   name: 'Lilacs',             note: 'picked from the hedge'     },
-  // garden / patio
-  { src: '/assets/photos/general/garden-1.webp',   name: 'Nina',               note: 'among the lilies'          },
-  { src: '/assets/photos/general/garden-2.webp',   name: 'The sauna garden',   note: 'a place to rest'           },
-  // garden — before & after
-  { src: '/assets/photos/general/garden-3.webp',   name: 'Nina',               note: 'in the patio garden'       },
-  { src: '/assets/photos/general/before-1.webp',   name: 'How it started',     note: 'early spring'              },
-  { src: '/assets/photos/general/before-2.webp',   name: 'Breaking ground',    note: 'building the sauna garden' },
+  { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'A painted turtle'          },
+  { src: '/assets/photos/general/02-turtles-2.webp',      name: 'Painted turtles',    note: 'Nesting in the woods'      },
+  // people
+  { src: '/assets/photos/general/03-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
+  // veggie garden — oldest to newest
+  { src: '/assets/photos/general/04-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
+  { src: '/assets/photos/general/05-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
+  { src: '/assets/photos/general/06-veggie-garden-3.webp', name: 'The arbor',         note: 'Freshly built, daffodils blooming' },
+  { src: '/assets/photos/general/07-veggie-garden-4.webp', name: 'Chaos',             note: 'Watching the first seedlings' },
+  { src: '/assets/photos/general/08-veggie-garden-5.webp', name: 'The veggie garden', note: 'Kale and marigolds thriving' },
+  { src: '/assets/photos/general/09-veggie-garden-6.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
+  { src: '/assets/photos/general/10-veggie-garden-7.webp', name: 'The harvest',       note: 'From the veggie garden'    },
+  { src: '/assets/photos/general/11-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
+  // patio garden — oldest to newest
+  { src: '/assets/photos/general/12-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
+  { src: '/assets/photos/general/13-patio-garden-2.webp', name: 'Roadside blooms',    note: 'And a curious dog'         },
+  { src: '/assets/photos/general/14-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
+  { src: '/assets/photos/general/15-patio-garden-4.webp', name: 'Chaos & Mayhem',     note: 'Our dogs, last year'       },
+  { src: '/assets/photos/general/16-patio-garden-5.webp', name: 'Nina',               note: 'In the patio garden'       },
+  // sauna garden — oldest to newest
+  { src: '/assets/photos/general/17-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
+  { src: '/assets/photos/general/18-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
+  // more from the garden
+  { src: '/assets/photos/general/19-flower-1.webp',       name: 'Dahlias',            note: 'In early fall'             },
+  { src: '/assets/photos/general/20-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
+  // last
+  { src: '/assets/photos/general/21-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
+  { src: '/assets/photos/general/22-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
 ];
 
 const GAL_TINTS = [
@@ -75,6 +85,31 @@ const PATH_D = [
   'C 255 248, 225 155, 93 130',
 ].join(' ');
 
+// Route-draw timing, shared between the SMIL path animation and the pin reveal below.
+const ROUTE_DRAW_DELAY_MS = 1000;
+const ROUTE_DRAW_DUR_MS = 3800;
+
+// Splits PATH_D into its drawn segments and measures, via the SVG geometry
+// API, what fraction of the total path length each stop sits at — so each
+// pin can light up exactly when the animated route line reaches it.
+function getStopPathFractions(pathD: string): number[] {
+  const segments = pathD.trim().split(/(?=[MQC])/).map(s => s.trim()).filter(Boolean);
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const measure = (d: string) => {
+    const p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', d);
+    return p.getTotalLength();
+  };
+  const total = measure(pathD);
+  const fractions: number[] = [];
+  let cumulative = segments[0];
+  for (let i = 1; i < segments.length; i++) {
+    cumulative += ' ' + segments[i];
+    fractions.push(total > 0 ? measure(cumulative) / total : 1);
+  }
+  return fractions;
+}
+
 const MAP_CREAM = (a: number) => `rgba(255,248,232,${a})`;
 const MAP_DEEP  = (a: number) => `rgba(16,41,31,${a})`;
 
@@ -98,9 +133,29 @@ const GOAL_TINTS = [
   'rgba(216,139,106,0.34)', 'rgba(242,201,76,0.26)',
   'rgba(126,154,96,0.34)',  'rgba(93,173,226,0.28)',
   'rgba(199,125,166,0.30)', 'rgba(182,212,155,0.30)',
+  'rgba(224,163,60,0.30)',  'rgba(60,142,114,0.32)',
+  'rgba(199,125,166,0.34)', 'rgba(210,110,110,0.28)',
 ];
 
-const NINA_BIO = "We moved here in 2020 and have added numerous garden spaces since.";
+// Splash shape/position for each goal chip's background glow.
+const GOAL_SPLASHES = [
+  { shape: 'ellipse 165% 135% at 8% -22%',   stop: 78 },
+  { shape: 'ellipse 140% 165% at 108% 125%', stop: 74 },
+  { shape: 'circle at 92% -14%',             stop: 66 },
+  { shape: 'ellipse 185% 100% at -8% 112%',  stop: 76 },
+  { shape: 'ellipse 150% 120% at 50% 108%',  stop: 72 },
+];
+
+// Stable per-comment hash — same comment always lands on the same
+// tint/splash combo, and it's tied to the comment's own id rather than its
+// position in the list, so the colors don't repeat in a visible rhythm.
+function hashSeed(seed: string): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+const NINA_BIO = "We moved here in 2020 and have added numerous garden spaces.";
 const NINA_BIO3 = "Painted turtles come up from the wetlands each summer to nest in the sandy soil. They're one of many creatures we share this special land with.";
 
 const SHEET_TOP_PCT = 24;
@@ -111,15 +166,6 @@ function ChevronGlyph({ dir }: { dir: 'left' | 'right' }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
       <path d={d} fill="none" stroke="currentColor" strokeWidth="1.6"
-            strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function HomeGlyph() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M2.5 7.5 L8 2.5 L13.5 7.5 M4 6.4 L4 13 L12 13 L12 6.4"
-            fill="none" stroke="currentColor" strokeWidth="1.4"
             strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -145,72 +191,31 @@ function MailGlyph() {
   );
 }
 
-// ─── iOS frame ────────────────────────────────────────────────────
-function IOSDevice({ children }: { children: React.ReactNode }) {
-  const [scale, setScale] = useState(1);
-  useEffect(() => {
-    function update() {
-      const pad = 32;
-      const sw = (window.innerWidth  - pad * 2) / 402;
-      const sh = (window.innerHeight - pad * 2) / 874;
-      setScale(Math.min(1, Math.min(sw, sh)));
-    }
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-
-  return (
-    <div style={{ display:'flex', justifyContent:'center', alignItems:'center', minHeight:'100vh', background:'#0b1a12' }}>
-      <div style={{ transform:`scale(${scale})`, transformOrigin:'center', transition:'transform 200ms ease' }}>
-        <div className="ios-device">
-          {/* Dynamic island */}
-          <div className="ios-island" />
-          {/* Status bar */}
-          <div className="ios-status">
-            <span className="ios-time">9:41</span>
-            <div className="ios-icons">
-              <svg width="17" height="12" viewBox="0 0 19 12">
-                <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#fff"/>
-                <rect x="4.8" y="5"   width="3.2" height="7"   rx="0.7" fill="#fff"/>
-                <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#fff"/>
-                <rect x="14.4" y="0"  width="3.2" height="12"  rx="0.7" fill="#fff"/>
-              </svg>
-              <svg width="26" height="12" viewBox="0 0 27 13">
-                <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#fff" strokeOpacity="0.35" fill="none"/>
-                <rect x="2" y="2" width="20" height="9" rx="2" fill="#fff"/>
-                <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill="#fff" fillOpacity="0.4"/>
-              </svg>
-            </div>
-          </div>
-          {/* Content */}
-          <div className="ios-content">
-            {children}
-          </div>
-          {/* Home indicator */}
-          <div className="ios-home-bar" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Map: Splotch marker ──────────────────────────────────────────
 // ─── Map pin components ───────────────────────────────────────────
 const PIN_R = 12, PIN_LIFT = 20, NUM_SCALE = 1.25;
 const STOP_COLOR = '#2E7D5B';
 const HANKEN = "'Hanken Grotesk', system-ui, sans-serif";
 
-function NumberPin({ n, active, visited }: { n: number; active: boolean; visited: boolean }) {
+function NumberPin({ n, active, visited, revealed, spotlight }: { n: number; active: boolean; visited: boolean; revealed: boolean; spotlight?: boolean }) {
   const r = PIN_R, lift = PIN_LIFT;
   const cy = -lift - r;
   const border = visited ? 'none' : 'double';
+  // Dimming is only for the initial route-draw reveal — once a pin has
+  // been revealed it stays at full opacity regardless of active/visited
+  // state; the double-ring border is what marks unvisited stops.
+  const opacity = revealed ? 1 : 0.35;
   return (
-    <g opacity={visited && !active ? 0.5 : 1} style={{ transition: 'opacity 400ms ease' }}>
+    <g opacity={opacity} style={{ transition: 'opacity 500ms ease' }}>
       <ellipse cx="0" cy="1.5" rx={r * 0.5} ry="2" fill={MAP_DEEP(0.4)} />
       {/* stem tail */}
       <line x1="0" y1={cy + r} x2="0" y2="0"
             stroke={MAP_CREAM(0.95)} strokeWidth="1" strokeLinecap="round" />
+      {/* subtle "look here first" pulse — only before any stop has been opened */}
+      {spotlight && revealed && (
+        <circle className="map-stop-spotlight" cx="0" cy={cy} r={r + 6} fill="none"
+                stroke={MAP_CREAM(0.7)} strokeWidth="1.4" />
+      )}
       {/* double border outer ring */}
       {border === 'double' && (
         <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
@@ -253,15 +258,15 @@ function ParkingIcon() {
   );
 }
 
-function MapStop({ pos, n, label, title, active, visited, onClick }: {
+function MapStop({ pos, n, label, title, active, visited, revealed, spotlight, onClick }: {
   pos: {x:number;y:number}; n: number; label: string; title: string;
-  active: boolean; visited: boolean; onClick: () => void;
+  active: boolean; visited: boolean; revealed: boolean; spotlight?: boolean; onClick: () => void;
 }) {
   const { x, y } = pos;
   const labelY = y + 12.5 + 2;
   const top = y - PIN_LIFT - PIN_R * 2 - 8;
   return (
-    <g className={`map-stop ${active ? 'active' : ''} ${visited ? 'visited' : ''}`}
+    <g className="map-stop"
        role="button" tabIndex={0}
        aria-label={`Stop ${n}: ${title}${visited ? ' (visited)' : ''}`}
        style={{ cursor: 'pointer' }}
@@ -269,7 +274,7 @@ function MapStop({ pos, n, label, title, active, visited, onClick }: {
        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
       <g transform={`translate(${x} ${y})`}>
-        <NumberPin n={n} active={active} visited={visited} />
+        <NumberPin n={n} active={active} visited={visited} revealed={revealed} spotlight={spotlight} />
       </g>
       <StopLabel x={x} y={labelY} text={label} />
     </g>
@@ -285,16 +290,43 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   active: boolean;
 }) {
   const revealRef = useRef<SVGAnimateElement>(null);
+  const [pathFractions] = useState(() => getStopPathFractions(PATH_D));
+  const [pinsRevealed, setPinsRevealed] = useState<boolean[]>(() => stops.map(() => false));
+  const hasPlayedRef = useRef(false);
 
-  // Replay the route-draw each time the map view becomes active. The SVG is
-  // always mounted (under the intro), so without this the SMIL timeline would
-  // run once on page load — before the user ever sees the map.
+  // Play the route-draw once, the first time the map view becomes active. The
+  // SVG is always mounted (under the intro), so without gating this the SMIL
+  // timeline would run once on page load — before the user ever sees the map.
+  // Each pin fades from slightly transparent to fully opaque the moment the
+  // drawn line reaches its position, so the reveal reads as one continuous
+  // motion. On later visits the route stays drawn (SMIL freezes at its end
+  // value) and pins are shown already-revealed, with no replay.
   useEffect(() => {
     if (!active) return;
+    if (hasPlayedRef.current) {
+      setPinsRevealed(stops.map(() => true));
+      return;
+    }
+    hasPlayedRef.current = true;
+    // The route line itself renders instantly for reduced-motion users (see
+    // the CSS override that disables the SMIL draw animation) — match that
+    // by revealing every pin immediately instead of staggering them.
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setPinsRevealed(stops.map(() => true));
+      return;
+    }
+    setPinsRevealed(stops.map(() => false));
+    const timers: ReturnType<typeof setTimeout>[] = [];
     // Give the screen transition time to settle, then draw the trail.
-    // Delay replays every time the user returns to the map.
-    const t = setTimeout(() => revealRef.current?.beginElement(), 1000);
-    return () => clearTimeout(t);
+    timers.push(setTimeout(() => revealRef.current?.beginElement(), ROUTE_DRAW_DELAY_MS));
+    stops.forEach((_, i) => {
+      // Falls back to a full reveal if PATH_D ever has fewer segments than stops.
+      const frac = pathFractions[i] ?? 1;
+      timers.push(setTimeout(() => {
+        setPinsRevealed(prev => prev.map((v, j) => (j === i ? true : v)));
+      }, ROUTE_DRAW_DELAY_MS + frac * ROUTE_DRAW_DUR_MS));
+    });
+    return () => timers.forEach(clearTimeout);
   }, [active]);
 
   return (
@@ -307,7 +339,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
                 strokeLinecap="round" strokeLinejoin="round"
                 strokeDasharray="100 100" strokeDashoffset="100">
             <animate ref={revealRef}
-                     attributeName="stroke-dashoffset" from="100" to="0" dur="3.8s"
+                     attributeName="stroke-dashoffset" from="100" to="0" dur={`${ROUTE_DRAW_DUR_MS}ms`}
                      begin="indefinite" fill="freeze" calcMode="linear" />
           </path>
         </mask>
@@ -335,6 +367,8 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
           <MapStop key={s.id}
             pos={pos} n={s.n} label={pos.label} title={s.title}
             active={activeIdx === i} visited={visited.has(i)}
+            revealed={pinsRevealed[i] ?? false}
+            spotlight={i === 0 && visited.size === 0}
             onClick={() => onSelect(i, pos)} />
         );
       })}
@@ -345,7 +379,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
         <circle r="14" fill={MAP_DEEP(0.55)} stroke={MAP_CREAM(0.22)} strokeWidth="0.8" />
         <path d="M 0 -10 L 3 0 L 0 10 L -3 0 Z" fill="var(--terracotta)" />
         <path d="M 0 10 L 3 0 L -3 0 Z" fill={MAP_CREAM(0.3)} />
-        <text y="-18" textAnchor="middle" fontFamily="var(--font-label)" fontSize="9"
+        <text y="-18" textAnchor="middle" fontFamily="var(--font-body)" fontSize="9"
               fill="#10291F" letterSpacing="0.16em">N</text>
       </g>
     </svg>
@@ -555,7 +589,9 @@ const gallerySrc = (g: { src?: string; img?: string; name: string; note: string;
   g.src ?? `/assets/watercolor/${g.img}.webp`;
 const gallerySrcSm = (g: Parameters<typeof gallerySrc>[0]) =>
   gallerySrc(g).replace('.webp', '-sm.webp');
-const SCREEN_3_IMAGES = GALLERY.map(gallerySrc);
+// Thumbnails only — full-size photos load on demand when a visitor actually
+// opens one in the viewer, instead of downloading the whole gallery upfront.
+const SCREEN_3_IMAGES = GALLERY.map(gallerySrcSm);
 
 function preloadImages(urls: string[]) {
   return Promise.all(urls.map(src => new Promise<void>(resolve => {
@@ -583,13 +619,15 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
     // Screen 1 must be painted before we reveal; screens 2 & 3 warm in parallel
     // so they're ready before the visitor taps through — critical on slow links.
     preloadImages(SCREEN_1_IMAGES).then(finish);
-    preloadImages(SCREEN_2_IMAGES).then(() => preloadImages(SCREEN_3_IMAGES));
+    preloadImages(SCREEN_2_IMAGES);
+    preloadImages(SCREEN_3_IMAGES);
     const safety = setTimeout(finish, 6000);
 
     // Re-preload after phone wakes from sleep so images are warm again
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
-        preloadImages(SCREEN_2_IMAGES).then(() => preloadImages(SCREEN_3_IMAGES));
+        preloadImages(SCREEN_2_IMAGES);
+        preloadImages(SCREEN_3_IMAGES);
       }
     };
     document.addEventListener('visibilitychange', onVisible);
@@ -640,13 +678,205 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
 }
 
 // ─── Goals board ─────────────────────────────────────────────────
-function GoalChip({ g, tint, pending }: { g: SeedGoal; tint: string; pending?: boolean }) {
+function GoalChip({ g, pending, onExpand }: { g: SeedGoal; pending?: boolean; onExpand: (g: SeedGoal) => void }) {
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const [truncated, setTruncated] = useState(false);
+  const seed = String(g.id);
+  const tint = GOAL_TINTS[hashSeed(seed + 't') % GOAL_TINTS.length];
+  const splash = GOAL_SPLASHES[hashSeed(seed + 's') % GOAL_SPLASHES.length];
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    setTruncated(el.scrollHeight > el.clientHeight + 1);
+  }, [g.text]);
+
   return (
-    <div className={`goal-chip idea-letter is-expanded${pending ? ' is-pending' : ''}`}
-         style={{ '--chip-tint': tint } as React.CSSProperties}>
-      <p className="goal-chip-text">{g.text}</p>
+    <div className={`goal-chip idea-letter is-expanded${pending ? ' is-pending' : ''}${truncated ? ' is-truncated' : ''}`}
+         style={{ backgroundImage: `radial-gradient(${splash.shape}, ${tint}, transparent ${splash.stop}%)` }}
+         role={truncated ? 'button' : undefined}
+         tabIndex={truncated ? 0 : undefined}
+         onClick={truncated ? () => onExpand(g) : undefined}
+         onKeyDown={truncated ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onExpand(g); } } : undefined}>
+      <p className="goal-chip-text" ref={textRef}>{g.text}</p>
       {g.name && <span className="goal-chip-name">— {g.name}</span>}
+      {truncated && <span className="goal-chip-more">read more</span>}
       {pending && <span className="goal-chip-pending" aria-label="Saving…" />}
+    </div>
+  );
+}
+
+function GoalDetailModal({ goals, index, onClose, onIndex }: {
+  goals: SeedGoal[]; index: number | null; onClose: () => void; onIndex: (i: number) => void;
+}) {
+  const open = index !== null;
+  const [shown, setShown] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const settling = useRef(false);
+
+  useEffect(() => {
+    let a: number, b: number;
+    if (open) {
+      setShown(false);
+      a = requestAnimationFrame(() => { b = requestAnimationFrame(() => setShown(true)); });
+    }
+    return () => { cancelAnimationFrame(a); cancelAnimationFrame(b); };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || index === null) return;
+    const el = trackRef.current;
+    if (!el) return;
+    settling.current = true;
+    const id = requestAnimationFrame(() => {
+      el.scrollLeft = index * el.clientWidth;
+      requestAnimationFrame(() => { settling.current = false; });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [open]);
+
+  function close() { setShown(false); setTimeout(onClose, 300); }
+  function step(d: number) {
+    if (index === null) return;
+    const el = trackRef.current;
+    if (!el) return;
+    const len = goals.length;
+    const ni = (index + d + len) % len;
+    const wrapped = (d > 0 && ni < index) || (d < 0 && ni > index);
+    el.scrollTo({ left: ni * el.clientWidth, behavior: wrapped ? 'auto' : 'smooth' });
+  }
+  function onScroll() {
+    if (settling.current || !trackRef.current || index === null) return;
+    const el = trackRef.current;
+    const i = Math.round(el.scrollLeft / el.clientWidth);
+    if (i !== index && i >= 0 && i < goals.length) onIndex(i);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') step(1);
+      else if (e.key === 'ArrowLeft') step(-1);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, index]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = handleRef.current;
+    const modal = modalRef.current;
+    if (!handle || !modal) return;
+
+    let startY = 0;
+    let active = false;
+    let dy = 0;
+
+    function onStart(e: TouchEvent) {
+      startY = e.touches[0].clientY;
+      active = true;
+      dy = 0;
+    }
+
+    function onMove(e: TouchEvent) {
+      if (!active) return;
+      dy = e.touches[0].clientY - startY;
+      if (dy < 0) { dy = 0; return; }
+      e.preventDefault();
+      modal!.style.transition = 'none';
+      modal!.style.transform = `translateY(${dy}px)`;
+    }
+
+    function onEnd() {
+      if (!active) return;
+      active = false;
+      modal!.style.transition = '';
+      if (dy > 80) {
+        modal!.style.transform = '';
+        close();
+      } else {
+        modal!.style.transform = 'translateY(0)';
+        requestAnimationFrame(() => {
+          modal!.style.transition = 'transform 280ms cubic-bezier(0.22,1,0.36,1)';
+          modal!.style.transform = 'translateY(0)';
+          setTimeout(() => { modal!.style.transition = ''; modal!.style.transform = ''; }, 290);
+        });
+      }
+    }
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd, { passive: true });
+    handle.addEventListener('touchcancel', onEnd, { passive: true });
+
+    return () => {
+      handle.removeEventListener('touchstart', onStart);
+      handle.removeEventListener('touchmove', onMove);
+      handle.removeEventListener('touchend', onEnd);
+      handle.removeEventListener('touchcancel', onEnd);
+    };
+  }, [open]);
+
+  if (!open || index === null) return null;
+
+  return (
+    <>
+      <div className={`goal-modal-backdrop ${shown ? 'show' : ''}`} onClick={close} />
+      <div ref={modalRef} className={`goal-modal ${shown ? 'show' : ''}`} role="dialog" aria-modal="true" aria-label="Garden goal">
+        <div ref={handleRef} className="sheet-handle" />
+        <button className="sheet-close goal-modal-close" onClick={close} aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </button>
+        <div className="goal-modal-track" ref={trackRef} onScroll={onScroll}>
+          {goals.map((g) => (
+            <GoalModalSlide key={g.id} goal={g} />
+          ))}
+        </div>
+        <div className="g-viewer-foot">
+          <button className="g-vbtn" onClick={() => step(-1)} aria-label="Previous goal">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3 L5 8 L10 13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <span className="g-viewer-count">{index + 1}<i>/</i>{goals.length}</span>
+          <button className="g-vbtn" onClick={() => step(1)} aria-label="Next goal">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3 L11 8 L6 13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function GoalModalSlide({ goal }: { goal: SeedGoal }) {
+  const [scrollState, setScrollState] = useState(0); // 0 = at top, 1 = middle, 2 = at bottom
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  function updateScrollState() {
+    const el = bodyRef.current;
+    if (!el) return;
+    const max = el.scrollHeight - el.clientHeight;
+    if (max <= 4) { setScrollState(2); return; }
+    if (el.scrollTop >= max - 8) setScrollState(2);
+    else if (el.scrollTop > 6) setScrollState(1);
+    else setScrollState(0);
+  }
+  useEffect(() => { updateScrollState(); }, []);
+
+  return (
+    <div className="goal-modal-slide">
+      <div className={`goal-modal-body hint-${scrollState}`} ref={bodyRef} onScroll={updateScrollState}>
+        <p className="goal-modal-text">{goal.text}</p>
+        {goal.name && <span className="goal-modal-name">— {goal.name}</span>}
+      </div>
+      {scrollState !== 2 && (
+        <span className="goal-modal-scroll-hint" aria-hidden="true">
+          scroll for more <span className="scroll-hint-arrow">↓</span>
+        </span>
+      )}
     </div>
   );
 }
@@ -670,13 +900,11 @@ function GoalStreamSkeleton() {
   );
 }
 
-function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: number | null }) {
+function GoalStream({ goals, pendingId, onExpand }: { goals: SeedGoal[]; pendingId?: number | null; onExpand: (g: SeedGoal) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const pauseUntil = useRef(0);
   const animated = goals.length > 5;
-  const [showHint, setShowHint] = useState(animated);
 
-  useEffect(() => { setShowHint(animated); }, [animated]);
   useEffect(() => {
     if (!animated) return;
     const el = ref.current;
@@ -694,7 +922,7 @@ function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: numbe
       raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);
-    const pause = () => { pauseUntil.current = Date.now() + 3200; setShowHint(false); };
+    const pause = () => { pauseUntil.current = Date.now() + 3200; };
     el.addEventListener('pointerdown', pause);
     el.addEventListener('wheel', pause, { passive: true });
     el.addEventListener('touchmove', pause, { passive: true });
@@ -713,7 +941,7 @@ function GoalStream({ goals, pendingId }: { goals: SeedGoal[]; pendingId?: numbe
       <div className={`goal-stream ${animated ? 'is-rising' : 'is-static'}`} ref={ref}>
         <div className="goal-stream-track">
           {items.map((g, i) => (
-            <GoalChip key={i} g={g} tint={GOAL_TINTS[i % GOAL_TINTS.length]} pending={pendingId !== null && g.id === pendingId} />
+            <GoalChip key={i} g={g} pending={pendingId !== null && g.id === pendingId} onExpand={onExpand} />
           ))}
         </div>
       </div>
@@ -738,6 +966,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [toast, setToast] = useState<{msg:string;kind:string}|null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
   // Tracks the text of the optimistic entry so we can dedupe when server echoes it back
   const pendingTextRef = useRef<string | null>(null);
 
@@ -807,7 +1036,7 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isTourOpen()) { pushToast('Opens July 10 — see you on tour day!', 'info'); return; }
+    if (!isTourOpen()) { pushToast('Not open yet but thanks for testing', 'info'); return; }
     const g = text.trim();
     if (!g) { pushToast('Write your goal first', 'error'); return; }
     if (overLimit) { pushToast('Please shorten your goal to 300 characters', 'error'); return; }
@@ -869,7 +1098,8 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
         <p className="goals-stream-head">From the community</p>
         {goals.length === 0
           ? <GoalStreamSkeleton />
-          : <GoalStream goals={streamGoals} pendingId={pendingId} />
+          : <GoalStream goals={streamGoals} pendingId={pendingId}
+                        onExpand={(g) => setExpandedIdx(goals.findIndex(x => x.id === g.id))} />
         }
       </div>
       {toast && (
@@ -877,6 +1107,8 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
           <span className="toast-msg">{toast.msg}</span>
         </div>
       )}
+      <GoalDetailModal goals={goals} index={expandedIdx}
+                       onClose={() => setExpandedIdx(null)} onIndex={setExpandedIdx} />
     </section>
   );
 }
@@ -917,8 +1149,10 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
     if (index === null) return;
     const el = trackRef.current;
     if (!el) return;
-    const ni = Math.max(0, Math.min(items.length - 1, index + d));
-    el.scrollTo({ left: ni * el.clientWidth, behavior: 'smooth' });
+    const len = items.length;
+    const ni = (index + d + len) % len;
+    const wrapped = (d > 0 && ni < index) || (d < 0 && ni > index);
+    el.scrollTo({ left: ni * el.clientWidth, behavior: wrapped ? 'auto' : 'smooth' });
   }
   function onScroll() {
     if (settling.current || !trackRef.current || index === null) return;
@@ -961,15 +1195,14 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
           ))}
         </div>
         <div className="g-viewer-foot">
-          <button className="g-vbtn" onClick={() => step(-1)} disabled={index <= 0} aria-label="Previous">
+          <button className="g-vbtn" onClick={() => step(-1)} aria-label="Previous">
             <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3 L5 8 L10 13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <div className="g-viewer-cap">
-            <span className="g-viewer-name">{cur.name}</span>
             <span className="g-viewer-note">{cur.note}</span>
           </div>
           <span className="g-viewer-count">{index + 1}<i>/</i>{items.length}</span>
-          <button className="g-vbtn" onClick={() => step(1)} disabled={index >= items.length - 1} aria-label="Next">
+          <button className="g-vbtn" onClick={() => step(1)} aria-label="Next">
             <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3 L11 8 L6 13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>

@@ -7,9 +7,7 @@ const stops = defineCollection({
     number: z.number(),
     name: z.string(),
     subtitle: z.string(),
-    mapLabel: z.string().optional(),
     plants: z.array(z.string()),
-    chipColors: z.array(z.string()),
     accent: z.string().optional(),
   }),
 });
