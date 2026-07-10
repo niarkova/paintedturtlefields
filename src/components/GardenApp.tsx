@@ -27,33 +27,30 @@ interface Props {
 const GALLERY = [
   // turtles
   { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'A painted turtle'          },
-  { src: '/assets/photos/general/02-turtles-2.webp',      name: 'Painted turtles',    note: 'Nesting in the woods'      },
   // people
-  { src: '/assets/photos/general/03-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
+  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
   // veggie garden — oldest to newest
-  { src: '/assets/photos/general/04-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
-  { src: '/assets/photos/general/05-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
-  { src: '/assets/photos/general/06-veggie-garden-3.webp', name: 'The arbor',         note: 'Freshly built, daffodils blooming' },
-  { src: '/assets/photos/general/07-veggie-garden-4.webp', name: 'Chaos',             note: 'Watching the first seedlings' },
-  { src: '/assets/photos/general/08-veggie-garden-5.webp', name: 'The veggie garden', note: 'Kale and marigolds thriving' },
-  { src: '/assets/photos/general/09-veggie-garden-6.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
-  { src: '/assets/photos/general/10-veggie-garden-7.webp', name: 'The harvest',       note: 'From the veggie garden'    },
-  { src: '/assets/photos/general/11-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
+  { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
+  { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
+  { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',         note: 'Freshly built, daffodils blooming' },
+  { src: '/assets/photos/general/06-veggie-garden-4.webp', name: 'Chaos',             note: 'Watching the first seedlings' },
+  { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
+  { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
   // patio garden — oldest to newest
-  { src: '/assets/photos/general/12-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
-  { src: '/assets/photos/general/13-patio-garden-2.webp', name: 'Roadside blooms',    note: 'And a curious dog'         },
-  { src: '/assets/photos/general/14-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
-  { src: '/assets/photos/general/15-patio-garden-4.webp', name: 'Chaos & Mayhem',     note: 'Our dogs, last year'       },
-  { src: '/assets/photos/general/16-patio-garden-5.webp', name: 'Nina',               note: 'In the patio garden'       },
+  { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
+  { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Roadside blooms',    note: 'And a curious dog'         },
+  { src: '/assets/photos/general/11-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
+  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Chaos & Mayhem',     note: 'Our dogs, last year'       },
+  { src: '/assets/photos/general/13-patio-garden-5.webp', name: 'Nina',               note: 'In the patio garden'       },
   // sauna garden — oldest to newest
-  { src: '/assets/photos/general/17-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
-  { src: '/assets/photos/general/18-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
+  { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
+  { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
   // more from the garden
-  { src: '/assets/photos/general/19-flower-1.webp',       name: 'Dahlias',            note: 'In early fall'             },
-  { src: '/assets/photos/general/20-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
+  { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlias',            note: 'In early fall'             },
+  { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
   // last
-  { src: '/assets/photos/general/21-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
-  { src: '/assets/photos/general/22-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
+  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
+  { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
 ];
 
 const GAL_TINTS = [
@@ -197,13 +194,12 @@ const PIN_R = 12, PIN_LIFT = 20, NUM_SCALE = 1.25;
 const STOP_COLOR = '#2E7D5B';
 const HANKEN = "'Hanken Grotesk', system-ui, sans-serif";
 
-function NumberPin({ n, active, visited, revealed, spotlight }: { n: number; active: boolean; visited: boolean; revealed: boolean; spotlight?: boolean }) {
+function NumberPin({ n, active, revealed, spotlight }: { n: number; active: boolean; revealed: boolean; spotlight?: boolean }) {
   const r = PIN_R, lift = PIN_LIFT;
   const cy = -lift - r;
-  const border = visited ? 'none' : 'double';
-  // Dimming is only for the initial route-draw reveal — once a pin has
-  // been revealed it stays at full opacity regardless of active/visited
-  // state; the double-ring border is what marks unvisited stops.
+  // Dimming is only for the initial route-draw reveal — once a pin has been
+  // revealed it stays at full opacity, and every pin keeps the same double-
+  // ring style regardless of visited state.
   const opacity = revealed ? 1 : 0.35;
   return (
     <g opacity={opacity} style={{ transition: 'opacity 500ms ease' }}>
@@ -217,9 +213,7 @@ function NumberPin({ n, active, visited, revealed, spotlight }: { n: number; act
                 stroke={MAP_CREAM(0.7)} strokeWidth="1.4" />
       )}
       {/* double border outer ring */}
-      {border === 'double' && (
-        <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
-      )}
+      <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
       {/* active selection ring */}
       {active && (
         <circle cx="0" cy={cy} r={r + 5} fill="none" stroke={MAP_CREAM(0.85)} strokeWidth="1.4" />
@@ -274,7 +268,7 @@ function MapStop({ pos, n, label, title, active, visited, revealed, spotlight, o
        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
       <g transform={`translate(${x} ${y})`}>
-        <NumberPin n={n} active={active} visited={visited} revealed={revealed} spotlight={spotlight} />
+        <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
       </g>
       <StopLabel x={x} y={labelY} text={label} />
     </g>
@@ -292,6 +286,11 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   const revealRef = useRef<SVGAnimateElement>(null);
   const [pathFractions] = useState(() => getStopPathFractions(PATH_D));
   const [pinsRevealed, setPinsRevealed] = useState<boolean[]>(() => stops.map(() => false));
+  // Once true, the route line is drawn via a plain static attribute instead
+  // of the SMIL animation's frozen end state — some browsers (notably iOS
+  // Safari) don't reliably keep fill="freeze" applied indefinitely, which
+  // made the route silently vanish on a later visit to the map.
+  const [routeDrawn, setRouteDrawn] = useState(false);
   const hasPlayedRef = useRef(false);
 
   // Play the route-draw once, the first time the map view becomes active. The
@@ -299,12 +298,13 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
   // timeline would run once on page load — before the user ever sees the map.
   // Each pin fades from slightly transparent to fully opaque the moment the
   // drawn line reaches its position, so the reveal reads as one continuous
-  // motion. On later visits the route stays drawn (SMIL freezes at its end
-  // value) and pins are shown already-revealed, with no replay.
+  // motion. On later visits the route stays drawn and pins are shown
+  // already-revealed, with no replay.
   useEffect(() => {
     if (!active) return;
     if (hasPlayedRef.current) {
       setPinsRevealed(stops.map(() => true));
+      setRouteDrawn(true);
       return;
     }
     hasPlayedRef.current = true;
@@ -313,6 +313,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
     // by revealing every pin immediately instead of staggering them.
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       setPinsRevealed(stops.map(() => true));
+      setRouteDrawn(true);
       return;
     }
     setPinsRevealed(stops.map(() => false));
@@ -326,6 +327,9 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
         setPinsRevealed(prev => prev.map((v, j) => (j === i ? true : v)));
       }, ROUTE_DRAW_DELAY_MS + frac * ROUTE_DRAW_DUR_MS));
     });
+    // Hand off from the SMIL animation to a plain drawn attribute once the
+    // draw finishes, so the line can't lose its state later.
+    timers.push(setTimeout(() => setRouteDrawn(true), ROUTE_DRAW_DELAY_MS + ROUTE_DRAW_DUR_MS));
     return () => timers.forEach(clearTimeout);
   }, [active]);
 
@@ -337,10 +341,12 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
         <mask id="mapRouteReveal">
           <path d={PATH_D} pathLength="100" fill="none" stroke="#fff" strokeWidth="16"
                 strokeLinecap="round" strokeLinejoin="round"
-                strokeDasharray="100 100" strokeDashoffset="100">
-            <animate ref={revealRef}
-                     attributeName="stroke-dashoffset" from="100" to="0" dur={`${ROUTE_DRAW_DUR_MS}ms`}
-                     begin="indefinite" fill="freeze" calcMode="linear" />
+                strokeDasharray="100 100" strokeDashoffset={routeDrawn ? 0 : 100}>
+            {!routeDrawn && (
+              <animate ref={revealRef}
+                       attributeName="stroke-dashoffset" from="100" to="0" dur={`${ROUTE_DRAW_DUR_MS}ms`}
+                       begin="indefinite" fill="freeze" calcMode="linear" />
+            )}
           </path>
         </mask>
       </defs>
@@ -545,16 +551,15 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
 }
 
 // ─── Map nav: trail bar ───────────────────────────────────────────
-function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
-  visited: Set<number>; total: number; activeIdx: number | null;
+function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
+  activeIdx: number | null; hasTapped: boolean;
   onIntro: () => void; onExit: () => void;
 }) {
   const tint = activeIdx !== null ? TRAIL_TINTS[activeIdx % TRAIL_TINTS.length] : null;
-  const allVisited = visited.size >= total;
   return (
-    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''}`}
+    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''} ${hasTapped ? 'has-tapped' : ''}`}
          style={tint ? { '--trail-tint': tint } as React.CSSProperties : undefined}>
-      <button className="trail-step prev" onClick={onIntro} aria-label="Back to welcome">
+      <button className="trail-step prev" onClick={onIntro} aria-label="Back to welcome" tabIndex={hasTapped ? 0 : -1}>
         <ChevronGlyph dir="left" />
         <span className="trail-step-label">back</span>
       </button>
@@ -563,9 +568,10 @@ function MapNav({ visited, total, activeIdx, onIntro, onExit }: {
         tap a stop
       </span>
       <button
-        className={`trail-step finish ${allVisited ? '' : 'is-muted'}`}
+        className="trail-step finish"
         onClick={onExit}
         aria-label="Finish your walk"
+        tabIndex={hasTapped ? 0 : -1}
       >
         <span className="trail-step-label">finish</span>
         <ChevronGlyph dir="right" />
@@ -1120,6 +1126,8 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
 }) {
   const open = index !== null;
   const trackRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(false);
   const settling = useRef(false);
 
@@ -1172,15 +1180,70 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, index]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handle = handleRef.current;
+    const modal = modalRef.current;
+    if (!handle || !modal) return;
+
+    let startY = 0;
+    let active = false;
+    let dy = 0;
+
+    function onStart(e: TouchEvent) {
+      startY = e.touches[0].clientY;
+      active = true;
+      dy = 0;
+    }
+
+    function onMove(e: TouchEvent) {
+      if (!active) return;
+      dy = e.touches[0].clientY - startY;
+      if (dy < 0) { dy = 0; return; }
+      e.preventDefault();
+      modal!.style.transition = 'none';
+      modal!.style.transform = `translateY(${dy}px)`;
+    }
+
+    function onEnd() {
+      if (!active) return;
+      active = false;
+      modal!.style.transition = '';
+      if (dy > 80) {
+        modal!.style.transform = '';
+        close();
+      } else {
+        modal!.style.transform = 'translateY(0)';
+        requestAnimationFrame(() => {
+          modal!.style.transition = 'transform 280ms cubic-bezier(0.22,1,0.36,1)';
+          modal!.style.transform = 'translateY(0)';
+          setTimeout(() => { modal!.style.transition = ''; modal!.style.transform = ''; }, 290);
+        });
+      }
+    }
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd, { passive: true });
+    handle.addEventListener('touchcancel', onEnd, { passive: true });
+
+    return () => {
+      handle.removeEventListener('touchstart', onStart);
+      handle.removeEventListener('touchmove', onMove);
+      handle.removeEventListener('touchend', onEnd);
+      handle.removeEventListener('touchcancel', onEnd);
+    };
+  }, [open]);
+
   if (!open || index === null) return null;
   const cur = items[index] || items[0];
 
   return (
     <>
       <div className={`g-viewer-backdrop ${shown ? 'show' : ''}`} onClick={close} />
-      <div className={`g-viewer ${shown ? 'show' : ''}`} role="dialog" aria-modal="true"
+      <div ref={modalRef} className={`g-viewer ${shown ? 'show' : ''}`} role="dialog" aria-modal="true"
            aria-label={`Photo: ${cur.name}`}>
-        <div className="sheet-handle" />
+        <div ref={handleRef} className="sheet-handle" />
         <button className="sheet-close g-viewer-close" onClick={close} aria-label="Close">
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
             <path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -1293,6 +1356,13 @@ export default function GardenApp({ stops, seedGoals }: Props) {
     return 'intro';
   });
   useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
+  // Only the intro→map screen transition is a visitor's genuine first
+  // arrival. Restoring straight into 'map' (e.g. iOS reloading a backgrounded
+  // tab) means they were already mid-tour, even though the in-memory
+  // `visited` set — which isn't persisted — starts empty again; without this
+  // the nav's back/finish buttons would wrongly stay hidden as if this were
+  // a first visit.
+  const restoredMidTour = useRef(view === 'map' || view === 'exit');
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [visited, setVisited] = useState(() => new Set<number>());
   const [tapPctSheet, setTapPctSheet] = useState({ x: 50, y: -10 });
@@ -1320,8 +1390,7 @@ export default function GardenApp({ stops, seedGoals }: Props) {
     <div className="app-stage">
       {inMap && (
         <MapNav
-          visited={visited} total={stops.length}
-          activeIdx={activeIdx}
+          activeIdx={activeIdx} hasTapped={visited.size > 0 || restoredMidTour.current}
           onIntro={gotoIntro} onExit={gotoExit}
         />
       )}

@@ -1,4 +1,4 @@
-const CACHE = 'ptf-v16';
+const CACHE = 'ptf-v17';
 
 const PRECACHE = [
   '/',
@@ -11,27 +11,24 @@ const PRECACHE = [
   // a visitor actually opens one, instead of forcing every visitor to
   // download the whole gallery upfront.
   '/assets/photos/general/01-turtles-1-sm.webp',
-  '/assets/photos/general/02-turtles-2-sm.webp',
-  '/assets/photos/general/03-people-1-sm.webp',
-  '/assets/photos/general/04-veggie-garden-1-sm.webp',
-  '/assets/photos/general/05-veggie-garden-2-sm.webp',
-  '/assets/photos/general/06-veggie-garden-3-sm.webp',
-  '/assets/photos/general/07-veggie-garden-4-sm.webp',
-  '/assets/photos/general/08-veggie-garden-5-sm.webp',
-  '/assets/photos/general/09-veggie-garden-6-sm.webp',
-  '/assets/photos/general/10-veggie-garden-7-sm.webp',
-  '/assets/photos/general/11-garlic-harvest-sm.webp',
-  '/assets/photos/general/12-patio-garden-1-sm.webp',
-  '/assets/photos/general/13-patio-garden-2-sm.webp',
-  '/assets/photos/general/14-patio-garden-3-sm.webp',
-  '/assets/photos/general/15-patio-garden-4-sm.webp',
-  '/assets/photos/general/16-patio-garden-5-sm.webp',
-  '/assets/photos/general/17-sauna-garden-1-sm.webp',
-  '/assets/photos/general/18-sauna-garden-2-sm.webp',
-  '/assets/photos/general/19-flower-1-sm.webp',
-  '/assets/photos/general/20-flower-3-sm.webp',
-  '/assets/photos/general/21-seedlings-sm.webp',
-  '/assets/photos/general/22-bouquet-collage-sm.webp',
+  '/assets/photos/general/02-people-1-sm.webp',
+  '/assets/photos/general/03-veggie-garden-1-sm.webp',
+  '/assets/photos/general/04-veggie-garden-2-sm.webp',
+  '/assets/photos/general/05-veggie-garden-3-sm.webp',
+  '/assets/photos/general/06-veggie-garden-4-sm.webp',
+  '/assets/photos/general/07-veggie-garden-5-sm.webp',
+  '/assets/photos/general/08-garlic-harvest-sm.webp',
+  '/assets/photos/general/09-patio-garden-1-sm.webp',
+  '/assets/photos/general/10-patio-garden-2-sm.webp',
+  '/assets/photos/general/11-patio-garden-3-sm.webp',
+  '/assets/photos/general/12-patio-garden-4-sm.webp',
+  '/assets/photos/general/13-patio-garden-5-sm.webp',
+  '/assets/photos/general/14-sauna-garden-1-sm.webp',
+  '/assets/photos/general/15-sauna-garden-2-sm.webp',
+  '/assets/photos/general/16-flower-1-sm.webp',
+  '/assets/photos/general/17-flower-3-sm.webp',
+  '/assets/photos/general/18-seedlings-sm.webp',
+  '/assets/photos/general/19-bouquet-collage-sm.webp',
 ];
 
 self.addEventListener('install', e => {

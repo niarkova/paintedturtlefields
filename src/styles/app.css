@@ -109,24 +109,27 @@ html, body {
   color: var(--cream-ink-soft);
   background: rgba(255,248,232,0.10);
   cursor: pointer;
-  transition: color 200ms, background 200ms, box-shadow 200ms;
+  transition: color 200ms, background 200ms, box-shadow 200ms, opacity 320ms cubic-bezier(0.22,1,0.36,1);
 }
 .trail-step:hover { color: var(--terracotta); background: rgba(16,41,31,0.82); }
 .trail-step:disabled { opacity: 0.32; pointer-events: none; }
+/* The hint reads alone first — back/finish ease in only once the visitor
+   has tapped their first stop, so the map opens with one clear cue. */
+.nav-trail:not(.has-tapped) .trail-step.prev,
+.nav-trail:not(.has-tapped) .trail-step.finish {
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-trail.has-tapped .trail-step.prev,
+.nav-trail.has-tapped .trail-step.finish {
+  transition-delay: 80ms;
+}
 .trail-step.finish {
   color: var(--forest-paper-deep);
   background: var(--terracotta);
   box-shadow: 0 6px 18px -6px rgba(216,139,106,0.7);
 }
 .trail-step.finish:hover { background: var(--terracotta); }
-/* Muted finish: outlined pink until all stops are visited */
-.trail-step.finish.is-muted {
-  background: transparent;
-  color: var(--terracotta);
-  border: 1.5px solid var(--terracotta);
-  box-shadow: none;
-  opacity: 0.7;
-}
 .trail-step svg { flex: 0 0 auto; }
 .trail-step-label { line-height: 1; white-space: nowrap; }
 
@@ -375,7 +378,7 @@ html, body {
   overflow-x: hidden; overflow-y: auto;
 }
 .intro.show { opacity: 1; pointer-events: auto; }
-.intro-img-garland { padding-top: 14px; padding-bottom: 210px; }
+.intro-img-garland { padding-top: 90px; padding-bottom: 210px; }
 
 .intro-frame {
   position: relative; text-align: center; width: 100%; max-width: 400px;
@@ -407,7 +410,7 @@ html, body {
   }
 }
 .intro-hero {
-  width: 104px; height: 104px; position: relative; margin: 0 0 14px;
+  width: 104px; height: 104px; position: relative; margin: 0 0 2px;
   transform: scale(1);
   transition: transform 700ms cubic-bezier(0.22,1,0.36,1);
 }
@@ -448,10 +451,14 @@ html, body {
   letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(255,248,232,0.35);
   margin: 22px 0 0; text-align: center;
-  transition: opacity 400ms ease;
+  height: auto;
+  transition: opacity 400ms ease, margin 400ms ease, height 400ms ease;
   pointer-events: none;
+  overflow: hidden;
 }
-.intro.is-ready .intro-loading-label { opacity: 0; }
+/* Once ready the label isn't just invisible — it stops reserving space, so
+   the title sits close under the turtle instead of leaving a dead gap. */
+.intro.is-ready .intro-loading-label { opacity: 0; margin-top: 0; height: 0; }
 .intro-deco.garland { transition: opacity 650ms ease 120ms; }
 /* gentle swim while loading */
 .intro.is-loading .intro-hero img {
@@ -881,7 +888,7 @@ html, body {
   font-family: inherit; display: flex; flex-direction: column;
 }
 .g-cell-img {
-  position: relative; display: grid; place-items: center;
+  position: relative;
   overflow: hidden; border-radius: 0;
   background-color: var(--forest-paper-light);
   background-image:
