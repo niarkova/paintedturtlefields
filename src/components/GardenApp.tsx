@@ -62,9 +62,9 @@ const PLANT_PHOTOS: Record<string, string> = {
   'Campanula': '/assets/photos/stops/patio-campanula.webp',
   'Rose': '/assets/photos/stops/patio-rose.webp',
   'Rhododendron': '/assets/photos/stops/sauna-rhododendron.webp',
-  "Solomon's seal": '/assets/photos/stops/sauna-solomons-seal.webp',
-  'Astilbe':        '/assets/photos/stops/sauna-astilbe.webp',
-  'Ostrich fern':   '/assets/photos/stops/sauna-ostrich-fern.webp',
+  'Sun King spikenard':    '/assets/photos/stops/sauna-sun-king-spikenard.webp',
+  'Astilbe':               '/assets/photos/stops/sauna-astilbe.webp',
+  'Japanese painted fern': '/assets/photos/stops/sauna-japanese-painted-fern.webp',
   'Bleeding heart': '/assets/photos/stops/sauna-bleeding-heart.webp',
 };
 const plantPhotoThumb = (src: string) => src.replace(/\.webp$/, '-thumb.webp');
