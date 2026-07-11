@@ -45,7 +45,7 @@ const GALLERY = [
   { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
   { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
   // more from the garden
-  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Our friend Penny Miller — huge thanks for helping get the gardens ready for the tour!' },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Our friend Penny Miller helping get our gardens ready for the tour!' },
   { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlia',             note: 'In early fall'             },
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
   // last
