@@ -2,7 +2,7 @@
 number: 2
 name: Patio garden
 subtitle: a place to sit
-plants: [Container dahlias, Sweet alyssum, Creeping jenny, Calibrachoa, Allium schubertii, Campanula, "Sunset horizon rose", Weigela, Veronica, "Euphorbia 'Ascot Rainbow'", "Royal Purple Smoke Bush"]
+plants: [Container dahlias, Sweet alyssum, Creeping jenny, Calibrachoa, Allium schubertii, Campanula, "Sunset horizon rose", Weigela, "Euphorbia 'Ascot Rainbow'", "Royal Purple Smoke Bush"]
 accent: "#B6D49B"
 ---
 

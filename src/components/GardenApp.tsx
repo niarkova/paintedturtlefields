@@ -30,6 +30,7 @@ const GALLERY = [
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
+  { src: '/assets/photos/general/21-romanesco.webp',        name: 'Romanesco',         note: 'My favorite brassica'                        },
   // patio garden — oldest to newest, dogs photo saved for last
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Before the patio garden', note: 'Before the patio garden' },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
@@ -63,6 +64,7 @@ const PLANT_PHOTOS: Record<string, string> = {
   'Veronica':                 '/assets/photos/stops/patio-veronica.webp',
   "Euphorbia 'Ascot Rainbow'": '/assets/photos/stops/patio-euphorbia-ascot-rainbow.webp',
   'Royal Purple Smoke Bush':  '/assets/photos/stops/patio-smoke-bush.webp',
+  'Montana clematis':         '/assets/photos/stops/marjorie-montana-clematis.webp',
   'Rhododendron':             '/assets/photos/stops/sauna-rhododendron.webp',
   'Sun King spikenard':       '/assets/photos/stops/sauna-sun-king-spikenard.webp',
   'Astilbe':                  '/assets/photos/stops/sauna-astilbe.webp',
