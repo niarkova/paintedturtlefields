@@ -2,7 +2,7 @@
 number: 8
 name: "Marjorie's garden"
 subtitle: the sunny threshold
-plants: [Purple hydrangea, Baptisia, Montana clematis, Veronica]
+plants: [Purple hydrangea, Baptisia, Montana clematis]
 accent: "#F2C94C"
 ---
 

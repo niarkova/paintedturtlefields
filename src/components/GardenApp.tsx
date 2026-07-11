@@ -57,6 +57,7 @@ const GALLERY = [
 // the exact plant name as it appears in that stop's content frontmatter.
 // Plants without an entry here keep the placeholder icon.
 const PLANT_PHOTOS: Record<string, string> = {
+  'Romanesco':                '/assets/photos/stops/veggie-romanesco.webp',
   'Allium schubertii':        '/assets/photos/stops/patio-allium.webp',
   'Campanula':                '/assets/photos/stops/patio-campanula.webp',
   'Sunset horizon rose':      '/assets/photos/stops/patio-rose.webp',
