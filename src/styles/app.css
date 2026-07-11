@@ -941,7 +941,7 @@ html, body {
 .g-viewer-slide {
   position: relative; flex: 0 0 100%; min-height: 0; scroll-snap-align: center;
   display: flex; align-items: center; justify-content: center; padding: 12px 20px 4px;
-  box-sizing: border-box;
+  box-sizing: border-box; overflow: hidden;
 }
 .g-viewer-wash {
   position: absolute; width: 80%; aspect-ratio: 1/1; border-radius: 50%;

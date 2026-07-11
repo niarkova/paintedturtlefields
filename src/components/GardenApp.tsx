@@ -30,16 +30,18 @@ const GALLERY = [
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Building the raised beds in veggie garden', note: 'Building the raised beds in veggie garden' },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'Raised beds completed',                    note: 'Raised beds completed'                    },
   { src: '/assets/photos/general/09-patio-garden-1.webp',  name: 'Before the patio garden',                  note: 'Before the patio garden'                  },
-  { src: '/assets/photos/general/10-patio-garden-2.webp',  name: 'Beginning of the patio garden',            note: 'And a curious dog'                        },
+  { src: '/assets/photos/general/10-patio-garden-2.webp',  name: 'Beginning of the patio garden',            note: 'Beginning of the patio garden'            },
+  { src: '/assets/photos/general/22-patio-garden-6.webp',  name: 'Patio addition in progress',               note: 'Patio addition in progress'               },
+  { src: '/assets/photos/general/23-patio-garden-7.webp',  name: 'New patio taking shape',                   note: 'New patio taking shape'                   },
   { src: '/assets/photos/general/11-patio-garden-3.webp',  name: 'Supervising the new bed',                  note: 'Supervising the new bed'                  },
   { src: '/assets/photos/general/12-patio-garden-4.webp',  name: 'Nina',                                     note: 'Nina'                                     },
   { src: '/assets/photos/general/13-patio-garden-5.webp',  name: 'Our dogs on the patio, last year',         note: 'Our dogs on the patio, last year'         },
   { src: '/assets/photos/general/14-sauna-garden-1.webp',  name: 'Building the sauna garden',                note: 'Building the sauna garden'                },
   { src: '/assets/photos/general/15-sauna-garden-2.webp',  name: 'The sauna garden',                         note: 'The sauna garden'                         },
-  { src: '/assets/photos/general/02-people-1.webp',        name: 'Charlie Nardozzi',                         note: 'Charlie Nardozzi'                         },
-  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',                             note: 'Our friend Penny Miller helping get our gardens ready for the tour!' },
-  { src: '/assets/photos/general/16-flower-1.webp',        name: 'Dahlia in early fall',                     note: 'Dahlia in early fall'                     },
-  { src: '/assets/photos/general/17-flower-3.webp',        name: 'Lilac bouquet this spring',                note: 'Lilac bouquet this spring'                },
+  { src: '/assets/photos/general/02-people-1.webp',        name: 'Local gardening celebrity Charlie Nardozzi', note: 'Local gardening celebrity Charlie Nardozzi' },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Our friend Penny Miller',                  note: 'Our friend Penny Miller'                  },
+  { src: '/assets/photos/general/16-flower-1.webp',        name: 'Dahlias in the fall',                      note: 'Dahlias in the fall'                      },
+  { src: '/assets/photos/general/17-flower-3.webp',        name: 'Lilacs in the spring',                     note: 'Lilacs in the spring'                     },
   { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting setup',                      note: 'Seed starting setup'                      },
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'The arbor',                                note: 'The arbor'                                },
   { src: '/assets/photos/general/08-garlic-harvest.webp',  name: 'Garlic haul last year',                    note: 'Garlic haul last year'                    },
@@ -85,7 +87,7 @@ const MAP_POS = [
   { x: 306, y: 339, label: 'Medicinal field'   },
   { x: 222, y: 240, label: 'Patio garden'      },
   { x: 145, y: 259, label: "Marjorie's garden" },
-  { x:  93, y: 130, label: 'Sauna garden'      },
+  { x:  93, y: 135, label: 'Sauna garden'      },
 ];
 
 // parking → 1 → 2 → 3 → 4 → right around house above → 5
@@ -1150,6 +1152,125 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
   );
 }
 
+// ─── Pinch-to-zoom image ──────────────────────────────────────────
+// Adds pinch-to-zoom and double-tap on a gallery photo. Prevents the
+// crash that happened when pinch-to-zoom conflicted with the scroll
+// container on iOS.
+function ZoomableImage({ src, alt, active }: { src: string; alt: string; active: boolean }) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const z = useRef({ scale: 1, tx: 0, ty: 0 });
+  const lastTap = useRef(0);
+
+  // Reset zoom when this slide becomes inactive (user swiped away)
+  useEffect(() => {
+    const { scale, tx, ty } = z.current;
+    if (!active && (scale !== 1 || tx !== 0 || ty !== 0)) {
+      const img = imgRef.current;
+      if (!img) return;
+      img.style.transition = 'transform 200ms ease';
+      img.style.transform = '';
+      z.current = { scale: 1, tx: 0, ty: 0 };
+      setTimeout(() => { if (imgRef.current) imgRef.current.style.transition = ''; }, 210);
+    }
+  }, [active]);
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    img.style.transformOrigin = '0 0';
+
+    function apply(scale: number, tx: number, ty: number, anim = false) {
+      Object.assign(z.current, { scale, tx, ty });
+      img!.style.transition = anim ? 'transform 200ms ease' : '';
+      img!.style.transform = (scale === 1 && tx === 0 && ty === 0)
+        ? '' : `translate(${tx}px,${ty}px) scale(${scale})`;
+    }
+    function clamp(v: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, v)); }
+
+    // Cached natural top-left (computed at pinch start, stable during gesture)
+    let natLeft = 0, natTop = 0, pd0 = 0;
+    let panActive = false, panX0 = 0, panY0 = 0, panTx0 = 0, panTy0 = 0;
+
+    function startPan(t: Touch) {
+      panActive = true;
+      panX0 = t.clientX; panY0 = t.clientY;
+      panTx0 = z.current.tx; panTy0 = z.current.ty;
+    }
+
+    function onStart(e: TouchEvent) {
+      if (e.touches.length >= 2) {
+        const t = e.touches;
+        const rect = img!.getBoundingClientRect();
+        // With transform-origin:0 0, naturalLeft = rect.left - tx
+        natLeft = rect.left - z.current.tx;
+        natTop  = rect.top  - z.current.ty;
+        pd0 = Math.hypot(t[1].clientX - t[0].clientX, t[1].clientY - t[0].clientY);
+        panActive = false;
+        e.preventDefault();
+      } else if (e.touches.length === 1 && z.current.scale > 1) {
+        startPan(e.touches[0]);
+      }
+    }
+
+    function onMove(e: TouchEvent) {
+      const { scale, tx, ty } = z.current;
+      if (e.touches.length >= 2) {
+        const t = e.touches;
+        const d = Math.hypot(t[1].clientX - t[0].clientX, t[1].clientY - t[0].clientY);
+        const cx = (t[0].clientX + t[1].clientX) / 2;
+        const cy = (t[0].clientY + t[1].clientY) / 2;
+        const factor = d / pd0;
+        pd0 = d;
+        const newScale = clamp(scale * factor, 1, 4);
+        // Keep pinch midpoint fixed on the image content
+        const ex = (cx - natLeft - tx) / scale;
+        const ey = (cy - natTop  - ty) / scale;
+        apply(newScale, cx - natLeft - ex * newScale, cy - natTop - ey * newScale);
+        e.preventDefault();
+      } else if (e.touches.length === 1 && panActive) {
+        apply(scale, panTx0 + e.touches[0].clientX - panX0, panTy0 + e.touches[0].clientY - panY0);
+        e.preventDefault();
+      }
+    }
+
+    function onEnd(e: TouchEvent) {
+      if (e.touches.length < 2 && z.current.scale < 1.15) {
+        apply(1, 0, 0, true);
+      }
+      if (e.touches.length === 0) {
+        panActive = false;
+        // Double-tap: toggle 2.5× zoom (centered on image)
+        if (e.changedTouches.length === 1) {
+          const now = Date.now();
+          if (now - lastTap.current < 300) {
+            if (z.current.scale > 1) {
+              apply(1, 0, 0, true);
+            } else {
+              const r = img!.getBoundingClientRect();
+              // With transform-origin:0 0 and tx=ty=0, zoom to 2.5× keeping center fixed
+              apply(2.5, -r.width * 0.75, -r.height * 0.75, true);
+            }
+            lastTap.current = 0;
+          } else { lastTap.current = now; }
+        }
+      } else if (e.touches.length === 1 && z.current.scale > 1) {
+        startPan(e.touches[0]);
+      }
+    }
+
+    img.addEventListener('touchstart', onStart, { passive: false });
+    img.addEventListener('touchmove', onMove, { passive: false });
+    img.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      img.removeEventListener('touchstart', onStart);
+      img.removeEventListener('touchmove', onMove);
+      img.removeEventListener('touchend', onEnd);
+    };
+  }, []);
+
+  return <img ref={imgRef} src={src} alt={alt} loading="lazy" />;
+}
+
 // ─── Closing gallery ──────────────────────────────────────────────
 function GalleryViewer({ items, index, onClose, onIndex }: {
   items: typeof GALLERY; index: number | null;
@@ -1223,6 +1344,7 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
     let dy = 0;
 
     function onStart(e: TouchEvent) {
+      if (e.touches.length > 1) return; // ignore pinch-to-zoom on image below
       startY = e.touches[0].clientY;
       startTime = performance.now();
       active = true;
@@ -1231,6 +1353,7 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
 
     function onMove(e: TouchEvent) {
       if (!active) return;
+      if (e.touches.length > 1) { active = false; return; } // cancel if pinch starts
       dy = e.touches[0].clientY - startY;
       if (dy < 0) { dy = 0; return; }
       e.preventDefault();
@@ -1287,7 +1410,7 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
           {items.map((it) => (
             <div className="g-viewer-slide" key={gallerySrc(it)}>
               <span className="g-viewer-wash" aria-hidden="true" />
-              <img src={gallerySrc(it)} alt={it.name} loading="lazy" />
+              <ZoomableImage src={gallerySrc(it)} alt={it.name} active={it === cur} />
             </div>
           ))}
         </div>
