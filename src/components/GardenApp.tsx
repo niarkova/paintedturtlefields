@@ -29,6 +29,7 @@ const GALLERY = [
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'Before veggie garden and solar panels were added', note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Building the raised beds in veggie garden', note: 'Building the raised beds in veggie garden' },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'Raised beds completed',                    note: 'Raised beds completed'                    },
+  { src: '/assets/photos/general/24-fox-den.webp',         name: 'Trail cam footage of a nearby fox den',    note: 'Trail cam footage of a nearby fox den'    },
   { src: '/assets/photos/general/09-patio-garden-1.webp',  name: 'Before the patio garden',                  note: 'Before the patio garden'                  },
   { src: '/assets/photos/general/10-patio-garden-2.webp',  name: 'Beginning of the patio garden',            note: 'Beginning of the patio garden'            },
   { src: '/assets/photos/general/22-patio-garden-6.webp',  name: 'Patio addition in progress',               note: 'Patio addition in progress'               },
