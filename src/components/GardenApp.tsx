@@ -49,7 +49,7 @@ const GALLERY = [
   { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlia',             note: 'In early fall'             },
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Lilac bouquet this spring' },
   // last
-  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Seed starting set up'           },
+  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Seed starting setup'            },
   { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'Cutting garden'                 },
 ];
 
