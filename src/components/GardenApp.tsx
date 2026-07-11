@@ -25,31 +25,25 @@ interface Props {
 // ─── Gallery items (closing screen) ───────────────────────────────
 // src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
-  // turtles
-  { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'Moving a painted turtle to a safer place' },
-  // veggie garden — oldest to newest
-  { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
-  { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
-  // patio garden — oldest to newest, dogs photo saved for last
-  { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Before the patio garden', note: 'Before the patio garden' },
-  { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
-  { src: '/assets/photos/general/11-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
-  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Nina',               note: 'Nina'                      },
-  { src: '/assets/photos/general/13-patio-garden-5.webp', name: 'Chaos & Mayhem',     note: 'Our dogs on the patio, last year' },
-  // sauna garden — oldest to newest
-  { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
-  { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
-  // more from the garden
-  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
-  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Our friend Penny Miller helping get our gardens ready for the tour!' },
-  { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlia',             note: 'In early fall'             },
-  { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Lilac bouquet this spring' },
-  // last
-  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Seed starting setup'            },
-  { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',       note: 'Raised beds completed'          },
-  { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',         note: 'Arbor in veggie garden last year' },
-  { src: '/assets/photos/general/08-garlic-harvest.webp',  name: 'Garlic harvest',  note: 'Garlic haul last year'          },
-  { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'Cutting garden'                 },
+  { src: '/assets/photos/general/01-turtles-1.webp',       name: 'Moving a painted turtle to a safer place', note: 'Moving a painted turtle to a safer place' },
+  { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'Before veggie garden and solar panels were added', note: 'Before veggie garden and solar panels were added' },
+  { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Building the raised beds in veggie garden', note: 'Building the raised beds in veggie garden' },
+  { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'Raised beds completed',                    note: 'Raised beds completed'                    },
+  { src: '/assets/photos/general/09-patio-garden-1.webp',  name: 'Before the patio garden',                  note: 'Before the patio garden'                  },
+  { src: '/assets/photos/general/10-patio-garden-2.webp',  name: 'Beginning of the patio garden',            note: 'And a curious dog'                        },
+  { src: '/assets/photos/general/11-patio-garden-3.webp',  name: 'Supervising the new bed',                  note: 'Supervising the new bed'                  },
+  { src: '/assets/photos/general/12-patio-garden-4.webp',  name: 'Nina',                                     note: 'Nina'                                     },
+  { src: '/assets/photos/general/13-patio-garden-5.webp',  name: 'Our dogs on the patio, last year',         note: 'Our dogs on the patio, last year'         },
+  { src: '/assets/photos/general/14-sauna-garden-1.webp',  name: 'Building the sauna garden',                note: 'Building the sauna garden'                },
+  { src: '/assets/photos/general/15-sauna-garden-2.webp',  name: 'The sauna garden',                         note: 'The sauna garden'                         },
+  { src: '/assets/photos/general/02-people-1.webp',        name: 'Charlie Nardozzi',                         note: 'Charlie Nardozzi'                         },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',                             note: 'Our friend Penny Miller helping get our gardens ready for the tour!' },
+  { src: '/assets/photos/general/16-flower-1.webp',        name: 'Dahlia in early fall',                     note: 'Dahlia in early fall'                     },
+  { src: '/assets/photos/general/17-flower-3.webp',        name: 'Lilac bouquet this spring',                note: 'Lilac bouquet this spring'                },
+  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting setup',                      note: 'Seed starting setup'                      },
+  { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'The arbor',                                note: 'The arbor'                                },
+  { src: '/assets/photos/general/08-garlic-harvest.webp',  name: 'Garlic haul last year',                    note: 'Garlic haul last year'                    },
+  { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',                           note: 'Cutting garden'                           },
 ];
 
 // Plant photos for the "here you'll find" strip on each stop card, keyed by

@@ -425,6 +425,13 @@ html, body {
     object-fit: cover; object-position: center bottom;
   }
 }
+@media (min-width: 800px) {
+  .intro-deco.garland {
+    left: 50%; right: auto;
+    width: min(100vw, calc(100vh * 402 / 714));
+    transform: translateX(-50%);
+  }
+}
 .intro-hero {
   width: 104px; height: 104px; position: relative; margin: 0 0 2px;
   transform: scale(1);
@@ -605,6 +612,7 @@ html, body {
 }
 .exit-back {
   position: absolute; top: calc(env(safe-area-inset-top, 0px) + 20px); left: 22px; z-index: 12;
+  opacity: 1;
   transition: opacity 300ms ease, pointer-events 0s;
 }
 .exit-back.is-hidden { opacity: 0; pointer-events: none; }
@@ -1033,10 +1041,10 @@ html, body {
     margin: 0 -32px;
   }
 
-  /* Screen 3 card modals: cap width like the stop sheet on screen 2,
-     instead of stretching edge-to-edge on wide viewports. */
+  /* Screen 3 card modals: match sheet width so they don't look narrow
+     against the full-screen backdrop. */
   .goal-modal, .g-viewer {
-    max-width: 480px;
+    max-width: min(100vw, calc(100vh * 402 / 714));
     margin: 0 auto;
   }
 }
