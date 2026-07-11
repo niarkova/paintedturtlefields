@@ -50,6 +50,7 @@ const GALLERY = [
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
   // last
   { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Huge thanks to Penny for helping get the gardens ready for the tour!' },
   { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
 ];
 
@@ -61,6 +62,10 @@ const PLANT_PHOTOS: Record<string, string> = {
   'Campanula': '/assets/photos/stops/patio-campanula.webp',
   'Rose': '/assets/photos/stops/patio-rose.webp',
   'Rhododendron': '/assets/photos/stops/sauna-rhododendron.webp',
+  "Solomon's seal": '/assets/photos/stops/sauna-solomons-seal.webp',
+  'Astilbe':        '/assets/photos/stops/sauna-astilbe.webp',
+  'Ostrich fern':   '/assets/photos/stops/sauna-ostrich-fern.webp',
+  'Bleeding heart': '/assets/photos/stops/sauna-bleeding-heart.webp',
 };
 const plantPhotoThumb = (src: string) => src.replace(/\.webp$/, '-thumb.webp');
 
