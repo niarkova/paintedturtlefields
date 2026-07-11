@@ -579,19 +579,19 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
 }
 
 // ─── Map nav: trail bar ───────────────────────────────────────────
-function MapNav({ activeIdx, onIntro, onExit }: {
-  activeIdx: number | null;
+function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
+  activeIdx: number | null; hasTapped: boolean;
   onIntro: () => void; onExit: () => void;
 }) {
   const tint = activeIdx !== null ? TRAIL_TINTS[activeIdx % TRAIL_TINTS.length] : null;
   return (
-    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''}`}
+    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''} ${hasTapped ? 'has-tapped' : ''}`}
          style={tint ? { '--trail-tint': tint } as React.CSSProperties : undefined}>
       <button className="trail-step prev" onClick={onIntro} aria-label="Back to welcome">
         <ChevronGlyph dir="left" />
         <span className="trail-step-label">back</span>
       </button>
-      <span className="trail-hint">
+      <span className={`trail-hint ${hasTapped ? 'is-gone' : ''}`}>
         <span className="tap-dot" />
         tap a stop
       </span>
@@ -1294,7 +1294,8 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
             <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3 L5 8 L10 13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <div className="g-viewer-cap">
-            <span className="g-viewer-note">{cur.note}</span>
+            <span className="g-viewer-name">{cur.name}</span>
+            {cur.note !== cur.name && <span className="g-viewer-note">{cur.note}</span>}
           </div>
           <span className="g-viewer-count">{index + 1}<i>/</i>{items.length}</span>
           <button className="g-vbtn" onClick={() => step(1)} aria-label="Next">
@@ -1416,6 +1417,7 @@ export default function GardenApp({ stops, seedGoals }: Props) {
       {inMap && (
         <MapNav
           activeIdx={activeIdx}
+          hasTapped={visited.size > 0}
           onIntro={gotoIntro} onExit={gotoExit}
         />
       )}

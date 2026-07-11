@@ -132,6 +132,16 @@ html, body {
   font-size: 13px;
   color: var(--cream-ink-soft);
   white-space: nowrap;
+  opacity: 0;
+  animation: trail-hint-in 0.8s ease-out 5s forwards;
+}
+.trail-hint.is-gone {
+  animation: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+@keyframes trail-hint-in {
+  to { opacity: 1; }
 }
 .trail-hint .tap-dot {
   width: 8px; height: 8px;
