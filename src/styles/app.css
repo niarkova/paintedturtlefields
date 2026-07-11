@@ -950,7 +950,7 @@ html, body {
   padding: 10px 18px 22px;
 }
 .g-viewer-cap { flex: 1; min-width: 0; }
-.g-viewer-name { display: block; font-family: var(--font-display); font-size: 21px; line-height: 1.05; color: var(--cream-ink); }
+.g-viewer-name { display: block; font-family: var(--font-body); font-size: 13px; color: var(--cream-ink); }
 .g-viewer-note { display: block; font-family: var(--font-body); font-size: 13px; color: var(--cream-ink-soft); }
 .g-viewer-count { flex: 0 0 auto; font-family: var(--font-body); font-size: 13px; letter-spacing: 0.06em; color: var(--cream-ink-soft); font-variant-numeric: tabular-nums; }
 .g-viewer-count i { font-style: normal; opacity: 0.5; margin: 0 1px; }
