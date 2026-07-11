@@ -220,11 +220,11 @@ function NumberPin({ n, active, revealed, spotlight }: { n: number; active: bool
       {/* stem tail */}
       <line x1="0" y1={cy + r} x2="0" y2="0"
             stroke={MAP_CREAM(0.95)} strokeWidth="1" strokeLinecap="round" />
-      {/* sonar ping rings — stop once any stop has been opened */}
-      {spotlight && revealed && (<>
-        <circle className="map-stop-ping"       cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
-        <circle className="map-stop-ping-delay" cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
-      </>)}
+      {/* subtle "tap a stop" pulse — stops for good once any stop has been opened */}
+      {spotlight && revealed && (
+        <circle className="map-stop-spotlight" cx="0" cy={cy} r={r + 6} fill="none"
+                stroke={MAP_CREAM(0.7)} strokeWidth="1.4" />
+      )}
       {/* double border outer ring */}
       <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
       {/* active selection ring */}
@@ -281,9 +281,7 @@ function MapStop({ pos, n, label, title, active, visited, revealed, spotlight, o
        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
       <g transform={`translate(${x} ${y})`}>
-        <g className={spotlight && revealed ? 'map-stop-bob' : ''}>
-          <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
-        </g>
+        <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
       </g>
       <StopLabel x={x} y={labelY} text={label} />
     </g>
@@ -1376,18 +1374,8 @@ function Exit({ show, onBackToMap, seedGoals }: {
 }
 
 // ─── App ──────────────────────────────────────────────────────────
-const VIEW_KEY = 'ptf_view_v1';
-
 export default function GardenApp({ stops, seedGoals }: Props) {
-  // Restore the screen on refresh (e.g. refresh on screen 3 → stay on screen 3).
-  const [view, setView] = useState<'intro' | 'map' | 'exit'>(() => {
-    try {
-      const v = localStorage.getItem(VIEW_KEY);
-      if (v === 'map' || v === 'exit' || v === 'intro') return v;
-    } catch {}
-    return 'intro';
-  });
-  useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
+  const [view, setView] = useState<'intro' | 'map' | 'exit'>('intro');
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [visited, setVisited] = useState(() => new Set<number>());
   const [tapPctSheet, setTapPctSheet] = useState({ x: 50, y: -10 });
