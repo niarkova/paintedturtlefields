@@ -57,14 +57,18 @@ const GALLERY = [
 // the exact plant name as it appears in that stop's content frontmatter.
 // Plants without an entry here keep the placeholder icon.
 const PLANT_PHOTOS: Record<string, string> = {
-  'Allium schubertii': '/assets/photos/stops/patio-allium.webp',
-  'Campanula': '/assets/photos/stops/patio-campanula.webp',
-  'Sunset horizon rose': '/assets/photos/stops/patio-rose.webp',
-  'Rhododendron': '/assets/photos/stops/sauna-rhododendron.webp',
-  'Sun King spikenard':    '/assets/photos/stops/sauna-sun-king-spikenard.webp',
-  'Astilbe':               '/assets/photos/stops/sauna-astilbe.webp',
-  'Japanese painted fern': '/assets/photos/stops/sauna-japanese-painted-fern.webp',
-  'Pachysandra': '/assets/photos/stops/sauna-pachysandra.webp',
+  'Allium schubertii':        '/assets/photos/stops/patio-allium.webp',
+  'Campanula':                '/assets/photos/stops/patio-campanula.webp',
+  'Sunset horizon rose':      '/assets/photos/stops/patio-rose.webp',
+  'Weigela':                  '/assets/photos/stops/patio-weigela.webp',
+  'Veronica':                 '/assets/photos/stops/patio-veronica.webp',
+  "Euphorbia 'Ascot Rainbow'": '/assets/photos/stops/patio-euphorbia-ascot-rainbow.webp',
+  'Royal Purple Smoke Bush':  '/assets/photos/stops/patio-smoke-bush.webp',
+  'Rhododendron':             '/assets/photos/stops/sauna-rhododendron.webp',
+  'Sun King spikenard':       '/assets/photos/stops/sauna-sun-king-spikenard.webp',
+  'Astilbe':                  '/assets/photos/stops/sauna-astilbe.webp',
+  'Japanese painted fern':    '/assets/photos/stops/sauna-japanese-painted-fern.webp',
+  'Pachysandra':              '/assets/photos/stops/sauna-pachysandra.webp',
 };
 const PLANT_NOTES: Record<string, string> = {
   'Sunset horizon rose': 'Each flower transitions from yellow to red',
