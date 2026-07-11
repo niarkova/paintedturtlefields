@@ -394,6 +394,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
 
 // ─── Stop card photo gallery ───────────────────────────────────────
 function StopGallery({ stop }: { stop: StopData }) {
+  if (!stop.plants?.length) return null;
   const ref = useRef<HTMLDivElement>(null);
   const [scrollState, setScrollState] = useState(0);
 
