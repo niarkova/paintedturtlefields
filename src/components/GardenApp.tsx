@@ -612,33 +612,60 @@ function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
 }
 
 // ─── Intro screen ─────────────────────────────────────────────────
-// The loader only waits on screen 1 (intro) art, so it hands off fast. The
-// visitor lingers a few seconds reading screen 1, during which we warm
-// screen 2 (map), then screen 3 (gallery) — both ready before they arrive.
-const SCREEN_1_IMAGES = [
+// Load order matters, especially on slow links: firing every image at once
+// starves the small, urgent ones (like the bio photo) behind big ones that
+// aren't needed yet. So loading happens in strict phases:
+//   1. loader art (paper texture + turtle) — the loading screen itself
+//   2. bio photo — tiny (~100px), must be in place before we reveal it
+//   3. map — once this lands, the loading screen can stop
+//   4. (background, after the visitor is already on the map) plant thumbnails
+//      stop by stop, then plant full photos stop by stop, then gallery thumbnails
+const SCREEN_1_CRITICAL_IMAGES = [
   '/assets/textures/watercolor-paper-dark-green.webp',
   '/assets/watercolor/painted-turtle.webp',
-  '/assets/watercolor/floral-border-v2.webp',
-  '/assets/watercolor/host-photo.webp',
 ];
-const SCREEN_2_IMAGES = ['/assets/map-ground-v2.webp'];
+const BIO_IMAGE = '/assets/watercolor/host-photo.webp';
+const FLORAL_BORDER_IMAGE = '/assets/watercolor/floral-border-v2.webp';
+const MAP_IMAGE = '/assets/map-ground-v2.webp';
 const gallerySrc = (g: { src?: string; img?: string; name: string; note: string; illustration?: boolean }) =>
   g.src ?? `/assets/watercolor/${g.img}.webp`;
 const gallerySrcSm = (g: Parameters<typeof gallerySrc>[0]) =>
   gallerySrc(g).replace('.webp', '-sm.webp');
 // Thumbnails only — full-size photos load on demand when a visitor actually
 // opens one in the viewer, instead of downloading the whole gallery upfront.
-const SCREEN_3_IMAGES = GALLERY.map(gallerySrcSm);
+const GALLERY_THUMB_IMAGES = GALLERY.map(gallerySrcSm);
 
-function preloadImages(urls: string[]) {
-  return Promise.all(urls.map(src => new Promise<void>(resolve => {
+function preloadImage(src: string) {
+  return new Promise<void>(resolve => {
     const im = new Image();
     im.onload = im.onerror = () => resolve();
     im.src = src;
-  })));
+  });
 }
 
-function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
+function preloadImages(urls: string[]) {
+  return Promise.all(urls.map(preloadImage));
+}
+
+// Loads images one at a time, in order — used for background warm-up so
+// low-priority requests can't flood the connection and starve whatever the
+// visitor is about to tap next.
+async function preloadSequential(urls: string[]) {
+  for (const src of urls) await preloadImage(src);
+}
+
+// Builds the full background warm-up order for a walk's plant photos: every
+// stop's thumbnail first (in walking order), then every stop's full photo
+// (in walking order) — so the "here you'll find" strips fill in fast, well
+// before anyone needs the heavier full-size photos.
+function plantPreloadOrder(stops: StopData[]): string[] {
+  const photoStops = stops.map(s => (s.plants || []).filter(p => PLANT_PHOTOS[p]).map(p => PLANT_PHOTOS[p]));
+  const thumbs = photoStops.flatMap(photos => photos.map(plantPhotoThumb));
+  const fulls = photoStops.flat();
+  return [...thumbs, ...fulls];
+}
+
+function Intro({ show, onEnter, onMapReady }: { show: boolean; onEnter: () => void; onMapReady?: () => void }) {
   // The turtle doubles as the app loader: it animates alone while the page
   // loads, then the rest of the intro fades in around it (turtle stays put).
   const [ready, setReady] = useState(false);
@@ -651,21 +678,25 @@ function Intro({ show, onEnter }: { show: boolean; onEnter: () => void }) {
       if (done) return;
       done = true;
       const wait = Math.max(0, MIN - (performance.now() - start));
-      timer = setTimeout(() => setReady(true), wait);
+      timer = setTimeout(() => { setReady(true); onMapReady?.(); }, wait);
     };
-    // Screen 1 must be painted before we reveal; screens 2 & 3 warm in parallel
-    // so they're ready before the visitor taps through — critical on slow links.
-    preloadImages(SCREEN_1_IMAGES).then(finish);
-    preloadImages(SCREEN_2_IMAGES);
-    preloadImages(SCREEN_3_IMAGES);
+    // Strict phases: loader art, then the bio photo, then the map — only once
+    // the map lands does the loading screen stop. The floral border is purely
+    // decorative (hidden until reveal) so it warms in the background instead
+    // of blocking readiness.
+    (async () => {
+      await preloadImages(SCREEN_1_CRITICAL_IMAGES);
+      await preloadImage(BIO_IMAGE);
+      preloadImage(FLORAL_BORDER_IMAGE);
+      await preloadImage(MAP_IMAGE);
+      finish();
+    })();
     const safety = setTimeout(finish, 6000);
 
-    // Re-preload after phone wakes from sleep so images are warm again
+    // Re-warm the map after the phone wakes from sleep, in case it fell out
+    // of the in-memory cache while backgrounded.
     const onVisible = () => {
-      if (document.visibilityState === 'visible') {
-        preloadImages(SCREEN_2_IMAGES);
-        preloadImages(SCREEN_3_IMAGES);
-      }
+      if (document.visibilityState === 'visible') preloadImage(MAP_IMAGE);
     };
     document.addEventListener('visibilitychange', onVisible);
     return () => {
@@ -1509,6 +1540,18 @@ export default function GardenApp({ stops, seedGoals }: Props) {
   // all restart as if the tour were being opened for the first time.
   const [mapResetKey, setMapResetKey] = useState(0);
 
+  // Background image warm-up, kicked off once the map has loaded (see
+  // Intro's onMapReady): plant thumbnails stop-by-stop, then plant full
+  // photos stop-by-stop, then the closing gallery's thumbnails. Runs
+  // sequentially so it can't flood the connection and slow down whatever
+  // the visitor actually taps next.
+  const warmedRef = useRef(false);
+  function warmBackgroundImages() {
+    if (warmedRef.current) return;
+    warmedRef.current = true;
+    preloadSequential([...plantPreloadOrder(stops), ...GALLERY_THUMB_IMAGES]);
+  }
+
   function select(i: number, pos: {x:number;y:number}) {
     setActiveIdx(i);
     setVisited(v => { const n = new Set(v); n.add(i); return n; });
@@ -1547,7 +1590,7 @@ export default function GardenApp({ stops, seedGoals }: Props) {
       </div>
       <div className={`sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={closeSheet} />
       <BottomSheet stop={stop} isOpen={isOpen} onClose={closeSheet} tapPctSheet={tapPctSheet} />
-      <Intro show={view === 'intro'} onEnter={gotoMap} />
+      <Intro show={view === 'intro'} onEnter={gotoMap} onMapReady={warmBackgroundImages} />
       <Exit show={view === 'exit'} onBackToMap={gotoMap} seedGoals={seedGoals} />
     </div>
   );
