@@ -371,10 +371,6 @@ html, body {
 .stop-shot-note {
   font-size: 11px;
   opacity: 0.7;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 100px;
 }
 .stop-gallery-empty {
   position: relative; z-index: 2;
