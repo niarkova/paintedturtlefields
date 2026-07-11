@@ -39,7 +39,7 @@ const GALLERY = [
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Roadside blooms',    note: 'And a curious dog'         },
   { src: '/assets/photos/general/11-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
-  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Nina',               note: 'In the patio garden'       },
+  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Nina',               note: 'Nina'                      },
   { src: '/assets/photos/general/13-patio-garden-5.webp', name: 'Chaos & Mayhem',     note: 'Our dogs on the patio, last year' },
   // sauna garden — oldest to newest
   { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
