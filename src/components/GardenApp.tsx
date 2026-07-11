@@ -449,7 +449,10 @@ function StopGallery({ stop }: { stop: StopData }) {
               <div className="photo-placeholder has-photo">
                 <img src={plantPhotoThumb(photo)} alt={plant} loading="lazy" />
               </div>
-              <figcaption className="stop-shot-cap">{plant}</figcaption>
+              <figcaption className="stop-shot-cap">
+                <span className="stop-shot-name">{plant}</span>
+                {PLANT_NOTES[plant] && <span className="stop-shot-note">{PLANT_NOTES[plant]}</span>}
+              </figcaption>
             </figure>
           );
         })}
