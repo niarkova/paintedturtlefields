@@ -2,7 +2,7 @@
 number: 2
 name: Patio garden
 subtitle: a place to sit
-plants: [Container dahlias, Sweet alyssum, Creeping jenny, Calibrachoa]
+plants: [Container dahlias, Sweet alyssum, Creeping jenny, Calibrachoa, Allium schubertii, Campanula, Sunset horizon rose]
 accent: "#B6D49B"
 ---
 

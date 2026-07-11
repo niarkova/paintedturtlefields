@@ -28,7 +28,7 @@ const GALLERY = [
   // turtles
   { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'A painted turtle'          },
   // people
-  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
+  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi, here for a consult' },
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
@@ -36,12 +36,12 @@ const GALLERY = [
   { src: '/assets/photos/general/06-veggie-garden-4.webp', name: 'Chaos',             note: 'Watching the first seedlings' },
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
   { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
-  // patio garden — oldest to newest
+  // patio garden — oldest to newest, dogs photo saved for last
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Roadside blooms',    note: 'And a curious dog'         },
   { src: '/assets/photos/general/11-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
-  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Chaos & Mayhem',     note: 'Our dogs, last year'       },
-  { src: '/assets/photos/general/13-patio-garden-5.webp', name: 'Nina',               note: 'In the patio garden'       },
+  { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Nina',               note: 'In the patio garden'       },
+  { src: '/assets/photos/general/13-patio-garden-5.webp', name: 'Chaos & Mayhem',     note: 'Our dogs, last year'       },
   // sauna garden — oldest to newest
   { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
   { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
@@ -50,8 +50,24 @@ const GALLERY = [
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
   // last
   { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Huge thanks to Penny for helping get the gardens ready for the tour!' },
   { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
 ];
+
+// Plant photos for the "here you'll find" strip on each stop card, keyed by
+// the exact plant name as it appears in that stop's content frontmatter.
+// Plants without an entry here keep the placeholder icon.
+const PLANT_PHOTOS: Record<string, string> = {
+  'Allium schubertii': '/assets/photos/stops/patio-allium.webp',
+  'Campanula': '/assets/photos/stops/patio-campanula.webp',
+  'Sunset horizon rose': '/assets/photos/stops/patio-rose.webp',
+  'Rhododendron': '/assets/photos/stops/sauna-rhododendron.webp',
+  'Sun King spikenard':    '/assets/photos/stops/sauna-sun-king-spikenard.webp',
+  'Astilbe':               '/assets/photos/stops/sauna-astilbe.webp',
+  'Japanese painted fern': '/assets/photos/stops/sauna-japanese-painted-fern.webp',
+  'Bleeding heart': '/assets/photos/stops/sauna-bleeding-heart.webp',
+};
+const plantPhotoThumb = (src: string) => src.replace(/\.webp$/, '-thumb.webp');
 
 const GAL_TINTS = [
   'rgba(216,139,106,0.30)',
@@ -204,11 +220,11 @@ function NumberPin({ n, active, revealed, spotlight }: { n: number; active: bool
       {/* stem tail */}
       <line x1="0" y1={cy + r} x2="0" y2="0"
             stroke={MAP_CREAM(0.95)} strokeWidth="1" strokeLinecap="round" />
-      {/* subtle "look here first" pulse — only before any stop has been opened */}
-      {spotlight && revealed && (
-        <circle className="map-stop-spotlight" cx="0" cy={cy} r={r + 6} fill="none"
-                stroke={MAP_CREAM(0.7)} strokeWidth="1.4" />
-      )}
+      {/* sonar ping rings — stop once any stop has been opened */}
+      {spotlight && revealed && (<>
+        <circle className="map-stop-ping"       cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
+        <circle className="map-stop-ping-delay" cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
+      </>)}
       {/* double border outer ring */}
       <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
       {/* active selection ring */}
@@ -265,7 +281,9 @@ function MapStop({ pos, n, label, title, active, visited, revealed, spotlight, o
        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
       <g transform={`translate(${x} ${y})`}>
-        <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
+        <g className={spotlight && revealed ? 'map-stop-bob' : ''}>
+          <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
+        </g>
       </g>
       <StopLabel x={x} y={labelY} text={label} />
     </g>
@@ -371,7 +389,7 @@ function GardenMap({ stops, activeIdx, visited, onSelect, active }: {
             pos={pos} n={s.n} label={pos.label} title={s.title}
             active={activeIdx === i} visited={visited.has(i)}
             revealed={pinsRevealed[i] ?? false}
-            spotlight={i === 0 && visited.size === 0}
+            spotlight={visited.size === 0}
             onClick={() => onSelect(i, pos)} />
         );
       })}
@@ -394,6 +412,7 @@ function StopGallery({ stop }: { stop: StopData }) {
   if (!stop.plants?.length) return null;
   const ref = useRef<HTMLDivElement>(null);
   const [scrollState, setScrollState] = useState(0);
+  const [plantIdx, setPlantIdx] = useState<number | null>(null);
 
   function update() {
     const el = ref.current;
@@ -406,6 +425,11 @@ function StopGallery({ stop }: { stop: StopData }) {
   }
   useEffect(() => { update(); }, [stop.id]);
 
+  const photoPlants = stop.plants.filter(p => PLANT_PHOTOS[p]);
+  const plantItems = photoPlants.map(p => ({ src: PLANT_PHOTOS[p], name: p, note: p }));
+
+  if (!photoPlants.length) return null;
+
   return (
     <>
       <div className="stop-gallery-head">
@@ -415,20 +439,23 @@ function StopGallery({ stop }: { stop: StopData }) {
         </span>
       </div>
       <div className={`stop-gallery hint-${scrollState}`} ref={ref} onScroll={update}>
-        {stop.plants.map((plant) => (
-          <figure className="stop-shot" key={plant} onClick={() => ga('plant_click', { plant, stop_title: stop.title })}>
-            <div className="photo-placeholder">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="rgba(255,248,232,0.35)"
-                   strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 28 L16 14" />
-                <path d="M16 20 C16 20, 10 18, 8 12 C12 12, 16 15, 16 20" fill="rgba(255,248,232,0.08)" />
-                <path d="M16 16 C16 16, 22 14, 24 8 C20 8, 16 11, 16 16" fill="rgba(255,248,232,0.08)" />
-              </svg>
-            </div>
-            <figcaption className="stop-shot-cap">{plant}</figcaption>
-          </figure>
-        ))}
+        {photoPlants.map((plant) => {
+          const photo = PLANT_PHOTOS[plant];
+          return (
+            <figure className="stop-shot" key={plant} onClick={() => {
+              ga('plant_click', { plant, stop_title: stop.title });
+              setPlantIdx(photoPlants.indexOf(plant));
+            }}>
+              <div className="photo-placeholder has-photo">
+                <img src={plantPhotoThumb(photo)} alt={plant} loading="lazy" />
+              </div>
+              <figcaption className="stop-shot-cap">{plant}</figcaption>
+            </figure>
+          );
+        })}
       </div>
+      <GalleryViewer items={plantItems} index={plantIdx}
+                     onClose={() => setPlantIdx(null)} onIndex={setPlantIdx} />
     </>
   );
 }
@@ -463,11 +490,13 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
     if (!handle || !sheet) return;
 
     let startY = 0;
+    let startTime = 0;
     let active = false;
     let dy = 0;
 
     function onStart(e: TouchEvent) {
       startY = e.touches[0].clientY;
+      startTime = performance.now();
       active = true;
       dy = 0;
     }
@@ -485,7 +514,8 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
       if (!active) return;
       active = false;
       sheet.style.transition = '';
-      if (dy > 80) {
+      const velocity = dy / Math.max(1, performance.now() - startTime);
+      if (dy > 80 || (dy > 24 && velocity > 0.5)) {
         sheet.style.transform = '';
         onClose();
       } else {
@@ -549,15 +579,15 @@ function BottomSheet({ stop, isOpen, onClose, tapPctSheet }: {
 }
 
 // ─── Map nav: trail bar ───────────────────────────────────────────
-function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
-  activeIdx: number | null; hasTapped: boolean;
+function MapNav({ activeIdx, onIntro, onExit }: {
+  activeIdx: number | null;
   onIntro: () => void; onExit: () => void;
 }) {
   const tint = activeIdx !== null ? TRAIL_TINTS[activeIdx % TRAIL_TINTS.length] : null;
   return (
-    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''} ${hasTapped ? 'has-tapped' : ''}`}
+    <div className={`map-nav nav-trail ${tint ? 'is-tinted' : ''}`}
          style={tint ? { '--trail-tint': tint } as React.CSSProperties : undefined}>
-      <button className="trail-step prev" onClick={onIntro} aria-label="Back to welcome" tabIndex={hasTapped ? 0 : -1}>
+      <button className="trail-step prev" onClick={onIntro} aria-label="Back to welcome">
         <ChevronGlyph dir="left" />
         <span className="trail-step-label">back</span>
       </button>
@@ -569,7 +599,6 @@ function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
         className="trail-step finish"
         onClick={onExit}
         aria-label="Finish your walk"
-        tabIndex={hasTapped ? 0 : -1}
       >
         <span className="trail-step-label">finish</span>
         <ChevronGlyph dir="right" />
@@ -776,11 +805,13 @@ function GoalDetailModal({ goals, index, onClose, onIndex }: {
     if (!handle || !modal) return;
 
     let startY = 0;
+    let startTime = 0;
     let active = false;
     let dy = 0;
 
     function onStart(e: TouchEvent) {
       startY = e.touches[0].clientY;
+      startTime = performance.now();
       active = true;
       dy = 0;
     }
@@ -798,7 +829,8 @@ function GoalDetailModal({ goals, index, onClose, onIndex }: {
       if (!active) return;
       active = false;
       modal!.style.transition = '';
-      if (dy > 80) {
+      const velocity = dy / Math.max(1, performance.now() - startTime);
+      if (dy > 80 || (dy > 24 && velocity > 0.5)) {
         modal!.style.transform = '';
         close();
       } else {
@@ -1184,11 +1216,13 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
     if (!handle || !modal) return;
 
     let startY = 0;
+    let startTime = 0;
     let active = false;
     let dy = 0;
 
     function onStart(e: TouchEvent) {
       startY = e.touches[0].clientY;
+      startTime = performance.now();
       active = true;
       dy = 0;
     }
@@ -1206,7 +1240,8 @@ function GalleryViewer({ items, index, onClose, onIndex }: {
       if (!active) return;
       active = false;
       modal!.style.transition = '';
-      if (dy > 80) {
+      const velocity = dy / Math.max(1, performance.now() - startTime);
+      if (dy > 80 || (dy > 24 && velocity > 0.5)) {
         modal!.style.transform = '';
         close();
       } else {
@@ -1353,16 +1388,13 @@ export default function GardenApp({ stops, seedGoals }: Props) {
     return 'intro';
   });
   useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
-  // Only the intro→map screen transition is a visitor's genuine first
-  // arrival. Restoring straight into 'map' (e.g. iOS reloading a backgrounded
-  // tab) means they were already mid-tour, even though the in-memory
-  // `visited` set — which isn't persisted — starts empty again; without this
-  // the nav's back/finish buttons would wrongly stay hidden as if this were
-  // a first visit.
-  const restoredMidTour = useRef(view === 'map' || view === 'exit');
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [visited, setVisited] = useState(() => new Set<number>());
   const [tapPctSheet, setTapPctSheet] = useState({ x: 50, y: -10 });
+  // Bumped whenever the visitor goes all the way back to the welcome screen,
+  // so the map remounts fresh — route draw, pin reveal, and visited state
+  // all restart as if the tour were being opened for the first time.
+  const [mapResetKey, setMapResetKey] = useState(0);
 
   function select(i: number, pos: {x:number;y:number}) {
     setActiveIdx(i);
@@ -1375,7 +1407,12 @@ export default function GardenApp({ stops, seedGoals }: Props) {
   }
 
   function closeSheet() { setActiveIdx(null); }
-  function gotoIntro()  { setActiveIdx(null); setView('intro'); }
+  function gotoIntro()  {
+    setActiveIdx(null);
+    setView('intro');
+    setVisited(new Set());
+    setMapResetKey(k => k + 1);
+  }
   function gotoMap()    { setActiveIdx(null); setView('map'); }
   function gotoExit()   { setActiveIdx(null); setView('exit'); }
 
@@ -1387,12 +1424,12 @@ export default function GardenApp({ stops, seedGoals }: Props) {
     <div className="app-stage">
       {inMap && (
         <MapNav
-          activeIdx={activeIdx} hasTapped={visited.size > 0 || restoredMidTour.current}
+          activeIdx={activeIdx}
           onIntro={gotoIntro} onExit={gotoExit}
         />
       )}
       <div className="map-frame">
-        <GardenMap stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} active={inMap} />
+        <GardenMap key={mapResetKey} stops={stops} activeIdx={activeIdx} visited={visited} onSelect={select} active={inMap} />
       </div>
       <div className={`sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={closeSheet} />
       <BottomSheet stop={stop} isOpen={isOpen} onClose={closeSheet} tapPctSheet={tapPctSheet} />

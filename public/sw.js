@@ -1,4 +1,4 @@
-const CACHE = 'ptf-v17';
+const CACHE = 'ptf-v19';
 
 const PRECACHE = [
   '/',
@@ -29,6 +29,11 @@ const PRECACHE = [
   '/assets/photos/general/17-flower-3-sm.webp',
   '/assets/photos/general/18-seedlings-sm.webp',
   '/assets/photos/general/19-bouquet-collage-sm.webp',
+  // "Here you'll find" plant photo thumbnails
+  '/assets/photos/stops/patio-allium-thumb.webp',
+  '/assets/photos/stops/patio-campanula-thumb.webp',
+  '/assets/photos/stops/patio-rose-thumb.webp',
+  '/assets/photos/stops/sauna-rhododendron-thumb.webp',
 ];
 
 self.addEventListener('install', e => {
