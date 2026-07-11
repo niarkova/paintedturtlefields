@@ -599,7 +599,7 @@ function MapNav({ activeIdx, hasTapped, onIntro, onExit }: {
         <ChevronGlyph dir="left" />
         <span className="trail-step-label">back</span>
       </button>
-      <span className={`trail-hint ${hasTapped ? 'is-gone' : ''}`}>
+      <span className="trail-hint">
         <span className="tap-dot" />
         tap a stop
       </span>

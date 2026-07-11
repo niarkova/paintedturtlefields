@@ -133,12 +133,7 @@ html, body {
   color: var(--cream-ink-soft);
   white-space: nowrap;
   opacity: 0;
-  animation: trail-hint-in 0.8s ease-out 5s forwards;
-}
-.trail-hint.is-gone {
-  animation: none;
-  opacity: 0;
-  transition: opacity 300ms ease;
+  animation: trail-hint-in 0.8s ease-out 0.4s forwards;
 }
 @keyframes trail-hint-in {
   to { opacity: 1; }
