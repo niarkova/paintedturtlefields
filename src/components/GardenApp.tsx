@@ -1357,11 +1357,7 @@ function Exit({ show, onBackToMap, seedGoals }: {
             </a>
             <a
               className="social-btn"
-              href="#email"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = `mailto:${TOUR_EMAIL_M}@${TOUR_EMAIL_D}`;
-              }}
+              href={`mailto:${TOUR_EMAIL_M}@${TOUR_EMAIL_D}`}
               aria-label="Send email"
             >
               <MailGlyph />
