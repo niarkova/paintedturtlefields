@@ -31,7 +31,7 @@ const GALLERY = [
   { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi, here for a consult' },
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
-  { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
+  { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',         note: 'Raised beds completed'     },
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'Arbor in veggie garden last year' },
   { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'Garlic haul last year'     },
