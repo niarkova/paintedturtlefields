@@ -60,7 +60,7 @@ const GALLERY = [
 const PLANT_PHOTOS: Record<string, string> = {
   'Allium': '/assets/photos/stops/patio-allium.webp',
   'Campanula': '/assets/photos/stops/patio-campanula.webp',
-  'Rose': '/assets/photos/stops/patio-rose.webp',
+  'Sunset horizon rose': '/assets/photos/stops/patio-rose.webp',
   'Rhododendron': '/assets/photos/stops/sauna-rhododendron.webp',
   'Sun King spikenard':    '/assets/photos/stops/sauna-sun-king-spikenard.webp',
   'Astilbe':               '/assets/photos/stops/sauna-astilbe.webp',
@@ -220,11 +220,11 @@ function NumberPin({ n, active, revealed, spotlight }: { n: number; active: bool
       {/* stem tail */}
       <line x1="0" y1={cy + r} x2="0" y2="0"
             stroke={MAP_CREAM(0.95)} strokeWidth="1" strokeLinecap="round" />
-      {/* subtle "tap a stop" pulse on every pin — stops for good once any stop has been opened */}
-      {spotlight && revealed && (
-        <circle className="map-stop-spotlight" cx="0" cy={cy} r={r + 6} fill="none"
-                stroke={MAP_CREAM(0.7)} strokeWidth="1.4" />
-      )}
+      {/* sonar ping rings — stop once any stop has been opened */}
+      {spotlight && revealed && (<>
+        <circle className="map-stop-ping"       cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
+        <circle className="map-stop-ping-delay" cx="0" cy={cy} r={r + 4} fill="none" stroke={MAP_CREAM(0.72)} strokeWidth="1.6" />
+      </>)}
       {/* double border outer ring */}
       <circle cx="0" cy={cy} r={r + 2.4} fill="none" stroke={MAP_CREAM(0.55)} strokeWidth="1" />
       {/* active selection ring */}
@@ -281,7 +281,9 @@ function MapStop({ pos, n, label, title, active, visited, revealed, spotlight, o
        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <rect x={x - 56} y={top} width="112" height={labelY + 4 - top} fill="transparent" />
       <g transform={`translate(${x} ${y})`}>
-        <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
+        <g className={spotlight && revealed ? 'map-stop-bob' : ''}>
+          <NumberPin n={n} active={active} revealed={revealed} spotlight={spotlight} />
+        </g>
       </g>
       <StopLabel x={x} y={labelY} text={label} />
     </g>
@@ -425,38 +427,33 @@ function StopGallery({ stop }: { stop: StopData }) {
 
   const photoPlants = stop.plants.filter(p => PLANT_PHOTOS[p]);
   const plantItems = photoPlants.map(p => ({ src: PLANT_PHOTOS[p], name: p, note: p }));
-  const hasPhotos = photoPlants.length > 0;
+
+  if (!photoPlants.length) return null;
 
   return (
     <>
       <div className="stop-gallery-head">
         <p className="fav-label">here you'll find</p>
-        {hasPhotos && (
-          <span className={`scroll-hint ${scrollState === 2 ? 'is-hidden' : ''}`} aria-hidden="true">
-            scroll <span className="scroll-hint-arrow">→</span>
-          </span>
-        )}
+        <span className={`scroll-hint ${scrollState === 2 ? 'is-hidden' : ''}`} aria-hidden="true">
+          scroll <span className="scroll-hint-arrow">→</span>
+        </span>
       </div>
-      {hasPhotos ? (
-        <div className={`stop-gallery hint-${scrollState}`} ref={ref} onScroll={update}>
-          {photoPlants.map((plant) => {
-            const photo = PLANT_PHOTOS[plant];
-            return (
-              <figure className="stop-shot" key={plant} onClick={() => {
-                ga('plant_click', { plant, stop_title: stop.title });
-                setPlantIdx(photoPlants.indexOf(plant));
-              }}>
-                <div className="photo-placeholder has-photo">
-                  <img src={plantPhotoThumb(photo)} alt={plant} loading="lazy" />
-                </div>
-                <figcaption className="stop-shot-cap">{plant}</figcaption>
-              </figure>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="stop-gallery-empty">Photos coming soon</p>
-      )}
+      <div className={`stop-gallery hint-${scrollState}`} ref={ref} onScroll={update}>
+        {photoPlants.map((plant) => {
+          const photo = PLANT_PHOTOS[plant];
+          return (
+            <figure className="stop-shot" key={plant} onClick={() => {
+              ga('plant_click', { plant, stop_title: stop.title });
+              setPlantIdx(photoPlants.indexOf(plant));
+            }}>
+              <div className="photo-placeholder has-photo">
+                <img src={plantPhotoThumb(photo)} alt={plant} loading="lazy" />
+              </div>
+              <figcaption className="stop-shot-cap">{plant}</figcaption>
+            </figure>
+          );
+        })}
+      </div>
       <GalleryViewer items={plantItems} index={plantIdx}
                      onClose={() => setPlantIdx(null)} onIndex={setPlantIdx} />
     </>

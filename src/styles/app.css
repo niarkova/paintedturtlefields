@@ -57,17 +57,26 @@ html, body {
 .map-stop:focus { outline: none; }
 .map-stop:focus-visible circle { outline: 3px solid var(--terracotta); }
 
-/* Subtle "start here" cue on stop 1 — fades away the moment any stop opens */
-.map-stop-spotlight {
-  animation: stop-spotlight 2.2s ease-in-out infinite;
+/* Sonar ping + bob — "tap a stop" cue, disappears once any stop opens */
+.map-stop-ping,
+.map-stop-ping-delay {
+  transform-box: fill-box;
   transform-origin: center;
+  animation: stop-ping 2.4s ease-out infinite;
 }
-@keyframes stop-spotlight {
-  0%, 100% { opacity: 0.28; stroke-width: 1.4; }
-  50%      { opacity: 0.75; stroke-width: 1.8; }
+.map-stop-ping-delay { animation-delay: 1.2s; }
+@keyframes stop-ping {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(2.6); opacity: 0;   }
+}
+.map-stop-bob { animation: stop-bob 2.4s ease-in-out infinite; }
+@keyframes stop-bob {
+  0%, 100% { transform: translateY(0px);  }
+  45%      { transform: translateY(-5px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .map-stop-spotlight { animation: none; opacity: 0.5; }
+  .map-stop-ping, .map-stop-ping-delay { animation: none; opacity: 0; }
+  .map-stop-bob { animation: none; }
 }
 
 /* @media: respect reduced motion for route animation */
