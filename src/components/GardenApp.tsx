@@ -26,7 +26,7 @@ interface Props {
 // src: full path for real photos; img: key for watercolor illustrations
 const GALLERY = [
   // turtles
-  { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'A painted turtle'          },
+  { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'Moving a painted turtle to a safer place' },
   // people
   { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
   // veggie garden — oldest to newest
