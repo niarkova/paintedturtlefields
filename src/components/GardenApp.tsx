@@ -28,7 +28,7 @@ const GALLERY = [
   // turtles
   { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'A painted turtle'          },
   // people
-  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi, here for a consult' },
+  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
