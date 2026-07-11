@@ -36,7 +36,7 @@ const GALLERY = [
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
   { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
   // patio garden — oldest to newest, dogs photo saved for last
-  { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Along the driveway', note: 'Hostas and lupine'         },
+  { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Along the driveway', note: 'Before the patio garden'   },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
   { src: '/assets/photos/general/11-patio-garden-3.webp', name: 'Evening rounds',     note: 'Supervising the new bed'   },
   { src: '/assets/photos/general/12-patio-garden-4.webp', name: 'Nina',               note: 'Nina'                      },
