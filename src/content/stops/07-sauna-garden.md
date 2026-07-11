@@ -2,7 +2,7 @@
 number: 7
 name: Sauna garden
 subtitle: the cool place
-plants: ["Solomon's seal", Astilbe, Ostrich fern, Bleeding heart]
+plants: ["Solomon's seal", Astilbe, Ostrich fern, Bleeding heart, Rhododendron]
 accent: "#7E9A60"
 ---
 
