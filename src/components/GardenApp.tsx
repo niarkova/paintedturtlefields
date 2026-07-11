@@ -34,7 +34,7 @@ const GALLERY = [
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',         note: 'Freshly built, daffodils blooming' },
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
-  { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
+  { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'Garlic haul last year'     },
   // patio garden — oldest to newest, dogs photo saved for last
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Before the patio garden', note: 'Before the patio garden' },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
