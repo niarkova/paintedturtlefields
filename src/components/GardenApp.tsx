@@ -30,7 +30,6 @@ const GALLERY = [
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
-  { src: '/assets/photos/general/21-romanesco.webp',        name: 'Romanesco',         note: 'My favorite brassica'                        },
   // patio garden — oldest to newest, dogs photo saved for last
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Before the patio garden', note: 'Before the patio garden' },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
