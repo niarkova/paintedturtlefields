@@ -30,9 +30,6 @@ const GALLERY = [
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
-  { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',         note: 'Raised beds completed'     },
-  { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'Arbor in veggie garden last year' },
-  { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'Garlic haul last year'     },
   // patio garden — oldest to newest, dogs photo saved for last
   { src: '/assets/photos/general/09-patio-garden-1.webp', name: 'Before the patio garden', note: 'Before the patio garden' },
   { src: '/assets/photos/general/10-patio-garden-2.webp', name: 'Beginning of the patio garden', note: 'And a curious dog' },
@@ -49,6 +46,9 @@ const GALLERY = [
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Lilac bouquet this spring' },
   // last
   { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Seed starting setup'            },
+  { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',       note: 'Raised beds completed'          },
+  { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',         note: 'Arbor in veggie garden last year' },
+  { src: '/assets/photos/general/08-garlic-harvest.webp',  name: 'Garlic harvest',  note: 'Garlic haul last year'          },
   { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'Cutting garden'                 },
 ];
 
