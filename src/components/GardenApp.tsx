@@ -27,8 +27,6 @@ interface Props {
 const GALLERY = [
   // turtles
   { src: '/assets/photos/general/01-turtles-1.webp',      name: 'Nina & a visitor',   note: 'Moving a painted turtle to a safer place' },
-  // people
-  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
   // veggie garden — oldest to newest
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Building the raised beds in veggie garden' },
@@ -45,6 +43,7 @@ const GALLERY = [
   { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
   { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
   // more from the garden
+  { src: '/assets/photos/general/02-people-1.webp',       name: 'Charlie Nardozzi',   note: 'Local gardening celebrity Charlie Nardozzi' },
   { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Our friend Penny Miller helping get our gardens ready for the tour!' },
   { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlia',             note: 'In early fall'             },
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Lilac bouquet this spring' },
