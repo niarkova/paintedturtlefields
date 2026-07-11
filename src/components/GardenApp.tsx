@@ -110,12 +110,9 @@ function getStopPathFractions(pathD: string): number[] {
 const MAP_CREAM = (a: number) => `rgba(255,248,232,${a})`;
 const MAP_DEEP  = (a: number) => `rgba(16,41,31,${a})`;
 
-// Tour opens July 10 2026 (local time). Before then, real contact info is
-// replaced with harmless test values so it never appears in the HTML source.
-function isTourOpen() { return new Date() >= new Date('2026-07-10T00:00:00'); }
-const TOUR_IG      = isTourOpen() ? 'ninakittie'   : 'test';
-const TOUR_EMAIL_M = isTourOpen() ? 'nina_kittie'  : 'test';
-const TOUR_EMAIL_D = isTourOpen() ? 'hotmail.com'  : 'test.com';
+const TOUR_IG      = 'ninakittie';
+const TOUR_EMAIL_M = 'nina_kittie';
+const TOUR_EMAIL_D = 'hotmail.com';
 
 function ga(event: string, params?: Record<string, unknown>) {
   try { (window as any).gtag?.('event', event, params); } catch {}
@@ -1043,7 +1040,6 @@ function GoalsBoard({ seedGoals, active = true }: { seedGoals: SeedGoal[]; activ
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isTourOpen()) { pushToast('Not open yet but thanks for testing', 'info'); return; }
     const g = text.trim();
     if (!g) { pushToast('Write your goal first', 'error'); return; }
     if (overLimit) { pushToast('Please shorten your goal to 300 characters', 'error'); return; }
