@@ -1529,16 +1529,45 @@ function Exit({ show, onBackToMap, seedGoals }: {
   );
 }
 
+const SESSION_KEY = 'ptf_session_v1';
+
+// iOS in particular will silently kill a backgrounded tab and reload it from
+// scratch when the visitor switches back — without this, that reload dumps
+// them back on the welcome screen mid-walk. Restore where they were, but
+// only for that kind of reload: an explicit refresh should still start over.
+function loadSessionState(): { view: 'map' | 'exit'; visited: number[] } | null {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    if (nav?.type === 'reload') return null;
+    const parsed = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+    if (parsed?.view === 'map' || parsed?.view === 'exit') {
+      return { view: parsed.view, visited: Array.isArray(parsed.visited) ? parsed.visited : [] };
+    }
+  } catch {}
+  return null;
+}
+
 // ─── App ──────────────────────────────────────────────────────────
 export default function GardenApp({ stops, seedGoals }: Props) {
-  const [view, setView] = useState<'intro' | 'map' | 'exit'>('intro');
+  const [initialSession] = useState(loadSessionState);
+  const [view, setView] = useState<'intro' | 'map' | 'exit'>(initialSession?.view ?? 'intro');
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [visited, setVisited] = useState(() => new Set<number>());
+  const [visited, setVisited] = useState(() => new Set<number>(initialSession?.visited));
   const [tapPctSheet, setTapPctSheet] = useState({ x: 50, y: -10 });
   // Bumped whenever the visitor goes all the way back to the welcome screen,
   // so the map remounts fresh — route draw, pin reveal, and visited state
   // all restart as if the tour were being opened for the first time.
   const [mapResetKey, setMapResetKey] = useState(0);
+
+  // Keep the session snapshot current so a killed-and-reloaded tab (see
+  // loadSessionState above) can resume here. Cleared once back at the
+  // welcome screen, since that's an explicit "start over".
+  useEffect(() => {
+    try {
+      if (view === 'intro') sessionStorage.removeItem(SESSION_KEY);
+      else sessionStorage.setItem(SESSION_KEY, JSON.stringify({ view, visited: [...visited] }));
+    } catch {}
+  }, [view, visited]);
 
   // Background image warm-up, kicked off once the map has loaded (see
   // Intro's onMapReady): plant thumbnails stop-by-stop, then plant full

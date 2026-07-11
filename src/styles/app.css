@@ -394,7 +394,7 @@ html, body {
   overflow-x: hidden; overflow-y: auto;
 }
 .intro.show { opacity: 1; pointer-events: auto; }
-.intro-img-garland { padding-top: 90px; padding-bottom: 210px; }
+.intro-img-garland { padding-top: 40px; padding-bottom: 210px; }
 
 .intro-frame {
   position: relative; text-align: center; width: 100%; max-width: 400px;
