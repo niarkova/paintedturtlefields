@@ -2,7 +2,7 @@
 number: 7
 name: Sauna garden
 subtitle: the cool place
-plants: ["Sun King spikenard", Astilbe, "Japanese painted fern", Bleeding heart, Rhododendron]
+plants: ["Sun King spikenard", Astilbe, "Japanese painted fern", Pachysandra, Rhododendron]
 accent: "#7E9A60"
 ---
 

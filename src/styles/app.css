@@ -593,7 +593,9 @@ html, body {
 }
 .exit-back {
   position: absolute; top: calc(env(safe-area-inset-top, 0px) + 20px); left: 22px; z-index: 12;
+  transition: opacity 300ms ease, pointer-events 0s;
 }
+.exit-back.is-hidden { opacity: 0; pointer-events: none; }
 .exit-scroll {
   position: absolute; inset: 0;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
@@ -605,7 +607,7 @@ html, body {
 }
 .exit-heading {
   font-family: var(--font-display);
-  font-size: clamp(24px, 5vw, 30px);
+  font-size: clamp(32px, 7vw, 42px);
   font-weight: 400;
   color: var(--cream-ink);
   margin: 0 0 14px;

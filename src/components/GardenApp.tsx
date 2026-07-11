@@ -33,7 +33,6 @@ const GALLERY = [
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'How it started',    note: 'Early spring'              },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Stone circle bed',  note: 'Mid-build'                 },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'The arbor',         note: 'Freshly built, daffodils blooming' },
-  { src: '/assets/photos/general/06-veggie-garden-4.webp', name: 'Chaos',             note: 'Watching the first seedlings' },
   { src: '/assets/photos/general/07-veggie-garden-5.webp', name: 'Zinnias',           note: 'By the mailbox arch'       },
   { src: '/assets/photos/general/08-garlic-harvest.webp', name: 'Garlic harvest',     note: 'A wheelbarrow full'        },
   // patio garden — oldest to newest, dogs photo saved for last
@@ -46,11 +45,11 @@ const GALLERY = [
   { src: '/assets/photos/general/14-sauna-garden-1.webp', name: 'Breaking ground',    note: 'Building the sauna garden' },
   { src: '/assets/photos/general/15-sauna-garden-2.webp', name: 'The sauna garden',   note: 'A place to rest'           },
   // more from the garden
-  { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlias',            note: 'In early fall'             },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Huge thanks to Penny for helping get the gardens ready for the tour!' },
+  { src: '/assets/photos/general/16-flower-1.webp',       name: 'Dahlia',             note: 'In early fall'             },
   { src: '/assets/photos/general/17-flower-3.webp',       name: 'Lilacs',             note: 'Picked from the hedge'     },
   // last
-  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Under the grow lights in March' },
-  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Penny Miller',    note: 'Huge thanks to Penny for helping get the gardens ready for the tour!' },
+  { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting',   note: 'Seed starting set up'           },
   { src: '/assets/photos/general/19-bouquet-collage.webp', name: 'Cutting garden',  note: 'A season of arrangements'       },
 ];
 
@@ -65,7 +64,10 @@ const PLANT_PHOTOS: Record<string, string> = {
   'Sun King spikenard':    '/assets/photos/stops/sauna-sun-king-spikenard.webp',
   'Astilbe':               '/assets/photos/stops/sauna-astilbe.webp',
   'Japanese painted fern': '/assets/photos/stops/sauna-japanese-painted-fern.webp',
-  'Bleeding heart': '/assets/photos/stops/sauna-bleeding-heart.webp',
+  'Pachysandra': '/assets/photos/stops/sauna-pachysandra.webp',
+};
+const PLANT_NOTES: Record<string, string> = {
+  'Sunset horizon rose': 'Each flower transitions from yellow to red',
 };
 const plantPhotoThumb = (src: string) => src.replace(/\.webp$/, '-thumb.webp');
 
@@ -424,7 +426,7 @@ function StopGallery({ stop }: { stop: StopData }) {
   useEffect(() => { update(); }, [stop.id]);
 
   const photoPlants = stop.plants.filter(p => PLANT_PHOTOS[p]);
-  const plantItems = photoPlants.map(p => ({ src: PLANT_PHOTOS[p], name: p, note: p }));
+  const plantItems = photoPlants.map(p => ({ src: PLANT_PHOTOS[p], name: p, note: PLANT_NOTES[p] ?? p }));
 
   if (!photoPlants.length) return null;
 
@@ -1331,17 +1333,18 @@ function Exit({ show, onBackToMap, seedGoals }: {
   show: boolean; onBackToMap: () => void; seedGoals: SeedGoal[];
 }) {
   const [viewerIdx, setViewerIdx] = useState<number | null>(null);
+  const [backHidden, setBackHidden] = useState(false);
   // Defer mounting the photo gallery (heavy images) until the closing screen
   // is first reached, so it never competes with the intro/map on slow links.
   const [galleryMounted, setGalleryMounted] = useState(false);
   useEffect(() => { if (show) setGalleryMounted(true); }, [show]);
   return (
     <div className={`intro exit ${show ? 'show' : ''}`} aria-hidden={!show}>
-      <button className="trail-step prev exit-back" onClick={onBackToMap} aria-label="Back to the map">
+      <button className={`trail-step prev exit-back${backHidden ? ' is-hidden' : ''}`} onClick={onBackToMap} aria-label="Back to the map">
         <ChevronGlyph dir="left" />
         <span className="trail-step-label">back</span>
       </button>
-      <div className="exit-scroll">
+      <div className="exit-scroll" onScroll={(e) => setBackHidden((e.currentTarget as HTMLDivElement).scrollTop > 40)}>
         <div className="intro-frame exit-frame">
           <h2 className="exit-heading">Thanks for visiting!</h2>
           <div className="exit-social">
