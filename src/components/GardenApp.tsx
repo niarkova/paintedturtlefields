@@ -29,7 +29,6 @@ const GALLERY = [
   { src: '/assets/photos/general/03-veggie-garden-1.webp', name: 'Before veggie garden and solar panels were added', note: 'Before veggie garden and solar panels were added' },
   { src: '/assets/photos/general/04-veggie-garden-2.webp', name: 'Building the raised beds in veggie garden', note: 'Building the raised beds in veggie garden' },
   { src: '/assets/photos/general/05-veggie-garden-3.webp', name: 'Raised beds completed',                    note: 'Raised beds completed'                    },
-  { src: '/assets/photos/general/24-fox-den.webp',         name: 'Trail cam footage of a nearby fox den',    note: 'Trail cam footage of a nearby fox den'    },
   { src: '/assets/photos/general/09-patio-garden-1.webp',  name: 'Before the patio garden',                  note: 'Before the patio garden'                  },
   { src: '/assets/photos/general/10-patio-garden-2.webp',  name: 'Beginning of the patio garden',            note: 'Beginning of the patio garden'            },
   { src: '/assets/photos/general/22-patio-garden-6.webp',  name: 'Patio addition in progress',               note: 'Patio addition in progress'               },
@@ -37,10 +36,11 @@ const GALLERY = [
   { src: '/assets/photos/general/11-patio-garden-3.webp',  name: 'Supervising the new bed',                  note: 'Supervising the new bed'                  },
   { src: '/assets/photos/general/12-patio-garden-4.webp',  name: 'Nina',                                     note: 'Nina'                                     },
   { src: '/assets/photos/general/13-patio-garden-5.webp',  name: 'Our dogs on the patio, last year',         note: 'Our dogs on the patio, last year'         },
-  { src: '/assets/photos/general/14-sauna-garden-1.webp',  name: 'Building the sauna garden',                note: 'Building the sauna garden'                },
+  { src: '/assets/photos/general/14-sauna-garden-1.webp',  name: 'Building the sauna patio',                 note: 'Building the sauna patio'                 },
   { src: '/assets/photos/general/15-sauna-garden-2.webp',  name: 'The sauna garden',                         note: 'The sauna garden'                         },
-  { src: '/assets/photos/general/02-people-1.webp',        name: 'Local gardening celebrity Charlie Nardozzi', note: 'Local gardening celebrity Charlie Nardozzi' },
-  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Our friend Penny Miller',                  note: 'Our friend Penny Miller'                  },
+  { src: '/assets/photos/general/02-people-1.webp',        name: 'Local gardening celebrity Charlie Nardozzi here for a consult', note: 'Local gardening celebrity Charlie Nardozzi here for a consult' },
+  { src: '/assets/photos/general/20-penny-1.webp',         name: 'Our friend Penny Miller',                  note: 'Our friend Penny Miller helping prepare for the tour' },
+  { src: '/assets/photos/general/24-fox-den.webp',         name: 'Trail cam footage of a nearby fox den',    note: 'Trail cam footage of a nearby fox den'    },
   { src: '/assets/photos/general/16-flower-1.webp',        name: 'Dahlias in the fall',                      note: 'Dahlias in the fall'                      },
   { src: '/assets/photos/general/17-flower-3.webp',        name: 'Lilacs in the spring',                     note: 'Lilacs in the spring'                     },
   { src: '/assets/photos/general/18-seedlings.webp',       name: 'Seed starting setup',                      note: 'Seed starting setup'                      },
@@ -1510,6 +1510,7 @@ function Exit({ show, onBackToMap, seedGoals }: {
           <div className="exit-social">
             <a className="social-ig" href={`https://instagram.com/${TOUR_IG}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <IgGlyph />
+              <span>Instagram</span>
             </a>
             <a
               className="social-btn"
